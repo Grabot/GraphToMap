@@ -29,7 +29,7 @@ public class Main {
 
         for( int i = 0; i < nodes.size(); i++ )
         {
-            System.out.println("node: " + i + " with label: " + nodes.get(i).getLabel() );
+            System.out.println("node: " + nodes.get(i).getIndex() + " with label: " + nodes.get(i).getLabel() + " it has cluster: " + nodes.get(i).getCluster() );
         }
 
         for( int i = 0; i < edges.size(); i++ )
