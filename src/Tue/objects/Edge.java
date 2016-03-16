@@ -6,18 +6,18 @@ package Tue.objects;
 public class Edge
 {
 
-    Node origin;
+    Node source;
     Node dest;
 
-    public Edge( Node origin, Node dest )
+    public Edge( Node source, Node dest )
     {
-        this.origin = origin;
+        this.source = source;
         this.dest = dest;
     }
 
-    public Node getFrom()
+    public Node getSource()
     {
-        return origin;
+        return source;
     }
 
     public Node getDest()
