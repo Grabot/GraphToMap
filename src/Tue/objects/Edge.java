@@ -5,7 +5,7 @@ package Tue.objects;
  */
 public class Edge
 {
-
+    private int weight = 1;
     Node source;
     Node dest;
 
@@ -13,6 +13,11 @@ public class Edge
     {
         this.source = source;
         this.dest = dest;
+    }
+
+    public void setWeight()
+    {
+        this.weight = weight;
     }
 
     public Node getSource()
@@ -23,5 +28,10 @@ public class Edge
     public Node getDest()
     {
         return dest;
+    }
+
+    public int getWeight()
+    {
+        return weight;
     }
 }
