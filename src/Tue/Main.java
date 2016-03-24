@@ -1,6 +1,7 @@
 package Tue;
 
 import Tue.load.Display;
+import Tue.load.SpringForce;
 import Tue.load.Vector2;
 import Tue.objects.*;
 import Tue.parser.DotParser;
@@ -21,6 +22,8 @@ public class Main {
     public ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
     public ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
 
+    private SpringForce spring;
+
     public static void main(String[] args)
     {
 
@@ -35,6 +38,8 @@ public class Main {
         nodes = parser.getNodes();
         edges = parser.getEdges();
 
+        spring = new SpringForce();
+
         Graph g = new Graph(nodes, edges);
 
         int clusterNumber = getClusterNumber();
@@ -47,7 +52,7 @@ public class Main {
         }
 
         float[][] clusterD = new float[clusterNumber][clusterNumber];
-        ClusterNode[] Cnodes = new ClusterNode[clusterNumber];
+        ClusterNode[] Cnodes = new ClusterNode[(clusterNumber+1)];
         for( int i = 0; i < clusterNumber; i++ )
         {
             for( int j = (i+1); j < clusterNumber; j++ )
@@ -99,15 +104,27 @@ public class Main {
         {
             for( int j = (i+1); j < clusterNumber; j++ )
             {
-                clusteredges.add(new ClusterEdge( Cnodes[i], Cnodes[j], clusterD[i][j]));
+                if( clusterD[i][j] != -1 ) {
+                    clusteredges.add(new ClusterEdge(Cnodes[i], Cnodes[j], (clusterD[i][j]*100), spring));
+                }
             }
         }
 
         //set random positions for cluster nodes.
         for( int i = 0; i < clusterNumber; i++ )
         {
-            Cnodes[i].setPos(new Vector2( (float)(Math.random()*400), (float)(Math.random()*400)));
+            Cnodes[i].setPos(new Vector2( (float)(Math.random()*1200), (float)(Math.random()*800)));
             clusternodes.add(Cnodes[i]);
+        }
+
+
+        for( int i = 0; i < clusterNumber; i++ )
+        {
+            for( int j = 0; j < clusterNumber; j++ )
+            {
+                System.out.print( clusterD[i][j] + " " );
+            }
+            System.out.println("");
         }
 
         EventQueue.invokeLater(new Runnable()

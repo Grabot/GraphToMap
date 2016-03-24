@@ -25,8 +25,14 @@ public class Display extends JPanel implements ActionListener
 
     private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
+
+    long lastLoopTime;
+    float delta;
+
     public void create()
     {
+        lastLoopTime = System.currentTimeMillis();
+
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.add(this);
@@ -79,7 +85,34 @@ public class Display extends JPanel implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e)
+    {
+        //get delta in miliseconds
+        delta = System.currentTimeMillis() - lastLoopTime;
+        lastLoopTime = System.currentTimeMillis();
+        //get correct delta
+        delta = (delta/1000);
+
+        for( ClusterEdge edge : clusteredges )
+        {
+            edge.ApplyForces();
+        }
+
+        //calculate velocity
+        for( ClusterNode node : clusternodes )
+        {
+            //vel = ((F*dt)/m). We now assume mass = 1
+            node.setVel(new Vector2((node.getVel().x + (node.getForce().x*delta)), (node.getVel().y + (node.getForce().y*delta))));
+
+            node.setPos(new Vector2(node.getPos().x + (node.getVel().x*delta), node.getPos().y + (node.getVel().y*delta)));
+        }
+
+        //clear forces
+        for( ClusterNode node : clusternodes )
+        {
+            node.setForce( new Vector2(0, 0));
+        }
+
         this.repaint();
     }
 
