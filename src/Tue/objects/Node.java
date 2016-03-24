@@ -14,6 +14,7 @@ public class Node
     private String name;
     private String label = "";
     private String cluster = "";
+    private int clusterNumber = -1;
     private int index;
 
     public Node(String name, int index)
@@ -51,6 +52,16 @@ public class Node
     }
 
     public String getCluster() { return cluster; }
+
+    public void addClusterNumber( int clusterNumber )
+    {
+        this.clusterNumber = clusterNumber;
+    }
+
+    public int getClusterNumber()
+    {
+        return clusterNumber;
+    }
 
     public float getX() { return pos.x; }
 

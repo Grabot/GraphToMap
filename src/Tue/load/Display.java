@@ -1,5 +1,8 @@
 package Tue.load;
 
+import Tue.Main;
+import Tue.objects.ClusterEdge;
+import Tue.objects.ClusterNode;
 import Tue.objects.Edge;
 import Tue.objects.Node;
 import Tue.parser.DotParser;
@@ -17,11 +20,11 @@ import java.util.ArrayList;
  */
 public class Display extends JPanel implements ActionListener
 {
-    private DotParser parser;
+    private Main main;
     private final Timer timer = new Timer(40, this);
-    private ArrayList<Node> nodes = new ArrayList<Node>();
-    private ArrayList<Edge> edges = new ArrayList<Edge>();
 
+    private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
+    private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     public void create()
     {
         JFrame f = new JFrame("Graph To Map");
@@ -35,13 +38,14 @@ public class Display extends JPanel implements ActionListener
         timer.start();
     }
 
-    public Display(DotParser parser)
+    public Display( Main main )
     {
         super(true);
 
-        this.parser = parser;
-        nodes = parser.getNodes();
-        edges = parser.getEdges();
+        this.main = main;
+
+        this.clusternodes = main.clusternodes;
+        this.clusteredges = main.clusteredges;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());
@@ -59,18 +63,18 @@ public class Display extends JPanel implements ActionListener
 
     private void drawNodes( Graphics g )
     {
-        for (Node node : nodes)
+        for (ClusterNode Cnode : clusternodes)
         {
             int radius = 20;
-            g.fillOval((int)(node.getX()-(radius/2)), (int)(node.getY()-(radius/2)), radius, radius);
+            g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
         }
     }
 
     private void drawEdges( Graphics g )
     {
-        for (Edge edge : edges )
+        for (ClusterEdge edge : clusteredges )
         {
-            g.drawLine((int)edge.getSource().getX(), (int)edge.getSource().getY(), (int)edge.getDest().getX(), (int)edge.getDest().getY());
+            g.drawLine((int)edge.getSource().getPos().x, (int)edge.getSource().getPos().y, (int)edge.getDest().getPos().x, (int)edge.getDest().getPos().y);
         }
     }
 

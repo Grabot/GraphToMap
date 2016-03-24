@@ -8,13 +8,13 @@ import java.util.ArrayList;
 public class Graph
 {
 
-    private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
 
     public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
-        this.nodes = nodes;
         this.edges = edges;
+        this.nodes = nodes;
     }
 
     public float[] BFS( Node source )
@@ -31,7 +31,6 @@ public class Graph
 
         dist[source.getIndex()] = 0;
 
-        boolean done = false;
         while(!queue.isEmpty())
         {
             float current = 999;
@@ -47,6 +46,13 @@ public class Graph
 
             if( indexCurrent == -1 )
             {
+                for( Node node : nodes )
+                {
+                    if( dist[node.getIndex()] == Integer.MAX_VALUE )
+                    {
+                        dist[node.getIndex()] = -1;
+                    }
+                }
                 break;
             }
 
