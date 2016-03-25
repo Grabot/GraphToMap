@@ -1,5 +1,6 @@
-package Tue.load;
+package Tue.load.Forces;
 
+import Tue.load.Vector2;
 import Tue.objects.ClusterEdge;
 
 /**
@@ -21,7 +22,7 @@ public class SpringForce
     //hooke's law for spring forces
     public void ApplyForce( ClusterEdge edge )
     {
-        float ks = 2;
+        float ks = 3;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 

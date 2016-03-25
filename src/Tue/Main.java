@@ -1,7 +1,9 @@
 package Tue;
 
 import Tue.load.Display;
-import Tue.load.SpringForce;
+import Tue.load.Forces.FrictionForce;
+import Tue.load.Forces.SpringForce;
+import Tue.load.Forces.WallForce;
 import Tue.load.Vector2;
 import Tue.objects.*;
 import Tue.parser.DotParser;
@@ -16,6 +18,10 @@ import java.util.HashSet;
 
 public class Main {
 
+    public int width = 1200;
+    public int height = 800;
+    public int delta = 40;
+
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
 
@@ -23,6 +29,8 @@ public class Main {
     public ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
 
     private SpringForce spring;
+    private WallForce wall;
+    private FrictionForce friction;
 
     public static void main(String[] args)
     {
@@ -39,6 +47,8 @@ public class Main {
         edges = parser.getEdges();
 
         spring = new SpringForce();
+        wall = new WallForce( width, height, delta );
+        friction = new FrictionForce();
 
         Graph g = new Graph(nodes, edges);
 
@@ -96,7 +106,7 @@ public class Main {
         //define all cluster nodes
         for( int i = 0; i < clusterNumber; i++ )
         {
-            Cnodes[i] = new ClusterNode( i );
+            Cnodes[i] = new ClusterNode( i, wall, friction );
         }
 
         //define all cluster edges
@@ -117,12 +127,11 @@ public class Main {
             clusternodes.add(Cnodes[i]);
         }
 
-
         for( int i = 0; i < clusterNumber; i++ )
         {
             for( int j = 0; j < clusterNumber; j++ )
             {
-                System.out.print( clusterD[i][j] + " " );
+                System.out.print(clusterD[i][j] + " ");
             }
             System.out.println("");
         }
@@ -166,7 +175,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/sample2.gv"));
+            scanner = new DotScanner(new FileReader("datasets/universities.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

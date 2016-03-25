@@ -1,5 +1,7 @@
 package Tue.objects;
 
+import Tue.load.Forces.FrictionForce;
+import Tue.load.Forces.WallForce;
 import Tue.load.Vector2;
 
 import java.util.ArrayList;
@@ -18,12 +20,17 @@ public class ClusterNode
     private Vector2 vel;
     private Vector2 force;
 
-    public ClusterNode( int cluster )
+    private WallForce wall;
+    private FrictionForce friction;
+
+    public ClusterNode( int cluster, WallForce wall, FrictionForce friction )
     {
         pos = new Vector2(0, 0);
         vel = new Vector2(0, 0);
         force = new Vector2(0, 0);
         this.cluster = cluster;
+        this.wall = wall;
+        this.friction = friction;
     }
 
     public void setPos( Vector2 pos )
@@ -54,6 +61,12 @@ public class ClusterNode
     public Vector2 getForce()
     {
         return force;
+    }
+
+    public void ApplyForces()
+    {
+        wall.ApplyForces( this );
+        friction.ApplyForces( this );
     }
 
 }

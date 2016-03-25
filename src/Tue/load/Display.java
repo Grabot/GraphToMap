@@ -9,10 +9,7 @@ import Tue.parser.DotParser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -21,13 +18,16 @@ import java.util.ArrayList;
 public class Display extends JPanel implements ActionListener
 {
     private Main main;
-    private final Timer timer = new Timer(40, this);
+    private final Timer timer;
 
     private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
 
     long lastLoopTime;
     float delta;
+
+    private boolean showEdges = true;
+    private boolean movement = true;
 
     public void create()
     {
@@ -39,8 +39,30 @@ public class Display extends JPanel implements ActionListener
         f.pack();
         f.setLocation(400, 100);
         //f.setLocationRelativeTo(null);
-        f.setSize(1280, 800);
+        f.setSize(main.width, main.height);
         f.setVisible(true);
+
+        f.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if( e.getKeyCode() == KeyEvent.VK_E )
+                {
+                    showEdges = (!showEdges);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_V )
+                {
+                    movement = (!movement);
+                    for (ClusterNode node : clusternodes) {
+                        node.setForce(new Vector2(0, 0));
+                        node.setVel( new Vector2(0, 0));
+                    }
+                }
+            }
+            public void keyReleased(KeyEvent e) {
+            }
+            public void keyTyped(KeyEvent e) {
+            }
+        });
+
         timer.start();
     }
 
@@ -49,6 +71,7 @@ public class Display extends JPanel implements ActionListener
         super(true);
 
         this.main = main;
+        timer = new Timer(main.delta, this);
 
         this.clusternodes = main.clusternodes;
         this.clusteredges = main.clusteredges;
@@ -80,7 +103,9 @@ public class Display extends JPanel implements ActionListener
     {
         for (ClusterEdge edge : clusteredges )
         {
-            g.drawLine((int)edge.getSource().getPos().x, (int)edge.getSource().getPos().y, (int)edge.getDest().getPos().x, (int)edge.getDest().getPos().y);
+            if( showEdges ) {
+                g.drawLine((int) edge.getSource().getPos().x, (int) edge.getSource().getPos().y, (int) edge.getDest().getPos().x, (int) edge.getDest().getPos().y);
+            }
         }
     }
 
@@ -91,29 +116,50 @@ public class Display extends JPanel implements ActionListener
         delta = System.currentTimeMillis() - lastLoopTime;
         lastLoopTime = System.currentTimeMillis();
         //get correct delta
-        delta = (delta/1000);
+        delta = (delta / 1000);
+        //delta = 0.040f;
 
-        for( ClusterEdge edge : clusteredges )
+        calculatePos();
+
+        this.repaint();
+    }
+
+    private void calculatePos()
+    {
+        Vector2[] oldpos = new Vector2[clusternodes.size()];
+
+        //we will use a midpoint calculation to numerically solve the differential equation
+
+        calculateForces();
+        //calculate velocity and position for all nodes.
+        for( int i = 0; i < clusternodes.size(); i++ )
         {
+            oldpos[i] = clusternodes.get(i).getPos();
+            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
+            clusternodes.get(i).setPos( new Vector2((clusternodes.get(i).getPos().x + (clusternodes.get(i).getVel().x * (delta/2))), (clusternodes.get(i).getPos().y + (clusternodes.get(i).getVel().y * (delta/2) ))));
+        }
+        calculateForces();
+        for( int i = 0; i < clusternodes.size(); i++ )
+        {
+            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
+            clusternodes.get(i).setPos( new Vector2((oldpos[i].x + (clusternodes.get(i).getVel().x * delta)), (oldpos[i].y + (clusternodes.get(i).getVel().y * delta ))));
+        }
+    }
+
+    private void calculateForces()
+    {
+        for (ClusterNode node : clusternodes) {
+            node.setForce(new Vector2(0, 0));
+        }
+        //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
+        for (ClusterEdge edge : clusteredges) {
             edge.ApplyForces();
         }
 
-        //calculate velocity
         for( ClusterNode node : clusternodes )
         {
-            //vel = ((F*dt)/m). We now assume mass = 1
-            node.setVel(new Vector2((node.getVel().x + (node.getForce().x*delta)), (node.getVel().y + (node.getForce().y*delta))));
-
-            node.setPos(new Vector2(node.getPos().x + (node.getVel().x*delta), node.getPos().y + (node.getVel().y*delta)));
+            node.ApplyForces();
         }
-
-        //clear forces
-        for( ClusterNode node : clusternodes )
-        {
-            node.setForce( new Vector2(0, 0));
-        }
-
-        this.repaint();
     }
 
     private class MouseHandler extends MouseAdapter {

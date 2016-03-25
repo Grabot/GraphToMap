@@ -1,7 +1,5 @@
 package Tue.objects;
 
-import Tue.load.SpringForce;
-
 /**
  * Created by s138362 on 16-3-2016.
  */

@@ -1,6 +1,6 @@
 package Tue.objects;
 
-import Tue.load.SpringForce;
+import Tue.load.Forces.SpringForce;
 
 /**
  * Created by s138362 on 24-3-2016.
