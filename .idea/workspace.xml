@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="394ceb61-8553-40d0-bd44-b5c91a07bf59" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GraphToMap.iml" afterPath="$PROJECT_DIR$/GraphToMap.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/Main.java" afterPath="$PROJECT_DIR$/src/Tue/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/ClusterEdge.java" afterPath="$PROJECT_DIR$/src/Tue/objects/ClusterEdge.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,15 +27,15 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.71854305">
-              <caret line="167" column="48" selection-start-line="167" selection-start-column="48" selection-end-line="167" selection-end-column="48" />
+            <state vertical-scroll-proportion="0.12748344">
+              <caret line="165" column="34" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="34" />
               <folding>
                 <element signature="e#736#749#0" expanded="true" />
                 <element signature="e#815#828#0" expanded="true" />
-                <element signature="e#1939#1945#0" expanded="true" />
-                <element signature="e#1999#2005#0" expanded="true" />
-                <element signature="e#4012#4158#0" expanded="true" />
-                <element signature="e#4157#4158#0" expanded="true" />
+                <element signature="e#1977#1983#0" expanded="true" />
+                <element signature="e#2037#2043#0" expanded="true" />
+                <element signature="e#4129#4275#0" expanded="true" />
+                <element signature="e#4274#4275#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -776,10 +771,10 @@
           <folding>
             <element signature="e#736#749#0" expanded="true" />
             <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1939#1945#0" expanded="true" />
-            <element signature="e#1999#2005#0" expanded="true" />
-            <element signature="e#4012#4158#0" expanded="true" />
-            <element signature="e#4157#4158#0" expanded="true" />
+            <element signature="e#1977#1983#0" expanded="true" />
+            <element signature="e#2037#2043#0" expanded="true" />
+            <element signature="e#4129#4275#0" expanded="true" />
+            <element signature="e#4274#4275#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -885,10 +880,10 @@
           <folding>
             <element signature="e#736#749#0" expanded="true" />
             <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1939#1945#0" expanded="true" />
-            <element signature="e#1999#2005#0" expanded="true" />
-            <element signature="e#4012#4158#0" expanded="true" />
-            <element signature="e#4157#4158#0" expanded="true" />
+            <element signature="e#1977#1983#0" expanded="true" />
+            <element signature="e#2037#2043#0" expanded="true" />
+            <element signature="e#4129#4275#0" expanded="true" />
+            <element signature="e#4274#4275#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -998,10 +993,10 @@
           <folding>
             <element signature="e#736#749#0" expanded="true" />
             <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1939#1945#0" expanded="true" />
-            <element signature="e#1999#2005#0" expanded="true" />
-            <element signature="e#4012#4158#0" expanded="true" />
-            <element signature="e#4157#4158#0" expanded="true" />
+            <element signature="e#1977#1983#0" expanded="true" />
+            <element signature="e#2037#2043#0" expanded="true" />
+            <element signature="e#4129#4275#0" expanded="true" />
+            <element signature="e#4274#4275#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1284,15 +1279,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.71854305">
-          <caret line="167" column="48" selection-start-line="167" selection-start-column="48" selection-end-line="167" selection-end-column="48" />
+        <state vertical-scroll-proportion="0.12748344">
+          <caret line="165" column="34" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="34" />
           <folding>
             <element signature="e#736#749#0" expanded="true" />
             <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1939#1945#0" expanded="true" />
-            <element signature="e#1999#2005#0" expanded="true" />
-            <element signature="e#4012#4158#0" expanded="true" />
-            <element signature="e#4157#4158#0" expanded="true" />
+            <element signature="e#1977#1983#0" expanded="true" />
+            <element signature="e#2037#2043#0" expanded="true" />
+            <element signature="e#4129#4275#0" expanded="true" />
+            <element signature="e#4274#4275#0" expanded="true" />
           </folding>
         </state>
       </provider>

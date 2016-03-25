@@ -33,6 +33,8 @@ public class Main {
     private WallForce wall;
     private FrictionForce friction;
 
+    private double missingValue = 0;
+
     public static void main(String[] args)
     {
 
@@ -119,7 +121,9 @@ public class Main {
         {
             for( int j = (i+1); j < clusterNumber; j++ )
             {
-                clusteredges.add(new ClusterEdge(Cnodes[i], Cnodes[j], (clusterD[i][j]*100), spring));
+                if( clusterD[i][j] != missingValue ) {
+                    clusteredges.add(new ClusterEdge(Cnodes[i], Cnodes[j], (clusterD[i][j] * 100), spring));
+                }
             }
         }
 
@@ -141,36 +145,38 @@ public class Main {
         });
     }
 
-    private double[][] defineNodePosition(double[][] ClusterD)
+    private double[][] defineNodePosition(double[][] clusterD)
     {
 
         //keep track of the highest number to define empty aspects of the distance matrix
         //there are "-1" distances, these mean no connection. We connect them with a factor of the highest distance
         //This will draw them in the plane away from the others, which is also what should happen
         double highest = 0;
-        for( int i = 0; i < ClusterD.length; i++ )
+        for( int i = 0; i < clusterD.length; i++ )
         {
-            for( int j = 0; j < ClusterD[i].length; j++ )
+            for( int j = 0; j < clusterD[i].length; j++ )
             {
-                if( ClusterD[i][j] > highest )
+                if( clusterD[i][j] > highest )
                 {
-                    highest = ClusterD[i][j];
+                    highest = clusterD[i][j];
                 }
             }
         }
 
-        for( int i = 0; i < ClusterD.length; i++ )
+        missingValue = highest*1.6;
+
+        for( int i = 0; i < clusterD.length; i++ )
         {
-            for( int j = 0; j < ClusterD[i].length; j++ )
+            for( int j = 0; j < clusterD[i].length; j++ )
             {
-                if( ClusterD[i][j] == -1 )
+                if( clusterD[i][j] == -1 )
                 {
-                    ClusterD[i][j] = highest*1.4;
+                    clusterD[i][j] = missingValue;
                 }
             }
         }
 
-        double[][] output= MDSJ.classicalScaling(ClusterD); // apply MDS
+        double[][] output = MDSJ.classicalScaling(clusterD); // apply MDS
 
         for(int i=0; i<output[0].length; i++) {
             //coordinates are determined, scale them up to fit the plane
