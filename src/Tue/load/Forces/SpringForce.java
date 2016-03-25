@@ -32,8 +32,8 @@ public class SpringForce
         double posLength = (Math.sqrt(((posdif.x*posdif.x) + (posdif.y*posdif.y))));
         float dotProduct = ((posdif.x*veldif.x) + (posdif.y + veldif.y));
 
-        force.x = (posdif.x/(float)posLength)*((ks * ((float)posLength - edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
-        force.y = (posdif.y/(float)posLength)*((ks * ((float)posLength - edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
+        force.x = (posdif.x/(float)posLength)*((ks * ((float)posLength - (float)edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
+        force.y = (posdif.y/(float)posLength)*((ks * ((float)posLength - (float)edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
 
         //apply forces, the same force is applied towards opposite direction of the nodes
         edge.getDest().setForce( new Vector2( edge.getDest().getForce().x + force.x, edge.getDest().getForce().y + force.y) );

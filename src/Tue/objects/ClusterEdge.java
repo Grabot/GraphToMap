@@ -10,10 +10,10 @@ public class ClusterEdge
 
     private ClusterNode source;
     private ClusterNode dest;
-    private float weight = 0;
+    private double weight = 0;
     private SpringForce spring;
 
-    public ClusterEdge( ClusterNode source, ClusterNode dest, float weight, SpringForce spring )
+    public ClusterEdge( ClusterNode source, ClusterNode dest, double weight, SpringForce spring )
     {
         this.source = source;
         this.dest = dest;
@@ -42,7 +42,7 @@ public class ClusterEdge
         this.weight = weight;
     }
 
-    public float getWeight()
+    public double getWeight()
     {
         return weight;
     }
