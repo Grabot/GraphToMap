@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="394ceb61-8553-40d0-bd44-b5c91a07bf59" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/Main.java" afterPath="$PROJECT_DIR$/src/Tue/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/ClusterNode.java" afterPath="$PROJECT_DIR$/src/Tue/objects/ClusterNode.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,15 +31,15 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.12748344">
-              <caret line="165" column="34" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="34" />
+            <state vertical-scroll-proportion="0.28145695">
+              <caret line="114" column="48" selection-start-line="114" selection-start-column="48" selection-end-line="114" selection-end-column="48" />
               <folding>
-                <element signature="e#736#749#0" expanded="true" />
-                <element signature="e#815#828#0" expanded="true" />
-                <element signature="e#1977#1983#0" expanded="true" />
-                <element signature="e#2037#2043#0" expanded="true" />
-                <element signature="e#4129#4275#0" expanded="true" />
-                <element signature="e#4274#4275#0" expanded="true" />
+                <element signature="e#773#786#0" expanded="true" />
+                <element signature="e#852#865#0" expanded="true" />
+                <element signature="e#2093#2099#0" expanded="true" />
+                <element signature="e#2153#2159#0" expanded="true" />
+                <element signature="e#4254#4400#0" expanded="true" />
+                <element signature="e#4399#4400#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -81,7 +85,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <caret line="29" column="41" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -93,22 +97,22 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/objects/ClusterNode.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="68" column="37" selection-start-line="68" selection-start-column="37" selection-end-line="68" selection-end-column="37" />
+              <caret line="72" column="10" selection-start-line="72" selection-start-column="10" selection-end-line="72" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#275#288#0" expanded="true" />
-                <element signature="e#793#794#0" expanded="true" />
-                <element signature="e#823#824#0" expanded="true" />
-                <element signature="e#858#859#0" expanded="true" />
-                <element signature="e#884#885#0" expanded="true" />
-                <element signature="e#929#930#0" expanded="true" />
-                <element signature="e#959#960#0" expanded="true" />
-                <element signature="e#994#995#0" expanded="true" />
-                <element signature="e#1020#1021#0" expanded="true" />
-                <element signature="e#1069#1070#0" expanded="true" />
-                <element signature="e#1103#1104#0" expanded="true" />
-                <element signature="e#1140#1141#0" expanded="true" />
-                <element signature="e#1168#1169#0" expanded="true" />
+                <element signature="e#312#325#0" expanded="true" />
+                <element signature="e#918#919#0" expanded="true" />
+                <element signature="e#948#949#0" expanded="true" />
+                <element signature="e#983#984#0" expanded="true" />
+                <element signature="e#1009#1010#0" expanded="true" />
+                <element signature="e#1054#1055#0" expanded="true" />
+                <element signature="e#1084#1085#0" expanded="true" />
+                <element signature="e#1119#1120#0" expanded="true" />
+                <element signature="e#1145#1146#0" expanded="true" />
+                <element signature="e#1194#1195#0" expanded="true" />
+                <element signature="e#1228#1229#0" expanded="true" />
+                <element signature="e#1265#1266#0" expanded="true" />
+                <element signature="e#1293#1294#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -139,13 +143,13 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+              <caret line="139" column="9" selection-start-line="139" selection-start-column="9" selection-end-line="139" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#501#514#0" expanded="true" />
                 <element signature="e#581#594#0" expanded="true" />
-                <element signature="e#5153#5154#0" expanded="true" />
-                <element signature="e#5198#5199#0" expanded="true" />
+                <element signature="e#5167#5168#0" expanded="true" />
+                <element signature="e#5212#5213#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -200,13 +204,13 @@
         <option value="$PROJECT_DIR$/src/Tue/objects/Graph.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/Edge.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/SpringForce.java" />
-        <option value="$PROJECT_DIR$/src/Tue/objects/ClusterNode.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/FrictionForce.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/WallForce.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/ClusterEdge.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java" />
+        <option value="$PROJECT_DIR$/src/Tue/objects/ClusterNode.java" />
         <option value="$PROJECT_DIR$/src/Tue/Main.java" />
       </list>
     </option>
@@ -671,7 +675,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -683,7 +687,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28463203" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13219616" sideWeight="0.8623298" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13219616" sideWeight="0.8623298" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -709,7 +713,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
@@ -769,12 +775,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#736#749#0" expanded="true" />
-            <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1977#1983#0" expanded="true" />
-            <element signature="e#2037#2043#0" expanded="true" />
-            <element signature="e#4129#4275#0" expanded="true" />
-            <element signature="e#4274#4275#0" expanded="true" />
+            <element signature="e#773#786#0" expanded="true" />
+            <element signature="e#852#865#0" expanded="true" />
+            <element signature="e#2093#2099#0" expanded="true" />
+            <element signature="e#2153#2159#0" expanded="true" />
+            <element signature="e#4254#4400#0" expanded="true" />
+            <element signature="e#4399#4400#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -803,8 +809,8 @@
             <element signature="imports" expanded="true" />
             <element signature="e#501#514#0" expanded="true" />
             <element signature="e#581#594#0" expanded="true" />
-            <element signature="e#5153#5154#0" expanded="true" />
-            <element signature="e#5198#5199#0" expanded="true" />
+            <element signature="e#5167#5168#0" expanded="true" />
+            <element signature="e#5212#5213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -878,12 +884,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#736#749#0" expanded="true" />
-            <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1977#1983#0" expanded="true" />
-            <element signature="e#2037#2043#0" expanded="true" />
-            <element signature="e#4129#4275#0" expanded="true" />
-            <element signature="e#4274#4275#0" expanded="true" />
+            <element signature="e#773#786#0" expanded="true" />
+            <element signature="e#852#865#0" expanded="true" />
+            <element signature="e#2093#2099#0" expanded="true" />
+            <element signature="e#2153#2159#0" expanded="true" />
+            <element signature="e#4254#4400#0" expanded="true" />
+            <element signature="e#4399#4400#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -904,8 +910,8 @@
             <element signature="imports" expanded="true" />
             <element signature="e#501#514#0" expanded="true" />
             <element signature="e#581#594#0" expanded="true" />
-            <element signature="e#5153#5154#0" expanded="true" />
-            <element signature="e#5198#5199#0" expanded="true" />
+            <element signature="e#5167#5168#0" expanded="true" />
+            <element signature="e#5212#5213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -991,12 +997,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#736#749#0" expanded="true" />
-            <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1977#1983#0" expanded="true" />
-            <element signature="e#2037#2043#0" expanded="true" />
-            <element signature="e#4129#4275#0" expanded="true" />
-            <element signature="e#4274#4275#0" expanded="true" />
+            <element signature="e#773#786#0" expanded="true" />
+            <element signature="e#852#865#0" expanded="true" />
+            <element signature="e#2093#2099#0" expanded="true" />
+            <element signature="e#2153#2159#0" expanded="true" />
+            <element signature="e#4254#4400#0" expanded="true" />
+            <element signature="e#4399#4400#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1009,8 +1015,8 @@
             <element signature="imports" expanded="true" />
             <element signature="e#501#514#0" expanded="true" />
             <element signature="e#581#594#0" expanded="true" />
-            <element signature="e#5153#5154#0" expanded="true" />
-            <element signature="e#5198#5199#0" expanded="true" />
+            <element signature="e#5167#5168#0" expanded="true" />
+            <element signature="e#5212#5213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1191,53 +1197,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#501#514#0" expanded="true" />
-            <element signature="e#581#594#0" expanded="true" />
-            <element signature="e#5153#5154#0" expanded="true" />
-            <element signature="e#5198#5199#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/WallForce.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="39" column="29" selection-start-line="39" selection-start-column="29" selection-end-line="39" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/objects/ClusterNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="68" column="37" selection-start-line="68" selection-start-column="37" selection-end-line="68" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#275#288#0" expanded="true" />
-            <element signature="e#793#794#0" expanded="true" />
-            <element signature="e#823#824#0" expanded="true" />
-            <element signature="e#858#859#0" expanded="true" />
-            <element signature="e#884#885#0" expanded="true" />
-            <element signature="e#929#930#0" expanded="true" />
-            <element signature="e#959#960#0" expanded="true" />
-            <element signature="e#994#995#0" expanded="true" />
-            <element signature="e#1020#1021#0" expanded="true" />
-            <element signature="e#1069#1070#0" expanded="true" />
-            <element signature="e#1103#1104#0" expanded="true" />
-            <element signature="e#1140#1141#0" expanded="true" />
-            <element signature="e#1168#1169#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/ClusterEdge.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1267,27 +1226,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/WallForce.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <caret line="39" column="29" selection-start-line="39" selection-start-column="29" selection-end-line="39" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="139" column="9" selection-start-line="139" selection-start-column="9" selection-end-line="139" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#501#514#0" expanded="true" />
+            <element signature="e#581#594#0" expanded="true" />
+            <element signature="e#5167#5168#0" expanded="true" />
+            <element signature="e#5212#5213#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/CoulombForce.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="41" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/objects/ClusterNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="72" column="10" selection-start-line="72" selection-start-column="10" selection-end-line="72" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#312#325#0" expanded="true" />
+            <element signature="e#918#919#0" expanded="true" />
+            <element signature="e#948#949#0" expanded="true" />
+            <element signature="e#983#984#0" expanded="true" />
+            <element signature="e#1009#1010#0" expanded="true" />
+            <element signature="e#1054#1055#0" expanded="true" />
+            <element signature="e#1084#1085#0" expanded="true" />
+            <element signature="e#1119#1120#0" expanded="true" />
+            <element signature="e#1145#1146#0" expanded="true" />
+            <element signature="e#1194#1195#0" expanded="true" />
+            <element signature="e#1228#1229#0" expanded="true" />
+            <element signature="e#1265#1266#0" expanded="true" />
+            <element signature="e#1293#1294#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12748344">
-          <caret line="165" column="34" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.28145695">
+          <caret line="114" column="48" selection-start-line="114" selection-start-column="48" selection-end-line="114" selection-end-column="48" />
           <folding>
-            <element signature="e#736#749#0" expanded="true" />
-            <element signature="e#815#828#0" expanded="true" />
-            <element signature="e#1977#1983#0" expanded="true" />
-            <element signature="e#2037#2043#0" expanded="true" />
-            <element signature="e#4129#4275#0" expanded="true" />
-            <element signature="e#4274#4275#0" expanded="true" />
+            <element signature="e#773#786#0" expanded="true" />
+            <element signature="e#852#865#0" expanded="true" />
+            <element signature="e#2093#2099#0" expanded="true" />
+            <element signature="e#2153#2159#0" expanded="true" />
+            <element signature="e#4254#4400#0" expanded="true" />
+            <element signature="e#4399#4400#0" expanded="true" />
           </folding>
         </state>
       </provider>

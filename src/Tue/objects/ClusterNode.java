@@ -1,5 +1,6 @@
 package Tue.objects;
 
+import Tue.load.Forces.CoulombForce;
 import Tue.load.Forces.FrictionForce;
 import Tue.load.Forces.WallForce;
 import Tue.load.Vector2;
@@ -22,8 +23,9 @@ public class ClusterNode
 
     private WallForce wall;
     private FrictionForce friction;
+    private CoulombForce coulomb;
 
-    public ClusterNode( int cluster, WallForce wall, FrictionForce friction )
+    public ClusterNode( int cluster, WallForce wall, FrictionForce friction, CoulombForce coulomb )
     {
         pos = new Vector2(0, 0);
         vel = new Vector2(0, 0);
@@ -31,6 +33,7 @@ public class ClusterNode
         this.cluster = cluster;
         this.wall = wall;
         this.friction = friction;
+        this.coulomb = coulomb;
     }
 
     public void setPos( Vector2 pos )
@@ -63,10 +66,11 @@ public class ClusterNode
         return force;
     }
 
-    public void ApplyForces()
+    public void ApplyForces( ArrayList<ClusterNode> clusternodes )
     {
         wall.ApplyForces( this );
         friction.ApplyForces( this );
+        //coulomb.ApplyForces( this, clusternodes );
     }
 
 }

@@ -1,6 +1,7 @@
 package Tue;
 
 import Tue.load.Display;
+import Tue.load.Forces.CoulombForce;
 import Tue.load.Forces.FrictionForce;
 import Tue.load.Forces.SpringForce;
 import Tue.load.Forces.WallForce;
@@ -32,6 +33,7 @@ public class Main {
     private SpringForce spring;
     private WallForce wall;
     private FrictionForce friction;
+    private CoulombForce coulomb;
 
     private double missingValue = 0;
 
@@ -52,6 +54,7 @@ public class Main {
         spring = new SpringForce();
         wall = new WallForce( width, height, delta );
         friction = new FrictionForce();
+        coulomb = new CoulombForce( delta );
 
         Graph g = new Graph(nodes, edges);
 
@@ -111,7 +114,7 @@ public class Main {
         //define all cluster nodes
         for( int i = 0; i < clusterNumber; i++ )
         {
-            Cnodes[i] = new ClusterNode( i, wall, friction );
+            Cnodes[i] = new ClusterNode( i, wall, friction, coulomb );
             Cnodes[i].setPos( new Vector2((float)pos[0][i], (float)pos[1][i] ));
             clusternodes.add(Cnodes[i]);
         }
@@ -163,7 +166,7 @@ public class Main {
             }
         }
 
-        missingValue = highest*1.6;
+        missingValue = highest*1.2;
 
         for( int i = 0; i < clusterD.length; i++ )
         {
@@ -176,7 +179,8 @@ public class Main {
             }
         }
 
-        double[][] output = MDSJ.classicalScaling(clusterD); // apply MDS
+        double[][] output = MDSJ.stressMinimization(clusterD);
+        //double[][] output = MDSJ.classicalScaling(clusterD); // apply MDS
 
         for(int i=0; i<output[0].length; i++) {
             //coordinates are determined, scale them up to fit the plane

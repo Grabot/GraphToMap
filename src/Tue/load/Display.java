@@ -158,7 +158,7 @@ public class Display extends JPanel implements ActionListener
 
         for( ClusterNode node : clusternodes )
         {
-            node.ApplyForces();
+            node.ApplyForces( clusternodes );
         }
     }
 
