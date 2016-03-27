@@ -13,11 +13,11 @@
 package Tue.load.voronoitreemap.gui;
 
 
-import Tue.voronoitreemap.datastructure.OpenList;
-import Tue.voronoitreemap.diagram.PowerDiagram;
-import Tue.voronoitreemap.j2d.Point2D;
-import Tue.voronoitreemap.j2d.PolygonSimple;
-import Tue.voronoitreemap.j2d.Site;
+import Tue.load.voronoitreemap.datastructure.OpenList;
+import Tue.load.voronoitreemap.diagram.PowerDiagram;
+import Tue.load.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.Site;
 
 import javax.swing.*;
 import java.awt.*;

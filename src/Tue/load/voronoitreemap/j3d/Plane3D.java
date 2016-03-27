@@ -12,8 +12,8 @@
  ******************************************************************************/
 package Tue.load.voronoitreemap.j3d;
 
-import Tue.voronoitreemap.convexHull.JFace;
-import Tue.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.convexHull.JFace;
+import Tue.load.voronoitreemap.j2d.Point2D;
 
 
 public class Plane3D {

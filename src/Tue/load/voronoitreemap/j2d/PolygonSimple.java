@@ -13,10 +13,10 @@
 package Tue.load.voronoitreemap.j2d;
 
 
-import Tue.voronoitreemap.convexClip.ConvexClip;
-import Tue.voronoitreemap.convexClip.cVertex;
-import Tue.voronoitreemap.convexClip.cVertexList;
-import Tue.voronoitreemap.helper.Geometry;
+import Tue.load.voronoitreemap.convexClip.ConvexClip;
+import Tue.load.voronoitreemap.convexClip.cVertex;
+import Tue.load.voronoitreemap.convexClip.cVertexList;
+import Tue.load.voronoitreemap.helper.Geometry;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

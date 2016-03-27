@@ -12,7 +12,7 @@
  ******************************************************************************/
 package Tue.load.voronoitreemap.extension;
 
-import Tue.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 
 /**
  * Provides callback method for notification.

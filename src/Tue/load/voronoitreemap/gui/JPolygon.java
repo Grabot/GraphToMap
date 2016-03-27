@@ -13,9 +13,9 @@
 package Tue.load.voronoitreemap.gui;
 
 
-import Tue.voronoitreemap.extension.VoroCellObject;
-import Tue.voronoitreemap.j2d.Point2D;
-import Tue.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.extension.VoroCellObject;
+import Tue.load.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 
 import javax.swing.*;
 import java.awt.*;

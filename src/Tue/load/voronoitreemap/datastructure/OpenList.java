@@ -13,8 +13,8 @@
 package Tue.load.voronoitreemap.datastructure;
 
 
-import Tue.voronoitreemap.j2d.PolygonSimple;
-import Tue.voronoitreemap.j2d.Site;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;

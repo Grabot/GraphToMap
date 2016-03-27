@@ -12,9 +12,9 @@
  ******************************************************************************/
 package Tue.load.voronoitreemap.j2d;
 
-import Tue.voronoitreemap.convexHull.JVertex;
-import Tue.voronoitreemap.debuge.Colors;
-import Tue.voronoitreemap.extension.VoroCellObject;
+import Tue.load.voronoitreemap.convexHull.JVertex;
+import Tue.load.voronoitreemap.debuge.Colors;
+import Tue.load.voronoitreemap.extension.VoroCellObject;
 
 import java.awt.*;
 import java.util.ArrayList;

@@ -13,15 +13,15 @@
 package Tue.load.voronoitreemap.diagram;
 
 
-import Tue.voronoitreemap.convexHull.HEdge;
-import Tue.voronoitreemap.convexHull.JConvexHull;
-import Tue.voronoitreemap.convexHull.JFace;
-import Tue.voronoitreemap.convexHull.JVertex;
-import Tue.voronoitreemap.datastructure.OpenList;
-import Tue.voronoitreemap.debuge.ImageFrame;
-import Tue.voronoitreemap.j2d.Point2D;
-import Tue.voronoitreemap.j2d.PolygonSimple;
-import Tue.voronoitreemap.j2d.Site;
+import Tue.load.voronoitreemap.convexHull.HEdge;
+import Tue.load.voronoitreemap.convexHull.JConvexHull;
+import Tue.load.voronoitreemap.convexHull.JFace;
+import Tue.load.voronoitreemap.convexHull.JVertex;
+import Tue.load.voronoitreemap.datastructure.OpenList;
+import Tue.load.voronoitreemap.debuge.ImageFrame;
+import Tue.load.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

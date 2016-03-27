@@ -13,8 +13,8 @@
 package Tue.load.voronoitreemap.convexHull;
 
 
-import Tue.voronoitreemap.j2d.Point2D;
-import Tue.voronoitreemap.j3d.Plane3D;
+import Tue.load.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j3d.Plane3D;
 
 /**
  * Facet class connected over double-connected edge list. Contains incident vertices and edges.

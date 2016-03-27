@@ -13,8 +13,8 @@
 package Tue.load.voronoitreemap.gui;
 
 
-import Tue.voronoitreemap.j2d.Point2D;
-import Tue.voronoitreemap.j2d.Site;
+import Tue.load.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.*;
 import java.awt.event.InputEvent;

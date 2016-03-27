@@ -12,7 +12,7 @@
  ******************************************************************************/
 package Tue.load.voronoitreemap.convexClip;
 
-import Tue.voronoitreemap.j2d.Point2D;
+import Tue.load.voronoitreemap.j2d.Point2D;
 
 /**
  * 
