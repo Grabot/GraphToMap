@@ -11,15 +11,14 @@ public class WallForce
 
     private int width = 0;
     private int height = 0;
-    private float delta = 0;
-    public WallForce( int width, int height, int delta  )
+
+    public WallForce( int width, int height )
     {
         this.width = width;
         this.height = height;
-        this.delta = (delta/1000);
     }
 
-    public void ApplyForces( ClusterNode node )
+    public void ApplyForces( ClusterNode node, float delta )
     {
         float k = 100;
         float posdif = 0;

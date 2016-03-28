@@ -52,9 +52,9 @@ public class Main {
         edges = parser.getEdges();
 
         spring = new SpringForce();
-        wall = new WallForce( width, height, delta );
+        wall = new WallForce( width, height );
         friction = new FrictionForce();
-        coulomb = new CoulombForce( delta );
+        coulomb = new CoulombForce();
 
         Graph g = new Graph(nodes, edges);
 
@@ -69,6 +69,7 @@ public class Main {
 
         double[][] clusterD = new double[clusterNumber][clusterNumber];
         ClusterNode[] Cnodes = new ClusterNode[(clusterNumber+1)];
+
         for( int i = 0; i < clusterNumber; i++ )
         {
             for( int j = (i+1); j < clusterNumber; j++ )

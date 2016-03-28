@@ -66,9 +66,9 @@ public class ClusterNode
         return force;
     }
 
-    public void ApplyForces( ArrayList<ClusterNode> clusternodes )
+    public void ApplyForces( ArrayList<ClusterNode> clusternodes, float delta )
     {
-        wall.ApplyForces( this );
+        wall.ApplyForces( this, delta );
         friction.ApplyForces( this );
         //coulomb.ApplyForces( this, clusternodes );
     }

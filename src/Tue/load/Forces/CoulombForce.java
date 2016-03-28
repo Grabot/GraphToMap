@@ -12,12 +12,10 @@ public class CoulombForce
 {
 
     private Vector2 posdif;
-    private float delta;
 
-    public CoulombForce( int delta )
+    public CoulombForce()
     {
         posdif = new Vector2(0, 0);
-        this.delta = (delta/1000);
     }
 
     public void ApplyForces( ClusterNode source, ArrayList<ClusterNode> nodes )

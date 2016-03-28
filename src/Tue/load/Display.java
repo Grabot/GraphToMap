@@ -29,9 +29,15 @@ public class Display extends JPanel implements ActionListener
     private boolean showEdges = true;
     private boolean movement = true;
 
+    private Renderer render;
+    private Simulation simulation;
+
     public void create()
     {
         lastLoopTime = System.currentTimeMillis();
+
+        render = new Renderer(clusternodes, clusteredges);
+        simulation = new Simulation(clusternodes, clusteredges);
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,29 +90,7 @@ public class Display extends JPanel implements ActionListener
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-
-        drawNodes(g);
-        drawEdges(g);
-
-    }
-
-    private void drawNodes( Graphics g )
-    {
-        for (ClusterNode Cnode : clusternodes)
-        {
-            int radius = 20;
-            g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
-        }
-    }
-
-    private void drawEdges( Graphics g )
-    {
-        for (ClusterEdge edge : clusteredges )
-        {
-            if( showEdges ) {
-                g.drawLine((int) edge.getSource().getPos().x, (int) edge.getSource().getPos().y, (int) edge.getDest().getPos().x, (int) edge.getDest().getPos().y);
-            }
-        }
+        render.draw(g, showEdges );
     }
 
     @Override
@@ -119,47 +103,9 @@ public class Display extends JPanel implements ActionListener
         delta = (delta / 1000);
         //delta = 0.040f;
 
-        calculatePos();
+        simulation.update( delta );
 
         this.repaint();
-    }
-
-    private void calculatePos()
-    {
-        Vector2[] oldpos = new Vector2[clusternodes.size()];
-
-        //we will use a midpoint calculation to numerically solve the differential equation
-
-        calculateForces();
-        //calculate velocity and position for all nodes.
-        for( int i = 0; i < clusternodes.size(); i++ )
-        {
-            oldpos[i] = clusternodes.get(i).getPos();
-            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
-            clusternodes.get(i).setPos( new Vector2((clusternodes.get(i).getPos().x + (clusternodes.get(i).getVel().x * (delta/2))), (clusternodes.get(i).getPos().y + (clusternodes.get(i).getVel().y * (delta/2) ))));
-        }
-        calculateForces();
-        for( int i = 0; i < clusternodes.size(); i++ )
-        {
-            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
-            clusternodes.get(i).setPos( new Vector2((oldpos[i].x + (clusternodes.get(i).getVel().x * delta)), (oldpos[i].y + (clusternodes.get(i).getVel().y * delta ))));
-        }
-    }
-
-    private void calculateForces()
-    {
-        for (ClusterNode node : clusternodes) {
-            node.setForce(new Vector2(0, 0));
-        }
-        //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
-        for (ClusterEdge edge : clusteredges) {
-            edge.ApplyForces();
-        }
-
-        for( ClusterNode node : clusternodes )
-        {
-            node.ApplyForces( clusternodes );
-        }
     }
 
     private class MouseHandler extends MouseAdapter {
