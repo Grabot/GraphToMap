@@ -20,10 +20,10 @@ public class CoulombForce
 
     public void ApplyForces( ClusterNode source, ArrayList<ClusterNode> nodes )
     {
-        float kC = 100f;
-        float rSquared = 0;
-        float forceX = 0;
-        float forceY = 0;
+        double kC = 100f;
+        double rSquared = 0;
+        double forceX = 0;
+        double forceY = 0;
 
         for( ClusterNode target : nodes )
         {

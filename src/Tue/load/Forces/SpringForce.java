@@ -22,7 +22,7 @@ public class SpringForce
     //hooke's law for spring forces
     public void ApplyForce( ClusterEdge edge )
     {
-        float ks = 3;
+        double ks = 3;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
@@ -30,10 +30,10 @@ public class SpringForce
         veldif.y = edge.getSource().getVel().y - edge.getDest().getVel().y;
 
         double posLength = (Math.sqrt(((posdif.x*posdif.x) + (posdif.y*posdif.y))));
-        float dotProduct = ((posdif.x*veldif.x) + (posdif.y + veldif.y));
+        double dotProduct = ((posdif.x*veldif.x) + (posdif.y + veldif.y));
 
-        force.x = (posdif.x/(float)posLength)*((ks * ((float)posLength - (float)edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
-        force.y = (posdif.y/(float)posLength)*((ks * ((float)posLength - (float)edge.getWeight())) + (ks * ( dotProduct / (float)posLength)));
+        force.x = (posdif.x/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
+        force.y = (posdif.y/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
 
         //apply forces, the same force is applied towards opposite direction of the nodes
         edge.getDest().setForce( new Vector2( edge.getDest().getForce().x + force.x, edge.getDest().getForce().y + force.y) );

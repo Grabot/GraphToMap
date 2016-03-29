@@ -6,8 +6,10 @@ import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
+import Tue.objects.VoronoiEdge;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by s138362 on 27-3-2016.
@@ -18,6 +20,8 @@ public class Simulation
     private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
+
+    private HashSet<VoronoiEdge> voredges = new HashSet<VoronoiEdge>();
 
     private float delta = 0;
 
@@ -70,7 +74,6 @@ public class Simulation
         {
             Site site=sites.array[i];
             PolygonSimple polygon=site.getPolygon();
-            render.addVoronoiArea( polygon );
             polys.add(polygon);
         }
 
@@ -80,9 +83,10 @@ public class Simulation
     {
         this.delta = delta;
 
-        calculatePos();
-        calculateForces();
+//        calculatePos();
+//        calculateForces();
         calculateVoronoiArea();
+        LloydsMethod();
     }
 
     private void calculatePos()
@@ -144,13 +148,37 @@ public class Simulation
         diagram.computeDiagram();
         // for each site we can no get the resulting polygon of its cell.
         // note that the cell can also be empty, in this case there is no polygon for the corresponding site.
-        render.clearVoronoi();
+        voredges.clear();
         for (int i=0;i<sites.size;i++)
         {
             Site site=sites.array[i];
             PolygonSimple polygon=site.getPolygon();
-            render.addVoronoiArea( polygon );
+            for( int j = 0; j < polygon.length; j++ )
+            {
+                if( j != (polygon.length-1)) {
+                    voredges.add(new VoronoiEdge(new Vector2(polygon.getXPoints()[j], polygon.getYPoints()[j]), new Vector2(polygon.getXPoints()[j + 1], polygon.getYPoints()[j + 1])));
+                }
+                else
+                {
+                    voredges.add(new VoronoiEdge(new Vector2(polygon.getXPoints()[j], polygon.getYPoints()[j]), new Vector2(polygon.getXPoints()[0], polygon.getYPoints()[0])));
+                }
+            }
             polys.add(polygon);
+        }
+        render.addVoronoiEdges(voredges);
+    }
+
+    private void LloydsMethod()
+    {
+        for( int i = 0; i < polys.size(); i++ )
+        {
+            for( ClusterNode node : clusternodes )
+            {
+                if( polys.get(i).contains(node.getPos().x, node.getPos().y))
+                {
+                    node.setPos(new Vector2(polys.get(i).getCentroid().getX(), polys.get(i).getCentroid().getY()));
+                }
+            }
         }
     }
 

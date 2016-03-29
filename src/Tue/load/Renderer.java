@@ -3,9 +3,13 @@ package Tue.load;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
+import Tue.objects.VoronoiEdge;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by s138362 on 27-3-2016.
@@ -16,8 +20,10 @@ public class Renderer
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
 
-    private Graphics g;
+    private HashSet<VoronoiEdge> voredges = new HashSet<VoronoiEdge>();
 
+    private Graphics g;
+    private Graphics2D g2;
     private PolygonSimple boundingPolygon = null;
 
     public Renderer( ArrayList<ClusterNode> clusternodes, ArrayList<ClusterEdge> clusteredges )
@@ -29,6 +35,9 @@ public class Renderer
     public void draw( Graphics g, boolean showEdges )
     {
         this.g = g;
+        g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         drawNodes( );
         drawEdges( showEdges );
         //drawBounding();
@@ -37,19 +46,24 @@ public class Renderer
 
     private void drawNodes()
     {
+        g2.setColor(Color.BLUE);
         for (ClusterNode Cnode : clusternodes)
         {
-            int radius = 20;
-            g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
+            int radius = 10;
+            Ellipse2D.Double shape = new Ellipse2D.Double(Cnode.getPos().x-(radius/2), Cnode.getPos().y-(radius/2), radius, radius);
+            g2.fill(shape);
+            //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
         }
     }
 
     private void drawEdges( boolean showEdges )
     {
+        g2.setColor(Color.black);
         for (ClusterEdge edge : clusteredges )
         {
             if( showEdges ) {
-                g.drawLine((int) edge.getSource().getPos().x, (int) edge.getSource().getPos().y, (int) edge.getDest().getPos().x, (int) edge.getDest().getPos().y);
+                Shape shape = new Line2D.Double(edge.getSource().getPos().x, edge.getSource().getPos().y, edge.getDest().getPos().x, edge.getDest().getPos().y);
+                g2.draw(shape);
             }
         }
     }
@@ -80,37 +94,16 @@ public class Renderer
         this.boundingPolygon = boundingPolygon;
     }
 
-    public void clearVoronoi()
+    public void addVoronoiEdges( HashSet<VoronoiEdge> voredges )
     {
-        polys.clear();
-    }
-
-    public void addVoronoiArea( PolygonSimple area )
-    {
-        polys.add( area );
+        this.voredges = voredges;
     }
 
     private void drawVoronoiArea()
     {
-        for( PolygonSimple pol : polys )
-        {
-            double[] xPoints = pol.getXPoints();
-            double[] yPoints = pol.getYPoints();
-
-            for( int i = 0; i < xPoints.length; i++ )
-            {
-                if( xPoints[i] != 0 )
-                {
-                    if( i != (pol.length-1))
-                    {
-                        g.drawLine((int)xPoints[i], (int)yPoints[i], (int)xPoints[i+1], (int)yPoints[i+1] );
-                    }
-                    else
-                    {
-                        g.drawLine((int)xPoints[i], (int)yPoints[i], (int)xPoints[0], (int)yPoints[0] );
-                    }
-                }
-            }
+        for( VoronoiEdge edge : voredges ) {
+            Shape shape = new Line2D.Double(edge.getSource().x, edge.getSource().y, edge.getDest().x, edge.getDest().y);
+            g2.draw(shape);
         }
     }
 

@@ -20,8 +20,8 @@ public class WallForce
 
     public void ApplyForces( ClusterNode node, float delta )
     {
-        float k = 100;
-        float posdif = 0;
+        double k = 100;
+        double posdif = 0;
         //check if it will be through the wall in a next step
         //to the left side of the wall
         if((node.getPos().x + node.getVel().x * delta) < 0)

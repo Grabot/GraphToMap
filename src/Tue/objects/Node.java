@@ -63,9 +63,9 @@ public class Node
         return clusterNumber;
     }
 
-    public float getX() { return pos.x; }
+    public double getX() { return pos.x; }
 
-    public float getY() { return pos.y; }
+    public double getY() { return pos.y; }
 
     public Vector2 getPos() { return pos; }
 }

@@ -5,9 +5,9 @@ package Tue.load;
  */
 public class Vector2
 {
-    public float x, y;
+    public double x, y;
 
-    public Vector2( float x, float y )
+    public Vector2( double x, double y )
     {
         this.x = x;
         this.y = y;
@@ -44,12 +44,12 @@ public class Vector2
         this.y = y;
     }
 
-    public float distance(Vector2 v)
+    public double distance(Vector2 v)
     {
-        float a = v.x - x;
-        float b = v.y - y;
+        double a = v.x - x;
+        double b = v.y - y;
 
-        return (float)Math.sqrt( a * a + b * b);
+        return Math.sqrt( a * a + b * b);
 
     }
 }
