@@ -3,9 +3,6 @@ package Tue.load;
 import Tue.Main;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
-import Tue.objects.Edge;
-import Tue.objects.Node;
-import Tue.parser.DotParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +23,7 @@ public class Display extends JPanel implements ActionListener
     long lastLoopTime;
     float delta;
 
-    private boolean showEdges = true;
+    private boolean showEdges = false;
     private boolean movement = true;
 
     private Renderer render;
@@ -37,7 +34,7 @@ public class Display extends JPanel implements ActionListener
         lastLoopTime = System.currentTimeMillis();
 
         render = new Renderer(clusternodes, clusteredges);
-        simulation = new Simulation(clusternodes, clusteredges);
+        simulation = new Simulation(render, clusternodes, clusteredges, main.width, main.height);
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
