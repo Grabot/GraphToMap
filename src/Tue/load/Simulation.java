@@ -37,6 +37,8 @@ public class Simulation
 
     private double distanceBorder = 0;
 
+    private int iterations = 0;
+
     public Simulation(Renderer render, ArrayList<ClusterNode> clusternodes, ArrayList<ClusterEdge> clusteredges, int width, int height )
     {
         this.clusternodes = clusternodes;
@@ -55,25 +57,27 @@ public class Simulation
         boundingPolygon.add(0, height);
         render.addBounding(boundingPolygon);
 
-        int amount=10;
+        int amount=clusternodes.size();
 
         Random rand=new Random(200);
 
         for (int i=0;i<amount;i++){
-            Site site = new Site(rand.nextDouble()*width, rand.nextDouble()*height);
-            site.setPercentage(rand.nextFloat());
+            Site site = new Site(clusternodes.get(i).getPos().x, clusternodes.get(i).getPos().y);
+            //site.setPercentage(rand.nextFloat());
+            site.setWeight(100);
             sites.add(site);
         }
-        sites.get(0).setPercentage(1);
-        sites.get(1).setPercentage(1);
-        sites.get(2).setPercentage(1);
-        sites.get(3).setPercentage(1);
-        sites.get(4).setPercentage(1);
+        sites.get(0).setPercentage(2);
+        sites.get(1).setPercentage(2);
+        sites.get(2).setPercentage(2);
+        sites.get(3).setPercentage(2);
+        sites.get(4).setPercentage(2);
         sites.get(5).setPercentage(5);
-        sites.get(6).setPercentage(25);
-        sites.get(7).setPercentage(25);
+        sites.get(6).setPercentage(20);
+        sites.get(7).setPercentage(20);
         sites.get(8).setPercentage(20);
         sites.get(9).setPercentage(20);
+        sites.get(10).setPercentage(5);
 
         core.normalizeSites(sites);
 
@@ -86,14 +90,30 @@ public class Simulation
     {
         this.delta = delta;
 
+        sites = core.getSites();
+
         core.iterateSimple();
+        setClusterNodes();
+
 //        calculatePos();
 //        calculateForces();
-//        AdaptPositionsWeights();
-//        AdaptWeights();
 //        ComputePowerDiagram();
 
         render.addSites( core.getSites() );
+    }
+
+    private void setClusterNodes()
+    {
+        for( Site s : sites )
+        {
+            for( ClusterNode node : clusternodes )
+            {
+                if((node.getPos().x == s.getOldX()) && (node.getPos().y == s.getOldY()))
+                {
+                    node.setPos(new Vector2(s.getX(), s.getY()));
+                }
+            }
+        }
     }
 
     private void calculatePos()

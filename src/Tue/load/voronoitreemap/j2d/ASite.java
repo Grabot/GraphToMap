@@ -64,6 +64,16 @@ private ArrayList<Site> oldNeighbors;
 public PolygonSimple getPolygon(){
 	 return polygon;
  }
+
+	public double getOldX()
+	{
+		return oldX;
+	}
+
+	public double getOldY()
+	{
+		return oldY;
+	}
  
  public String toString(){
 	 return "("+ getX()+"\t,"+getY()+","+weight+","+percentage+")+z: "+z;
@@ -142,6 +152,12 @@ public void setXY(double x, double y){
 	 this.y=y;
 	 project();
  }
+
+	public void setOldXY( double oldX, double oldY )
+	{
+		this.oldX = oldX;
+		this.oldY = oldY;
+	}
  
  /* (non-Javadoc)
  * @see j2d.iSite#setXYW(double, double, double)

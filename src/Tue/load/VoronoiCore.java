@@ -125,7 +125,7 @@ public class VoronoiCore {
 			fixWeightsIfDominated(sites);
 	}
 
-	private double computeAreaError(OpenList sites) {
+	public double computeAreaError(OpenList sites) {
 		double completeArea = clipPolygon.getArea();
 		double errorArea = 0;
 		for (int z = 0; z < sites.size; z++) {
@@ -161,6 +161,7 @@ public class VoronoiCore {
 				double centroidX = centroid.getX();
 				double centroidY = centroid.getY();
 				if (clipPolygon.contains(centroidX, centroidY))
+					point.setOldXY(point.getX(), point.getY());
 					point.setXY(centroidX, centroidY);
 			}
 		}
@@ -205,6 +206,7 @@ public class VoronoiCore {
 				weight -= step;
 			else if (increase > (1.0 + epsilon))
 				weight += step;
+
 			point.setWeight(weight);
 
 			// debug purpose
@@ -266,6 +268,11 @@ public class VoronoiCore {
 		while (true) {
 
 			iterateSimple();
+
+			if( computeAreaError(sites) < 0.03 )
+			{
+				break;
+			}
 		}
 
 	}

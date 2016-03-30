@@ -47,8 +47,7 @@ public class Renderer
         drawBounding();
         drawVoronoiArea();
         drawNodes();
-        drawCircleArea();
-        //drawEdges( showEdges );
+        drawEdges( showEdges );
     }
 
     private void drawNodes()
@@ -137,19 +136,6 @@ public class Renderer
                 g2.setColor(Color.red);
                 g2.draw(poly);
             }
-        }
-    }
-
-    private void drawCircleArea()
-    {
-        g2.setColor(Color.RED);
-        for( Site s : sites )
-        {
-            double radius = s.getWeight();
-            Ellipse2D.Double shape = new Ellipse2D.Double(s.getPoint().getX()-(radius/2), s.getPoint().getY()-(radius/2), radius, radius);
-            g2.draw(shape);
-                //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
-            System.out.println("percentage?: " + s.getWeight() );
         }
     }
 

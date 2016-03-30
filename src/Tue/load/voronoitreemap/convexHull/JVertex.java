@@ -24,6 +24,11 @@ public class JVertex {
 	public double x;
 	public double y;
 	public double z;
+
+	public double oldX;
+	public double oldY;
+	public double oldZ;
+
 	private static final double epsilon = 1e-10;
 	private JConflictList list;
 	private int index;
