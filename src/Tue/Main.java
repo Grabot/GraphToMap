@@ -221,7 +221,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/universities.gv"));
+            scanner = new DotScanner(new FileReader("datasets/sample2.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

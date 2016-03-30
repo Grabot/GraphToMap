@@ -1,6 +1,9 @@
 package Tue.load;
 
+import Tue.load.voronoitreemap.datastructure.OpenList;
+import Tue.load.voronoitreemap.debuge.Colors;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
 import Tue.objects.VoronoiEdge;
@@ -19,6 +22,7 @@ public class Renderer
     private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
+    private OpenList sites;
 
     private HashSet<VoronoiEdge> voredges = new HashSet<VoronoiEdge>();
 
@@ -30,6 +34,8 @@ public class Renderer
     {
         this.clusternodes = clusternodes;
         this.clusteredges = clusteredges;
+
+        sites = new OpenList();
     }
 
     public void draw( Graphics g, boolean showEdges )
@@ -38,22 +44,32 @@ public class Renderer
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        drawNodes( );
-        drawEdges( showEdges );
-        //drawBounding();
+        drawBounding();
         drawVoronoiArea();
+        drawNodes();
+        drawCircleArea();
+        //drawEdges( showEdges );
     }
 
     private void drawNodes()
     {
         g2.setColor(Color.BLUE);
-        for (ClusterNode Cnode : clusternodes)
+        for (Site site : sites )
         {
             int radius = 10;
-            Ellipse2D.Double shape = new Ellipse2D.Double(Cnode.getPos().x-(radius/2), Cnode.getPos().y-(radius/2), radius, radius);
+            Ellipse2D.Double shape = new Ellipse2D.Double(site.getPoint().getX()-(radius/2), site.getPoint().getY()-(radius/2), radius, radius);
             g2.fill(shape);
             //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
         }
+
+//        g2.setColor(Color.BLUE);
+//        for (ClusterNode Cnode : clusternodes)
+//        {
+//            int radius = 10;
+//            Ellipse2D.Double shape = new Ellipse2D.Double(Cnode.getPos().x-(radius/2), Cnode.getPos().y-(radius/2), radius, radius);
+//            g2.fill(shape);
+//            //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
+//        }
     }
 
     private void drawEdges( boolean showEdges )
@@ -99,11 +115,41 @@ public class Renderer
         this.voredges = voredges;
     }
 
+    public void addSites( OpenList sites )
+    {
+        this.sites = sites;
+    }
+
     private void drawVoronoiArea()
     {
-        for( VoronoiEdge edge : voredges ) {
-            Shape shape = new Line2D.Double(edge.getSource().x, edge.getSource().y, edge.getDest().x, edge.getDest().y);
+//        for( VoronoiEdge edge : voredges ) {
+//            Shape shape = new Line2D.Double(edge.getSource().x, edge.getSource().y, edge.getDest().x, edge.getDest().y);
+//            g2.draw(shape);
+//        }
+
+        g2.setColor(Colors.circleFill);
+        for( Site s : sites )
+        {
+            PolygonSimple poly = s.getPolygon();
+            if (poly != null) {
+                g2.setColor(Color.CYAN);
+                g2.fill(poly);
+                g2.setColor(Color.red);
+                g2.draw(poly);
+            }
+        }
+    }
+
+    private void drawCircleArea()
+    {
+        g2.setColor(Color.RED);
+        for( Site s : sites )
+        {
+            double radius = s.getWeight();
+            Ellipse2D.Double shape = new Ellipse2D.Double(s.getPoint().getX()-(radius/2), s.getPoint().getY()-(radius/2), radius, radius);
             g2.draw(shape);
+                //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
+            System.out.println("percentage?: " + s.getWeight() );
         }
     }
 
