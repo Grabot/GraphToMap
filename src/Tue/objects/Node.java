@@ -17,6 +17,8 @@ public class Node
     private int clusterNumber = -1;
     private int index;
 
+    private double weight = 1;
+
     public Node(String name, int index)
     {
         pos = new Vector2(0, 0);
@@ -68,4 +70,14 @@ public class Node
     public double getY() { return pos.y; }
 
     public Vector2 getPos() { return pos; }
+
+    public void addWeight(double weight)
+    {
+        this.weight = weight;
+    }
+
+    public double getWeight()
+    {
+        return weight;
+    }
 }

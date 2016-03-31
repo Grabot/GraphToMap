@@ -18,10 +18,7 @@ import Tue.load.voronoitreemap.j2d.Point2D;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
@@ -59,15 +56,6 @@ public class VoronoiCore {
 		clipPolygon = polygon;
 		if (diagram != null)
 			diagram.setClipPoly(polygon);
-	}
-
-	/**
-	 * Returns clipping polygon
-	 * 
-	 * @return
-	 */
-	public PolygonSimple getClipPolyogon() {
-		return clipPolygon;
 	}
 
 	private void init() {
@@ -254,14 +242,14 @@ public class VoronoiCore {
 	/**
 	 * Computes the diagram and sets the results
 	 */
-	public synchronized void voroDiagram() {
+	public void voroDiagram() {
 		PowerDiagram diagram = new PowerDiagram();
 		diagram.setSites(sites);
 		diagram.setClipPoly(clipPolygon);
 		diagram.computeDiagram();
 	}
 
-	public void doIterate() {
+	public void doIterate( float error ) {
 
 		voroDiagram();
 
@@ -269,7 +257,7 @@ public class VoronoiCore {
 
 			iterateSimple();
 
-			if( computeAreaError(sites) < 0.03 )
+			if( computeAreaError(sites) < error )
 			{
 				break;
 			}
@@ -286,7 +274,7 @@ public class VoronoiCore {
 	}
 
 
-	public static void normalizeSites(OpenList sites) {
+	public void normalizeSites(OpenList sites) {
 		double sum = 0;
 		Site[] array = sites.array;
 		int size = sites.size;

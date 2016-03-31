@@ -1,6 +1,7 @@
 package Tue.load;
 
 import Tue.Main;
+import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
 
@@ -17,7 +18,7 @@ public class Display extends JPanel implements ActionListener
     private Main main;
     private final Timer timer;
 
-    private ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
+    private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
 
     long lastLoopTime;

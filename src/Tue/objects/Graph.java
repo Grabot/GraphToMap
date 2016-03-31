@@ -17,10 +17,10 @@ public class Graph
         this.nodes = nodes;
     }
 
-    public float[] BFS( Node source )
+    public double[] BFS( Node source )
     {
         ArrayList<Node> queue = new ArrayList<Node>();
-        float[] dist = new float[nodes.size()];
+        double[] dist = new double[nodes.size()];
         Node[] prev = new Node[nodes.size()];
 
         for( Node node : nodes )
@@ -33,7 +33,7 @@ public class Graph
 
         while(!queue.isEmpty())
         {
-            float current = 999;
+            double current = 999;
             int indexCurrent = -1;
             for( Node node : queue )
             {
@@ -65,7 +65,7 @@ public class Graph
                 {
                     if( edge.getSource() == node && edge.getDest() == u )
                     {
-                        float alt = dist[indexCurrent] + edge.getWeight();
+                        double alt = dist[indexCurrent] + edge.getWeight();
                         if( alt < dist[node.getIndex()])
                         {
                             dist[node.getIndex()] = alt;
@@ -74,7 +74,7 @@ public class Graph
                     }
                     if( edge.getDest() == node && edge.getSource() == u )
                     {
-                        float alt = dist[indexCurrent] + edge.getWeight();
+                        double alt = dist[indexCurrent] + edge.getWeight();
                         if( alt < dist[node.getIndex()])
                         {
                             dist[node.getIndex()] = alt;

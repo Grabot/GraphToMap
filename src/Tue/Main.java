@@ -27,8 +27,9 @@ public class Main {
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
 
-    public ArrayList<ClusterNode> clusternodes = new ArrayList<ClusterNode>();
+    public ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     public ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
+    private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 
     private SpringForce spring;
     private WallForce wall;
@@ -58,64 +59,26 @@ public class Main {
 
         Graph g = new Graph(nodes, edges);
 
+        //set the correct cluster for every node and get the total number of clusters
         int clusterNumber = getClusterNumber();
 
-        float[][] pairD = new float[nodes.size()][nodes.size()];
+        double[][] pairD = new double[nodes.size()][nodes.size()];
 
         for( int i = 0; i < nodes.size(); i++ )
         {
             pairD[i] = g.BFS(nodes.get(i));
         }
 
-        double[][] clusterD = new double[clusterNumber][clusterNumber];
-        ClusterNode[] Cnodes = new ClusterNode[(clusterNumber+1)];
+        Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
 
-        for( int i = 0; i < clusterNumber; i++ )
-        {
-            for( int j = (i+1); j < clusterNumber; j++ )
-            {
-                ArrayList<Node> from = new ArrayList<Node>();
-                ArrayList<Node> to = new ArrayList<Node>();
-                for( Node node : nodes )
-                {
-                    if( node.getClusterNumber() == i )
-                    {
-                        from.add(node);
-                    }
-                    if( node.getClusterNumber() == j )
-                    {
-                        to.add(node);
-                    }
-                }
-                float total = 0;
-                for( Node f : from )
-                {
-                    for( Node t : to )
-                    {
-                        total = (total + pairD[f.getIndex()][t.getIndex()]);
-                    }
-                }
-                if( total < 0 )
-                {
-                    clusterD[i][j] = -1;
-                    clusterD[j][i] = -1;
-                }
-                else {
-                    clusterD[i][j] = (total / (from.size() * to.size()));
-                    clusterD[j][i] = (total / (from.size() * to.size()));
-                }
-                from.clear();
-                to.clear();
-            }
-            clusterD[i][i] = 0;
-        }
+        double[][] clusterD = getDistanceMatrixCluster(clusterNumber, pairD);
 
         double[][] pos = defineNodePosition( clusterD );
 
         //define all cluster nodes
         for( int i = 0; i < clusterNumber; i++ )
         {
-            Cnodes[i] = new ClusterNode( i, wall, friction, coulomb );
+            Cnodes[i] = new Cluster( i, wall, friction, coulomb );
             Cnodes[i].setPos( new Vector2((float)pos[0][i], (float)pos[1][i] ));
             clusternodes.add(Cnodes[i]);
         }
@@ -147,6 +110,54 @@ public class Main {
                 new Display(main).create();
             }
         });
+    }
+
+    private double[][] getDistanceMatrixCluster(int clusterNumber, double[][] pairD)
+    {
+        double[][] clusterD = new double[clusterNumber][clusterNumber];
+
+        for( int i = 0; i < clusterNumber; i++ )
+        {
+            for( int j = (i+1); j < clusterNumber; j++ )
+            {
+                ArrayList<Node> from = new ArrayList<Node>();
+                ArrayList<Node> to = new ArrayList<Node>();
+                for( Node node : nodes )
+                {
+                    if( node.getClusterNumber() == i )
+                    {
+                        from.add(node);
+                    }
+                    if( node.getClusterNumber() == j )
+                    {
+                        to.add(node);
+                    }
+                }
+                double total = 0;
+                for( Node f : from )
+                {
+                    for( Node t : to )
+                    {
+                        total = (total + pairD[f.getIndex()][t.getIndex()]);
+                    }
+                }
+                if( total < 0 )
+                {
+                    clusterD[i][j] = -1;
+                    clusterD[j][i] = -1;
+                }
+                else
+                {
+                    clusterD[i][j] = (total / (from.size() * to.size()));
+                    clusterD[j][i] = (total / (from.size() * to.size()));
+                }
+                from.clear();
+                to.clear();
+            }
+            clusterD[i][i] = 0;
+        }
+
+        return clusterD;
     }
 
     private double[][] defineNodePosition(double[][] clusterD)
@@ -215,6 +226,36 @@ public class Main {
         }
 
         return clusterNumber;
+    }
+
+    private void getClusterNodes()
+    {
+        for( Node node : nodes )
+        {
+            for( int i = 0; i < clusters.size(); i++ )
+            {
+                if( node.getClusterNumber() == i ) {
+                    clusters.get(i).addNode(node);
+                }
+            }
+        }
+    }
+
+    private void getClusterWeights()
+    {
+        int clusternumber = -1;
+        double total = 0;
+        for( Node node : nodes )
+        {
+            clusternumber = node.getClusterNumber();
+            clusters.get(clusternumber).addWeight(node.getWeight());
+            total = (total+node.getWeight());
+        }
+
+        for( Cluster cluster : clusters )
+        {
+            cluster.setPercentage(cluster.getWeight()/total);
+        }
     }
 
     private DotParser parserInput()

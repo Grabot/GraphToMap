@@ -120,6 +120,19 @@ public class DotParser {
                     }
                 }
             }
+            else if( t.text.equalsIgnoreCase("fontsize"))
+            {
+                next();
+                if (t.text.equalsIgnoreCase("=")) {
+                    next();
+                    if (t.type == StreamTokenizer.TT_WORD || t.type == '"') {
+                        temp.addWeight(Double.parseDouble(t.text));
+                    }else {
+                        System.out.println("There was an error unable to deal with: " + t.text + " at line:" + t.line);
+                        scanner.pushback();
+                    }
+                }
+            }
         }
         nodeStmt();
     }

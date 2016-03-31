@@ -21,8 +21,6 @@ import java.util.List;
  * @author Nocaj, Hildenbrand
  */
 
-
-
 public class HEdge {
 	private JVertex origin;
 	private JVertex dest;
@@ -30,8 +28,7 @@ public class HEdge {
 	private JFace iFace;
 	private HEdge next;
 	private HEdge prev;
-	
-	
+
 	public HEdge(JVertex origin, JVertex dest, JFace iFace) {
 		this.origin = origin;
 		this.dest = dest;
