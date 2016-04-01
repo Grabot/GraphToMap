@@ -4,6 +4,7 @@ import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.debuge.Colors;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
+import Tue.objects.BorderNode;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
@@ -21,6 +22,7 @@ public class Renderer
     private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
+    private ArrayList<BorderNode> waternodes = new ArrayList<BorderNode>();
     private OpenList sites;
 
     private Graphics g;
@@ -45,23 +47,23 @@ public class Renderer
         drawVoronoiArea();
         drawNodes();
         drawEdges( showEdges );
+        drawWater();
     }
 
     private void drawNodes()
     {
-        g2.setColor(Color.BLUE);
+        g2.setColor(Color.BLACK);
         for (Site site : sites )
         {
             double radius = 10;
             Ellipse2D.Double shape = new Ellipse2D.Double(site.getPoint().getX()-(radius/2), site.getPoint().getY()-(radius/2), radius, radius);
             g2.fill(shape);
-            //g.fillOval((int)(Cnode.getPos().x-(radius/2)), (int)(Cnode.getPos().y-(radius/2)), radius, radius);
         }
 
         for (Cluster Cnode : clusternodes)
         {
             double radius = 10;
-            Cnode.draw(g2, radius, Color.BLUE);
+            Cnode.draw(g2, radius, Color.RED);
         }
     }
 
@@ -91,6 +93,10 @@ public class Renderer
         this.sites = sites;
     }
 
+    public void addBorderNodes( ArrayList<BorderNode> waternodes )
+    {
+        this.waternodes = waternodes;
+    }
     private void drawVoronoiArea()
     {
         g2.setColor(Colors.circleFill);
@@ -106,4 +112,14 @@ public class Renderer
         }
     }
 
+    private void drawWater()
+    {
+        g2.setColor(Color.BLUE);
+        for (BorderNode water : waternodes )
+        {
+            double radius = 10;
+            Ellipse2D.Double shape = new Ellipse2D.Double(water.getPos().x-(radius/2), water.getPos().y-(radius/2), radius, radius);
+            g2.fill(shape);
+        }
+    }
 }

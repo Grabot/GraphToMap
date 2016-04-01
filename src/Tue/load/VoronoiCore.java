@@ -46,6 +46,11 @@ public class VoronoiCore {
 		return sites;
 	}
 
+	public void setSiteList( OpenList sites )
+	{
+		this.sites = sites;
+	}
+
 	/**
 	 * The resulting Voronoi cells are clipped with this polygon
 	 * 

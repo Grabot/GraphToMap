@@ -20,7 +20,7 @@ public class Cluster extends ClusterNode
 
     public Cluster(int clusternumber, WallForce wall, FrictionForce friction, CoulombForce coulomb )
     {
-        super( wall, friction, coulomb );
+        super( clusternumber, wall, friction, coulomb );
         this.clusternumber = clusternumber;
     }
 

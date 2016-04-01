@@ -18,7 +18,7 @@ public class Display extends JPanel implements ActionListener
     private Main main;
     private final Timer timer;
 
-    private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
+    private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
 
     long lastLoopTime;
@@ -34,8 +34,8 @@ public class Display extends JPanel implements ActionListener
     {
         lastLoopTime = System.currentTimeMillis();
 
-        render = new Renderer(clusternodes, clusteredges);
-        simulation = new Simulation(render, clusternodes, clusteredges, main.width, main.height);
+        render = new Renderer(clusters, clusteredges);
+        simulation = new Simulation(render, clusters, clusteredges, main.width, main.height);
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,7 +55,7 @@ public class Display extends JPanel implements ActionListener
                 if( e.getKeyCode() == KeyEvent.VK_V )
                 {
                     movement = (!movement);
-                    for (ClusterNode node : clusternodes) {
+                    for (ClusterNode node : clusters) {
                         node.setForce(new Vector2(0, 0));
                         node.setVel( new Vector2(0, 0));
                     }
@@ -77,7 +77,7 @@ public class Display extends JPanel implements ActionListener
         this.main = main;
         timer = new Timer(main.delta, this);
 
-        this.clusternodes = main.clusternodes;
+        this.clusters = main.clusters;
         this.clusteredges = main.clusteredges;
 
         this.setOpaque(false);

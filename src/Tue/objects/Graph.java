@@ -33,7 +33,7 @@ public class Graph
 
         while(!queue.isEmpty())
         {
-            double current = 999;
+            double current = (Integer.MAX_VALUE-1);
             int indexCurrent = -1;
             for( Node node : queue )
             {

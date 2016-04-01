@@ -4,6 +4,7 @@ import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.diagram.PowerDiagram;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
+import Tue.objects.BorderNode;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
@@ -17,9 +18,10 @@ import java.util.Random;
 public class Simulation
 {
 
-    private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
+    private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
+    private ArrayList<BorderNode> waternodes = new ArrayList<BorderNode>();
 
     private float delta = 0;
 
@@ -36,9 +38,12 @@ public class Simulation
 
     private int iterations = 0;
 
-    public Simulation(Renderer render, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges, int width, int height )
+    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height )
     {
-        this.clusternodes = clusternodes;
+        this.width = width;
+        this.height = height;
+
+        this.clusters = clusters;
         this.clusteredges = clusteredges;
         this.render = render;
 
@@ -47,39 +52,100 @@ public class Simulation
         core = new VoronoiCore();
 
         //create bounding polygon (the size of the panel)
+        boundingPolygonTest();
+        /*
         boundingPolygon = new PolygonSimple();
         boundingPolygon.add(0, 0);
         boundingPolygon.add(width, 0);
         boundingPolygon.add(width, height);
         boundingPolygon.add(0, height);
         render.addBounding(boundingPolygon);
+        */
 
-        int amount=clusternodes.size();
+        int amount=clusters.size();
 
         for (int i=0;i<amount;i++){
-            Site site = new Site(clusternodes.get(i).getPos().x, clusternodes.get(i).getPos().y);
+            Site site = new Site(clusters.get(i).getPos().x, clusters.get(i).getPos().y);
             //site.setPercentage(rand.nextFloat());
-            site.setWeight(100);
+            site.setPercentage(clusters.get(i).getPercentage()*100);
             sites.add(site);
         }
-
-        sites.get(0).setPercentage(2);
-        sites.get(1).setPercentage(2);
-        sites.get(2).setPercentage(2);
-        sites.get(3).setPercentage(2);
-        sites.get(4).setPercentage(2);
-        sites.get(5).setPercentage(10);
-        sites.get(6).setPercentage(40);
-        sites.get(7).setPercentage(3);
-        sites.get(8).setPercentage(3);
-        sites.get(9).setPercentage(2);
-        sites.get(10).setPercentage(2);
 
         core.normalizeSites(sites);
 
         core.setSites(sites);
         core.setClipPolygon(boundingPolygon);
         core.voroDiagram();
+    }
+
+    private void boundingPolygonTest()
+    {
+        //add random nodes around the cluster nodes as is stated in the GMap implementation
+        while( true )
+        {
+            boolean place = true;
+            double r = 130;
+            Random random = new Random();
+            double xPos = random.nextDouble()*width;
+            double yPos = random.nextDouble()*height;
+
+            for( Cluster node : clusters )
+            {
+                if(node.getPos().distance(new Vector2(xPos, yPos)) < r )
+                {
+                    place = false;
+                }
+            }
+
+            if( place )
+            {
+                BorderNode border = new BorderNode(new Vector2(xPos, yPos));
+                waternodes.add(border);
+            }
+
+            if( waternodes.size() == 1000 )
+            {
+                break;
+            }
+        }
+
+        boundingPolygon = new PolygonSimple();
+        double xPosmin = width;
+        double xPosmax = 0;
+        double yPosmin = height;
+        double yPosmax = 0;
+
+        for( Cluster node : clusters )
+        {
+            if( node.getPos().x < xPosmin )
+            {
+                xPosmin = node.getPos().x;
+            }
+            if( node.getPos().x > xPosmax )
+            {
+                xPosmax = node.getPos().x;
+            }
+            if( node.getPos().y < yPosmin )
+            {
+                yPosmin = node.getPos().y;
+            }
+            if( node.getPos().y > yPosmax )
+            {
+                yPosmax = node.getPos().y;
+            }
+        }
+
+//        boundingPolygon.add(xPosmin - 100, yPosmin - 100 );
+//        boundingPolygon.add(xPosmax + 100, yPosmin - 100 );
+//        boundingPolygon.add(xPosmax + 100, yPosmax + 100 );
+//        boundingPolygon.add(xPosmin - 100, yPosmax + 100 );
+//        render.addBounding(boundingPolygon);
+
+        boundingPolygon.add(0, 0 );
+        boundingPolygon.add(width, 0 );
+        boundingPolygon.add(width, height );
+        boundingPolygon.add(0, height );
+        render.addBounding(boundingPolygon);
     }
 
     public void update( float delta )
@@ -91,18 +157,33 @@ public class Simulation
         //core.iterateSimple();
         //setClusterNodes();
 
-        calculatePos();
-        calculateForces();
-//        ComputePowerDiagram();
+//        calculatePos();
+//        calculateForces();
+//        setSiteNodes();
+//        core.voroDiagram();
 
-        //render.addSites( core.getSites() );
+        render.addSites( core.getSites() );
+        render.addBorderNodes( waternodes );
+    }
+
+    private void setSiteNodes()
+    {
+        //the sites will here only serve the voronoi diagram, so they can be randomly assigned
+        //as long as each site is assigned to a cluster node.
+        sites = core.getSiteList();
+        int amount = clusters.size();
+        for( int i = 0; i < amount; i++ )
+        {
+            sites.get(i).setXY( clusters.get(i).getPos().x, clusters.get(i).getPos().y );
+        }
+        core.setSiteList( sites );
     }
 
     private void setClusterNodes()
     {
         for( Site s : sites )
         {
-            for( ClusterNode node : clusternodes )
+            for( Cluster node : clusters )
             {
                 if((node.getPos().x == s.getOldX()) && (node.getPos().y == s.getOldY()))
                 {
@@ -114,29 +195,29 @@ public class Simulation
 
     private void calculatePos()
     {
-        Vector2[] oldpos = new Vector2[clusternodes.size()];
+        Vector2[] oldpos = new Vector2[clusters.size()];
 
         //we will use a midpoint calculation to numerically solve the differential equation
 
         calculateForces();
         //calculate velocity and position for all nodes.
-        for( int i = 0; i < clusternodes.size(); i++ )
+        for( int i = 0; i < clusters.size(); i++ )
         {
-            oldpos[i] = clusternodes.get(i).getPos();
-            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
-            clusternodes.get(i).setPos( new Vector2((clusternodes.get(i).getPos().x + (clusternodes.get(i).getVel().x * (delta/2))), (clusternodes.get(i).getPos().y + (clusternodes.get(i).getVel().y * (delta/2) ))));
+            oldpos[i] = clusters.get(i).getPos();
+            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * (delta/2))), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * (delta/2) ))));
         }
         calculateForces();
-        for( int i = 0; i < clusternodes.size(); i++ )
+        for( int i = 0; i < clusters.size(); i++ )
         {
-            clusternodes.get(i).setVel( new Vector2((clusternodes.get(i).getVel().x + (clusternodes.get(i).getForce().x * delta)), (clusternodes.get(i).getVel().y + (clusternodes.get(i).getForce().y * delta ))));
-            clusternodes.get(i).setPos( new Vector2((oldpos[i].x + (clusternodes.get(i).getVel().x * delta)), (oldpos[i].y + (clusternodes.get(i).getVel().y * delta ))));
+            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+            clusters.get(i).setPos( new Vector2((oldpos[i].x + (clusters.get(i).getVel().x * delta)), (oldpos[i].y + (clusters.get(i).getVel().y * delta ))));
         }
     }
 
     private void calculateForces()
     {
-        for (ClusterNode node : clusternodes) {
+        for (Cluster node : clusters) {
             node.setForce(new Vector2(0, 0));
         }
         //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
@@ -144,9 +225,9 @@ public class Simulation
             edge.ApplyForces();
         }
 
-        for( ClusterNode node : clusternodes )
+        for( Cluster node : clusters )
         {
-            node.ApplyForces( clusternodes, delta );
+            node.ApplyForces( clusters, delta );
         }
     }
 }

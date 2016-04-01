@@ -27,14 +27,8 @@ public class Main {
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
 
-    public ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     public ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
-    private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
-
-    private SpringForce spring;
-    private WallForce wall;
-    private FrictionForce friction;
-    private CoulombForce coulomb;
+    public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 
     private double missingValue = 0;
 
@@ -47,20 +41,20 @@ public class Main {
     }
 
     private void execute(final Main main ) {
+
         final DotParser parser = parserInput();
 
         nodes = parser.getNodes();
         edges = parser.getEdges();
 
-        spring = new SpringForce();
-        wall = new WallForce( width, height );
-        friction = new FrictionForce();
-        coulomb = new CoulombForce();
+        SpringForce spring = new SpringForce();
+        WallForce wall = new WallForce(width, height);
+        FrictionForce friction = new FrictionForce();
+        CoulombForce coulomb = new CoulombForce();
 
         Graph g = new Graph(nodes, edges);
 
         //set the correct cluster for every node and get the total number of clusters
-        int clusterNumber = getClusterNumber();
 
         double[][] pairD = new double[nodes.size()][nodes.size()];
 
@@ -69,6 +63,19 @@ public class Main {
             pairD[i] = g.BFS(nodes.get(i));
         }
 
+        //index 71 and 72 should be the disjointed nodes with universities dataset.
+
+
+//        for( int i = 0; i < pairD.length; i++ )
+//        {
+//            for( int j = 0; j < pairD[i].length; j++ )
+//            {
+//                System.out.print( pairD[i][j] + " ");
+//            }
+//            System.out.println("");
+//        }
+
+        int clusterNumber = getClusterNumber();
         Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
 
         double[][] clusterD = getDistanceMatrixCluster(clusterNumber, pairD);
@@ -78,10 +85,13 @@ public class Main {
         //define all cluster nodes
         for( int i = 0; i < clusterNumber; i++ )
         {
-            Cnodes[i] = new Cluster( i, wall, friction, coulomb );
+            Cnodes[i] = new Cluster( i, wall, friction, coulomb);
             Cnodes[i].setPos( new Vector2((float)pos[0][i], (float)pos[1][i] ));
-            clusternodes.add(Cnodes[i]);
+            clusters.add(Cnodes[i]);
         }
+
+        getClusterNodes();
+        getClusterWeights();
 
         //define all cluster edges
         for( int i = 0; i < clusterNumber; i++ )
@@ -201,6 +211,34 @@ public class Main {
         }
         return output;
     }
+
+
+    private double[][] removeData(double[][] source, int row, int column)
+    {
+        double[][] destinationarr = new double[(source.length-1)][(source.length-1)];
+
+        int p = 0;
+        for( int i = 0; i < source.length; ++i)
+        {
+            if ( i == row)
+                continue;
+
+
+            int q = 0;
+            for( int j = 0; j < source[i].length; ++j)
+            {
+                if ( j == column)
+                    continue;
+
+                destinationarr[p][q] = source[i][j];
+                ++q;
+            }
+            ++p;
+        }
+
+        return destinationarr;
+    }
+
 
     private int getClusterNumber()
     {

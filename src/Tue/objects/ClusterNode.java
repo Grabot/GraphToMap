@@ -25,7 +25,9 @@ public class ClusterNode
     private FrictionForce friction;
     private CoulombForce coulomb;
 
-    public ClusterNode( WallForce wall, FrictionForce friction, CoulombForce coulomb )
+    private int clusternumber = -1;
+
+    public ClusterNode( int clusternumber, WallForce wall, FrictionForce friction, CoulombForce coulomb )
     {
         pos = new Vector2(0, 0);
         vel = new Vector2(0, 0);
@@ -33,6 +35,7 @@ public class ClusterNode
         this.wall = wall;
         this.friction = friction;
         this.coulomb = coulomb;
+        this.clusternumber = clusternumber;
     }
 
     public void setPos( Vector2 pos )
@@ -77,6 +80,7 @@ public class ClusterNode
         g2.setColor(color);
         Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(radius/2), this.getPos().y-(radius/2), radius, radius);
         g2.fill(shape);
+        g2.drawString("cluster " + clusternumber, (float)this.getPos().x, (float)(this.getPos().y-20) );
     }
 
 }
