@@ -4,9 +4,9 @@
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
- * 
+ *
  * For distributors of proprietary software, other licensing is possible on request: arlind.nocaj@gmail.com
- * 
+ *
  * This work is based on the publication below, please cite on usage, e.g.,  when publishing an article.
  * Arlind Nocaj, Ulrik Brandes, "Computing Voronoi Treemaps: Faster, Simpler, and Resolution-independent", Computer Graphics Forum, vol. 31, no. 3, June 2012, pp. 855-864
  ******************************************************************************/
@@ -35,11 +35,11 @@ public class JConvexHull {
 	private List<JFace> visible;
 	//Current index
 	private int current;
-	
+
 	private boolean permutate=false;
-	
+
 	protected final Random rand = new Random(1985);
-	
+
 	public JConvexHull() {
 		points = new ArrayList<JVertex>();
 		facets = new ArrayList<JFace>();
@@ -65,7 +65,7 @@ public class JConvexHull {
 	 */
 	public List<JFace> compute(){
 		prep();
-		
+
 		while(current < points.size()){
 			JVertex next = points.get(current);
 			if(next.getList().empty()){ //No conflict, point in hull
@@ -91,14 +91,14 @@ public class JConvexHull {
 			for(HEdge hE : horizon){
 				JFace fn = new JFace(next,hE.getOrigin(),hE.getDest(),hE.getTwin().getNext().getDest());
 				fn.setList(new JConflictList(true));
-				
+
 				//Add to facet list
 				addFacet(fn);
 				created.add(fn);
-				
+
 				//Add new conflicts
 				addConflicts(hE.getiFace(),hE.getTwin().getiFace(),fn);
-				
+
 				//Link the new face with the horizon edge
 				fn.link(hE);
 				if(last != null)
@@ -123,9 +123,9 @@ public class JConvexHull {
 		return facets;
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Conflicts of the new JFace can be only the conflicts of the incident JFaces of the horizon edge
 	 * @param old1 incident facet of the horizon edge
@@ -172,7 +172,7 @@ public class JConvexHull {
 				addConflict(fn,v1);
 		}
 	}
-	
+
 	/**
 	 * Removes conflicts and rearranges the indices of the updated facets list.
 	 */
@@ -191,17 +191,17 @@ public class JConvexHull {
 	    facets.set(index, last);
 	}
 
-	
+
 	/**
 	 * Prepares the convex hull computation
 	 * Builds the tetrahedron, fills the conflict graph and builds permutation for the points list
-	 * 
+	 *
 	 */
 	private void prep() {
 		if(points.size() <= 3) { //A tetrahedron needs at least 4 points
 			throw new NotEnoughPointsException();
 		}
-		
+
 		//Randomize the vertices
 		if (permutate){
 		permutation();
@@ -210,7 +210,7 @@ public class JConvexHull {
 		for (int i=0;i<points.size();i++){
 			points.get(i).setIndex(i);
 		}
-		
+
 		JVertex v0,v1,v2,v3;
 		JFace f1,f2,f3,f0;
 		v0 = points.get(0);
@@ -248,7 +248,7 @@ public class JConvexHull {
 		f1 = new JFace(v0,v2,v3,v1);
 		f2 = new JFace(v0,v1,v3,v2);
 		f3 = new JFace(v1,v2,v3,v0);
-		
+
 		addFacet(f0);
 		addFacet(f1);
 		addFacet(f2);
@@ -260,7 +260,7 @@ public class JConvexHull {
 		f1.link(f2,v0,v3);
 		f1.link(f3, v2, v3);
 		f2.link(f3,v3,v1);
-		
+
 		this.current = 4;
 		//Fill conflict graph
 		JVertex v;
@@ -279,7 +279,7 @@ public class JConvexHull {
 			if(f3.conflict(v)){
 				addConflict(f3,v);
 			}
-		}		
+		}
 	}
 	/**
 	 * Creates the permutation of the vertices with the Fisher-Yates Shuffle.
@@ -295,19 +295,19 @@ public class JConvexHull {
 			points.set(ra, currentItem);
 			points.set(i,temp);
 		}
-		
+
 	}
 	private void addFacet(JFace f0) {
 		f0.setIndex(facets.size());
-		facets.add(f0);	
+		facets.add(f0);
 	}
-	
+
 	private void addConflict(JFace f0, JVertex v) {
 		JGraphEdge e = new JGraphEdge(f0,v);
 		f0.getList().add(e);
-		v.getList().add(e);		
+		v.getList().add(e);
 	}
-	
+
 	public int getVertexCount() {
 		return points.size();
 	}

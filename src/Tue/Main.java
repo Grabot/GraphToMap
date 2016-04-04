@@ -54,26 +54,12 @@ public class Main {
 
         Graph g = new Graph(nodes, edges);
 
-        //set the correct cluster for every node and get the total number of clusters
-
         double[][] pairD = new double[nodes.size()][nodes.size()];
 
         for( int i = 0; i < nodes.size(); i++ )
         {
             pairD[i] = g.BFS(nodes.get(i));
         }
-
-        //index 71 and 72 should be the disjointed nodes with universities dataset.
-
-
-//        for( int i = 0; i < pairD.length; i++ )
-//        {
-//            for( int j = 0; j < pairD[i].length; j++ )
-//            {
-//                System.out.print( pairD[i][j] + " ");
-//            }
-//            System.out.println("");
-//        }
 
         int clusterNumber = getClusterNumber();
         Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
@@ -188,7 +174,7 @@ public class Main {
             }
         }
 
-        missingValue = highest*1.2;
+        missingValue = highest*1.5;
 
         for( int i = 0; i < clusterD.length; i++ )
         {

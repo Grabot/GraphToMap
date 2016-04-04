@@ -4,10 +4,7 @@ import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.debuge.Colors;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
-import Tue.objects.BorderNode;
-import Tue.objects.Cluster;
-import Tue.objects.ClusterEdge;
-import Tue.objects.ClusterNode;
+import Tue.objects.*;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -28,6 +25,7 @@ public class Renderer
     private Graphics g;
     private Graphics2D g2;
     private PolygonSimple boundingPolygon = null;
+    private PolygonSimple newBorder = null;
 
     public Renderer(ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges )
     {
@@ -43,11 +41,20 @@ public class Renderer
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        drawBounding();
+        //drawBounding();
         drawVoronoiArea();
         drawNodes();
         drawEdges( showEdges );
-        drawWater();
+        //drawBoundary();
+        //drawWater();
+    }
+
+    private void drawBoundary()
+    {
+        if( newBorder != null ) {
+            g2.setColor(Color.RED);
+            g2.draw(newBorder);
+        }
     }
 
     private void drawNodes()
@@ -87,6 +94,10 @@ public class Renderer
     {
         this.boundingPolygon = boundingPolygon;
     }
+    public void addBorderLines( PolygonSimple newBorder )
+    {
+        this.newBorder = newBorder;
+    }
 
     public void addSites( OpenList sites )
     {
@@ -104,9 +115,9 @@ public class Renderer
         {
             PolygonSimple poly = s.getPolygon();
             if (poly != null) {
-                g2.setColor(Color.CYAN);
+                g2.setColor(Color.WHITE);
                 g2.fill(poly);
-                g2.setColor(Color.red);
+                g2.setColor(Color.GREEN);
                 g2.draw(poly);
             }
         }

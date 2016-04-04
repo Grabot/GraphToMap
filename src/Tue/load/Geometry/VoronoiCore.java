@@ -10,7 +10,7 @@
  * This work is based on the publication below, please cite on usage, e.g.,  when publishing an article.
  * Arlind Nocaj, Ulrik Brandes, "Computing Voronoi Treemaps: Faster, Simpler, and Resolution-independent", Computer Graphics Forum, vol. 31, no. 3, June 2012, pp. 855-864
  ******************************************************************************/
-package Tue.load;
+package Tue.load.Geometry;
 
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.diagram.PowerDiagram;
