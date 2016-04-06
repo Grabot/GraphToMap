@@ -8,6 +8,7 @@ import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.BorderNode;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
+import Tue.objects.DelaunayEdge;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -21,8 +22,9 @@ public class Simulation
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
-    private ArrayList<BorderNode> waternodes = new ArrayList<BorderNode>();
+    private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
+    private boolean[][] neighbours;
     private float delta = 0;
 
     private int width;
@@ -49,33 +51,24 @@ public class Simulation
         this.clusteredges = clusteredges;
         this.render = render;
 
+        neighbours = new boolean[clusters.size()][clusters.size()];
+
         // normal list based on an array
         sites = new OpenList();
         core = new VoronoiCore();
 
         boundary = new ConvexHull();
         testwithborder();
-        //create bounding polygon (the size of the panel)
         //boundingPolygonTest();
-
-//        PolygonSimple boundingPolygon = new PolygonSimple();
-//        boundingPolygon.add(0, 0);
-//        boundingPolygon.add(width, 0);
-//        boundingPolygon.add(width, height);
-//        boundingPolygon.add(0, height);
+        //boundingPolygon();
 
         for (int i=0;i<clusters.size();i++){
             Site site = new Site(clusters.get(i).getPos().x, clusters.get(i).getPos().y);
             //site.setPercentage(rand.nextFloat());
             site.setPercentage(clusters.get(i).getPercentage()*100);
+            site.setIndex(clusters.get(i).getNumber());
             sites.add(site);
             borderpoints.add( new Vector2( clusters.get(i).getPos().x, clusters.get(i).getPos().y ));
-        }
-
-        for( int i = 0; i < waternodes.size(); i++ )
-        {
-            Site site = new Site( waternodes.get(i).getPos().x, waternodes.get(i).getPos().y);
-            sites.add(site);
         }
 
         core.normalizeSites(sites);
@@ -87,48 +80,25 @@ public class Simulation
 
     }
 
-    private void addBoundingNodes()
+    private void boundingPolygon()
     {
-        //add random nodes around the cluster nodes as is stated in the GMap implementation
-        while( true )
-        {
-            boolean place = true;
-            double r = 150;
-            Random random = new Random();
-            double xPos = random.nextDouble()*width;
-            double yPos = random.nextDouble()*height;
+        boundingPolygon = new PolygonSimple();
 
-            for( Cluster node : clusters )
-            {
-                if(node.getPos().distance(new Vector2(xPos, yPos)) < r )
-                {
-                    place = false;
-                }
-            }
-
-            if( place )
-            {
-                BorderNode border = new BorderNode(new Vector2(xPos, yPos));
-                waternodes.add(border);
-            }
-
-            if( waternodes.size() == 1000 )
-            {
-                break;
-            }
-        }
+        boundingPolygon.add(10, 10 );
+        boundingPolygon.add(1170, 10 );
+        boundingPolygon.add(1170, 750 );
+        boundingPolygon.add(10, 750 );
+        render.addBounding(boundingPolygon);
     }
 
     private void boundingPolygonTest()
     {
-        //addBoundingNodes();
-
 
         boundingPolygon = new PolygonSimple();
-        double xPosmin = width;
-        double xPosmax = 0;
-        double yPosmin = height;
-        double yPosmax = 0;
+        double xPosmin = Double.MAX_VALUE;
+        double xPosmax = Double.MIN_VALUE;
+        double yPosmin = Double.MAX_VALUE;
+        double yPosmax = Double.MIN_VALUE;
 
         for( Cluster node : clusters )
         {
@@ -179,18 +149,16 @@ public class Simulation
         double distanceToZeroY = boundingPolygon.getCentroid().y;
 
         boundingPolygon.translate( -distanceToZeroX, -distanceToZeroY );
-        boundingPolygon.scale(1.2);
+        boundingPolygon.scale(1.5);
         boundingPolygon.translate( distanceToZeroX, distanceToZeroY );
         render.addBounding( boundingPolygon );
     }
 
     public void update( float delta )
     {
-        //testwithborder();
         this.delta = delta;
 
         sites = core.getSites();
-
         core.iterateSimple();
         setClusterNodes();
 
@@ -199,8 +167,31 @@ public class Simulation
 //        setSiteNodes();
 //        core.voroDiagram();
 
+        getDelaunay();
+
         render.addSites( core.getSites() );
-        render.addBorderNodes( waternodes );
+    }
+
+    private void getDelaunay()
+    {
+        for( int i = 0; i < neighbours.length; i++ )
+        {
+            for( int j = 0; j < neighbours[i].length; j++ )
+            {
+                neighbours[i][j] = false;
+            }
+        }
+        d_edges.clear();
+        for( Site s : sites )
+        {
+            for( Site s2 : s.getNeighbours())
+            {
+                d_edges.add(new DelaunayEdge( clusters.get(s.getIndex()), clusters.get(s2.getIndex())));
+                neighbours[s.getIndex()][s2.getIndex()] = true;
+            }
+        }
+
+        render.addDelaunay(d_edges);
     }
 
     private void setSiteNodes()
@@ -225,6 +216,7 @@ public class Simulation
                 if((node.getPos().x == s.getOldX()) && (node.getPos().y == s.getOldY()))
                 {
                     node.setPos(new Vector2(s.getX(), s.getY()));
+                    node.setSite(s);
                 }
             }
         }

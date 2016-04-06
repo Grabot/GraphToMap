@@ -1,5 +1,6 @@
 package Tue.objects;
 
+import Tue.load.Forces.Force;
 import Tue.load.Forces.SpringForce;
 
 import java.awt.*;
@@ -14,14 +15,14 @@ public class ClusterEdge
     private Cluster source;
     private Cluster dest;
     private double weight = 0;
-    private SpringForce spring;
+    private Force forces;
 
-    public ClusterEdge( Cluster source, Cluster dest, double weight, SpringForce spring )
+    public ClusterEdge( Cluster source, Cluster dest, double weight, Force forces )
     {
         this.source = source;
         this.dest = dest;
         this.weight = weight;
-        this.spring = spring;
+        this.forces = forces;
     }
 
     public ClusterNode getSource()
@@ -37,7 +38,7 @@ public class ClusterEdge
 
     public void ApplyForces()
     {
-        spring.ApplyForce( this );
+        forces.ApplyEdgeForce( this );
     }
 
     public void setWeight( float weight )

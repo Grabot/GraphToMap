@@ -1,8 +1,6 @@
 package Tue.objects;
 
-import Tue.load.Forces.CoulombForce;
-import Tue.load.Forces.FrictionForce;
-import Tue.load.Forces.WallForce;
+import Tue.load.Forces.Force;
 import Tue.load.Vector2;
 
 import java.awt.*;
@@ -21,20 +19,17 @@ public class ClusterNode
     private Vector2 vel;
     private Vector2 force;
 
-    private WallForce wall;
-    private FrictionForce friction;
-    private CoulombForce coulomb;
+    private Force forces;
 
     private int clusternumber = -1;
+    private double weight = -1;
 
-    public ClusterNode( int clusternumber, WallForce wall, FrictionForce friction, CoulombForce coulomb )
+    public ClusterNode( int clusternumber, Force forces )
     {
         pos = new Vector2(0, 0);
         vel = new Vector2(0, 0);
         force = new Vector2(0, 0);
-        this.wall = wall;
-        this.friction = friction;
-        this.coulomb = coulomb;
+        this.forces = forces;
         this.clusternumber = clusternumber;
     }
 
@@ -68,11 +63,13 @@ public class ClusterNode
         return force;
     }
 
-    public void ApplyForces( ArrayList<Cluster> clusternodes, float delta )
+    public void ApplyForces( ArrayList<Cluster> clusters, float delta )
     {
-        wall.ApplyForces( this, delta );
-        friction.ApplyForces( this );
-        //coulomb.ApplyForces( this, clusternodes );
+        forces.ApplyNodeForces( this, clusters, delta );
+    }
+
+    public void setFinalWeight( double weight ){
+        this.weight = weight;
     }
 
     public void draw( Graphics2D g2, double radius, Color color )
@@ -80,7 +77,8 @@ public class ClusterNode
         g2.setColor(color);
         Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(radius/2), this.getPos().y-(radius/2), radius, radius);
         g2.fill(shape);
-        g2.drawString("cluster " + clusternumber, (float)this.getPos().x, (float)(this.getPos().y-20) );
+        g2.drawString("cluster " + clusternumber, (float)this.getPos().x, (float)(this.getPos().y-30) );
+        g2.drawString("size " + (int)this.weight, (float)this.getPos().x, (float)(this.getPos().y-20));
     }
 
 }

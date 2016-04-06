@@ -1,6 +1,7 @@
 package Tue.load.Forces;
 
 import Tue.load.Vector2;
+import Tue.objects.Cluster;
 import Tue.objects.ClusterNode;
 
 import java.util.ArrayList;
@@ -18,14 +19,14 @@ public class CoulombForce
         posdif = new Vector2(0, 0);
     }
 
-    public void ApplyForces( ClusterNode source, ArrayList<ClusterNode> nodes )
+    public void ApplyForces( ClusterNode source, ArrayList<Cluster> nodes )
     {
         double kC = 100f;
         double rSquared = 0;
         double forceX = 0;
         double forceY = 0;
 
-        for( ClusterNode target : nodes )
+        for( Cluster target : nodes )
         {
             if( source != target ) {
                 posdif.x = source.getPos().x - target.getPos().x;

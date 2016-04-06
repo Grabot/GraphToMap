@@ -19,7 +19,7 @@ public class Display extends JPanel implements ActionListener
     private final Timer timer;
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
-    private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
+    private ArrayList<ClusterEdge> clusterEdges = new ArrayList<ClusterEdge>();
 
     long lastLoopTime;
     float delta;
@@ -34,8 +34,8 @@ public class Display extends JPanel implements ActionListener
     {
         lastLoopTime = System.currentTimeMillis();
 
-        render = new Renderer(clusters, clusteredges);
-        simulation = new Simulation(render, clusters, clusteredges, main.width, main.height);
+        render = new Renderer(clusters, clusterEdges);
+        simulation = new Simulation(render, clusters, clusterEdges, main.width, main.height);
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,7 +78,7 @@ public class Display extends JPanel implements ActionListener
         timer = new Timer(main.delta, this);
 
         this.clusters = main.clusters;
-        this.clusteredges = main.clusteredges;
+        this.clusterEdges = main.clusterEdges;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());

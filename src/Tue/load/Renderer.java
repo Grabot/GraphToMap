@@ -19,7 +19,7 @@ public class Renderer
     private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
-    private ArrayList<BorderNode> waternodes = new ArrayList<BorderNode>();
+    private ArrayList<DelaunayEdge> d_edges =  new ArrayList<DelaunayEdge>();
     private OpenList sites;
 
     private Graphics g;
@@ -41,12 +41,12 @@ public class Renderer
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        //drawBounding();
         drawVoronoiArea();
         drawNodes();
         drawEdges( showEdges );
+        drawBounding();
+        drawDelaunay();
         //drawBoundary();
-        //drawWater();
     }
 
     private void drawBoundary()
@@ -54,6 +54,15 @@ public class Renderer
         if( newBorder != null ) {
             g2.setColor(Color.RED);
             g2.draw(newBorder);
+        }
+    }
+
+    private void drawDelaunay()
+    {
+        g2.setColor(Color.YELLOW);
+        for( DelaunayEdge edge : d_edges )
+        {
+            edge.draw( g2, Color.YELLOW );
         }
     }
 
@@ -86,8 +95,10 @@ public class Renderer
 
     private void drawBounding()
     {
-        g2.setColor(Color.BLACK);
-        g2.draw(boundingPolygon);
+        if( boundingPolygon != null ) {
+            g2.setColor(Color.BLACK);
+            g2.draw(boundingPolygon);
+        }
     }
 
     public void addBounding( PolygonSimple boundingPolygon )
@@ -104,10 +115,11 @@ public class Renderer
         this.sites = sites;
     }
 
-    public void addBorderNodes( ArrayList<BorderNode> waternodes )
+    public void addDelaunay( ArrayList<DelaunayEdge> d_edges )
     {
-        this.waternodes = waternodes;
+        this.d_edges = d_edges;
     }
+
     private void drawVoronoiArea()
     {
         g2.setColor(Colors.circleFill);
@@ -120,17 +132,6 @@ public class Renderer
                 g2.setColor(Color.GREEN);
                 g2.draw(poly);
             }
-        }
-    }
-
-    private void drawWater()
-    {
-        g2.setColor(Color.BLUE);
-        for (BorderNode water : waternodes )
-        {
-            double radius = 10;
-            Ellipse2D.Double shape = new Ellipse2D.Double(water.getPos().x-(radius/2), water.getPos().y-(radius/2), radius, radius);
-            g2.fill(shape);
         }
     }
 }
