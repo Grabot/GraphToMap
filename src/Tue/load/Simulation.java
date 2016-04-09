@@ -77,7 +77,6 @@ public class Simulation
         core.setClipPolygon(boundingPolygon);
         core.voroDiagram();
 
-
     }
 
     private void boundingPolygon()
@@ -158,16 +157,16 @@ public class Simulation
     {
         this.delta = delta;
 
-        sites = core.getSites();
-        core.iterateSimple();
-        setClusterNodes();
+//        sites = core.getSites();
+//        core.iterateSimple();
+//        setClusterNodes();
 
 //        calculatePos();
 //        calculateForces();
 //        setSiteNodes();
 //        core.voroDiagram();
 
-        getDelaunay();
+        //getDelaunay();
 
         render.addSites( core.getSites() );
     }
