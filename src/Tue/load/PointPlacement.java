@@ -24,8 +24,8 @@ public class PointPlacement
     private int height = 800;
 
     private Random rand;
-    private int amountnewpoints = 100;
-    private int posamount = 10000;
+    private int amountnewpoints = 10;
+    private int posamount = 1000;
 
     public PointPlacement(ArrayList<Node> nodes, ArrayList<Edge> edges, Force forces)
     {

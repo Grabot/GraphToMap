@@ -79,7 +79,7 @@ public class Renderer
         for (Cluster Cnode : clusternodes)
         {
             double radius = 10;
-            Cnode.draw(g2, radius, Color.RED);
+            Cnode.draw(g2, radius, Color.BLACK);
         }
     }
 
@@ -122,12 +122,28 @@ public class Renderer
 
     private void drawVoronoiArea()
     {
+        double area = 0;
+        double want = 0;
+        double error = 0;
         g2.setColor(Colors.circleFill);
         for( Site s : sites )
         {
             PolygonSimple poly = s.getPolygon();
             if (poly != null) {
-                g2.setColor(Color.WHITE);
+                area = poly.getArea();
+                want = boundingPolygon.getArea()*s.getPercentage();
+                error = area-want;
+                if( error < 0 )
+                {
+                    error = (error*-1);
+                }
+                if( error >= 2550 )
+                {
+                    error = 2550;
+                }
+                Color co = new Color(255, 255-(int)(error/10), 255-(int)(error/10));
+                Color test = new Color(34, 152, 21);
+                g2.setColor(co);
                 g2.fill(poly);
                 g2.setColor(Color.GREEN);
                 g2.draw(poly);
