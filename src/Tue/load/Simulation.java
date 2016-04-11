@@ -5,10 +5,7 @@ import Tue.load.Geometry.VoronoiCore;
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
-import Tue.objects.BorderNode;
-import Tue.objects.Cluster;
-import Tue.objects.ClusterEdge;
-import Tue.objects.DelaunayEdge;
+import Tue.objects.*;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,6 +20,7 @@ public class Simulation
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
     private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
+    private ArrayList<DelaunayFace> d_faces = new ArrayList<DelaunayFace>();
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
     private boolean[][] neighbours;
     private float delta = 0;
@@ -58,9 +56,7 @@ public class Simulation
         core = new VoronoiCore();
 
         boundary = new ConvexHull();
-        testwithborder();
-        //boundingPolygonTest();
-        //boundingPolygon();
+        convexBorder();
 
         for (int i=0;i<clusters.size();i++){
             Site site = new Site(clusters.get(i).getPos().x, clusters.get(i).getPos().y);
@@ -77,57 +73,11 @@ public class Simulation
         core.setClipPolygon(boundingPolygon);
         core.voroDiagram();
 
+        getDelaunay();
+        render.addDelaunay(d_edges);
     }
 
-    private void boundingPolygon()
-    {
-        boundingPolygon = new PolygonSimple();
-
-        boundingPolygon.add(10, 10 );
-        boundingPolygon.add(1170, 10 );
-        boundingPolygon.add(1170, 750 );
-        boundingPolygon.add(10, 750 );
-        render.addBounding(boundingPolygon);
-    }
-
-    private void boundingPolygonTest()
-    {
-
-        boundingPolygon = new PolygonSimple();
-        double xPosmin = Double.MAX_VALUE;
-        double xPosmax = Double.MIN_VALUE;
-        double yPosmin = Double.MAX_VALUE;
-        double yPosmax = Double.MIN_VALUE;
-
-        for( Cluster node : clusters )
-        {
-            if( node.getPos().x < xPosmin )
-            {
-                xPosmin = node.getPos().x;
-            }
-            if( node.getPos().x > xPosmax )
-            {
-                xPosmax = node.getPos().x;
-            }
-            if( node.getPos().y < yPosmin )
-            {
-                yPosmin = node.getPos().y;
-            }
-            if( node.getPos().y > yPosmax )
-            {
-                yPosmax = node.getPos().y;
-            }
-        }
-
-        boundingPolygon.add(xPosmin - 100, yPosmin - 100 );
-        boundingPolygon.add(xPosmax + 100, yPosmin - 100 );
-        boundingPolygon.add(xPosmax + 100, yPosmax + 100 );
-        boundingPolygon.add(xPosmin - 100, yPosmax + 100 );
-        render.addBounding(boundingPolygon);
-
-    }
-
-    private void testwithborder()
+    private void convexBorder()
     {
         Vector2[] points = new Vector2[clusters.size()];
         boundingPolygon = new PolygonSimple();
@@ -157,16 +107,13 @@ public class Simulation
     {
         this.delta = delta;
 
-        sites = core.getSites();
-        core.iterateSimple();
-        setClusterNodes();
+//        sites = core.getSites();
+//        core.iterateSimple();
+//        setClusterNodes();
 
-//        calculatePos();
-//        calculateForces();
-//        setSiteNodes();
-//        core.voroDiagram();
-
-        getDelaunay();
+        //calculatePosEuler();
+        //setSiteNodes();
+        //core.voroDiagram();
 
         render.addSites( core.getSites() );
     }
@@ -189,6 +136,33 @@ public class Simulation
                 neighbours[s.getIndex()][s2.getIndex()] = true;
             }
         }
+
+        for( int i = 0; i < neighbours.length; i++ )
+        {
+            for( int j = (i+1); j < neighbours[i].length; j++ )
+            {
+                for( int k = j+1; k < neighbours[i].length; k++ )
+                {
+                    if( neighbours[i][j] && neighbours[i][k])
+                    {
+                        //if there are 2 neighbouring faces, check if those faces are also neighbouring
+                        if( neighbours[j][k])
+                        {
+                            d_faces.add( new DelaunayFace(clusters.get(i), clusters.get(j), clusters.get(k)));
+                        }
+                    }
+                }
+            }
+        }
+//
+//        for( int i = 0; i < d_faces.size(); i++ )
+//        {
+//            System.out.print("face: " + i );
+//            System.out.print(" first: " + d_faces.get(i).getFirst().getNumber() );
+//            System.out.print(" second: " + d_faces.get(i).getSecond().getNumber() );
+//            System.out.print(" third: " + d_faces.get(i).getThird().getNumber() );
+//            System.out.println("");
+//        }
 
         render.addDelaunay(d_edges);
     }
@@ -221,7 +195,7 @@ public class Simulation
         }
     }
 
-    private void calculatePos()
+    private void calculatePosMidPoint()
     {
         Vector2[] oldpos = new Vector2[clusters.size()];
 
@@ -243,6 +217,16 @@ public class Simulation
         }
     }
 
+    private void calculatePosEuler()
+    {
+        calculateForces();
+        //calculate velocity and position for all nodes.
+        for( int i = 0; i < clusters.size(); i++ )
+        {
+            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * delta)), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * delta ))));
+        }
+    }
     private void calculateForces()
     {
         for (Cluster node : clusters) {

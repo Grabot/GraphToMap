@@ -24,7 +24,7 @@ public class Display extends JPanel implements ActionListener
     long lastLoopTime;
     float delta;
 
-    private boolean showEdges = true;
+    private boolean showEdges = false;
     private boolean movement = true;
 
     private Renderer render;
