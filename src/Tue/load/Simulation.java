@@ -1,5 +1,6 @@
 package Tue.load;
 
+import Tue.load.Forces.Force;
 import Tue.load.Geometry.ConvexHull;
 import Tue.load.Geometry.VoronoiCore;
 import Tue.load.voronoitreemap.datastructure.OpenList;
@@ -33,6 +34,7 @@ public class Simulation
     private VoronoiCore core;
 
     private Renderer render;
+    private Force forces;
 
     private double distanceBorder = 0;
 
@@ -40,7 +42,7 @@ public class Simulation
 
     private ConvexHull boundary;
 
-    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height )
+    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces )
     {
         this.width = width;
         this.height = height;
@@ -48,6 +50,7 @@ public class Simulation
         this.clusters = clusters;
         this.clusteredges = clusteredges;
         this.render = render;
+        this.forces = forces;
 
         neighbours = new boolean[clusters.size()][clusters.size()];
 
@@ -72,6 +75,8 @@ public class Simulation
         core.setSites(sites);
         core.setClipPolygon(boundingPolygon);
         core.voroDiagram();
+        core.setOldPoint();
+        setClusterNodes();
 
         getDelaunay();
         render.addDelaunay(d_edges);
@@ -111,9 +116,10 @@ public class Simulation
 //        core.iterateSimple();
 //        setClusterNodes();
 
-        //calculatePosEuler();
-        //setSiteNodes();
-        //core.voroDiagram();
+        calculatePosEuler();
+//        setSiteNodes();
+//        core.setSites(sites);
+//        core.voroDiagram();
 
         render.addSites( core.getSites() );
     }
@@ -132,7 +138,7 @@ public class Simulation
         {
             for( Site s2 : s.getNeighbours())
             {
-                d_edges.add(new DelaunayEdge( clusters.get(s.getIndex()), clusters.get(s2.getIndex())));
+                d_edges.add(new DelaunayEdge( clusters.get(s.getIndex()), clusters.get(s2.getIndex()), forces));
                 neighbours[s.getIndex()][s2.getIndex()] = true;
             }
         }
@@ -154,15 +160,6 @@ public class Simulation
                 }
             }
         }
-//
-//        for( int i = 0; i < d_faces.size(); i++ )
-//        {
-//            System.out.print("face: " + i );
-//            System.out.print(" first: " + d_faces.get(i).getFirst().getNumber() );
-//            System.out.print(" second: " + d_faces.get(i).getSecond().getNumber() );
-//            System.out.print(" third: " + d_faces.get(i).getThird().getNumber() );
-//            System.out.println("");
-//        }
 
         render.addDelaunay(d_edges);
     }
@@ -175,6 +172,7 @@ public class Simulation
         int amount = clusters.size();
         for( int i = 0; i < amount; i++ )
         {
+            sites.get(i).setOldXY( sites.get(i).getX(), sites.get(i).getY());
             sites.get(i).setXY( clusters.get(i).getPos().x, clusters.get(i).getPos().y );
         }
         core.setSiteList( sites );
@@ -229,17 +227,51 @@ public class Simulation
     }
     private void calculateForces()
     {
+        //clear forces
         for (Cluster node : clusters) {
             node.setForce(new Vector2(0, 0));
         }
+
+        //getEdgeForces();
+        //getNodeForces();
+        getVoronoiForce();
+    }
+
+    private void getVoronoiForce()
+    {
+//        core.iterateSimple();
+        sites = core.getSites();
+        //core.moveSites();
+        core.adaptWeightsSimple();
+        //core.moveSitesBack();
+        core.voroDiagram();
+        setClusterNodes();
+    }
+
+    private void getEdgeForces()
+    {
         //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
+        /*
+        turned off for now
         for (ClusterEdge edge : clusteredges) {
             edge.ApplyForces();
         }
+        */
 
+        for( DelaunayEdge edge : d_edges )
+        {
+            edge.ApplyForces();
+        }
+    }
+
+    private void getNodeForces()
+    {
+        //apply forces node specific, so coulomb forces and wallforces
         for( Cluster node : clusters )
         {
             node.ApplyForces( clusters, delta );
         }
     }
+
+
 }

@@ -3,6 +3,7 @@ package Tue.load.Forces;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
+import Tue.objects.DelaunayEdge;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,11 @@ public class Force
     public void ApplyEdgeForce( ClusterEdge edge )
     {
         spring.ApplyForce(edge);
+    }
+
+    public void ApplyEdgeForce( DelaunayEdge edge )
+    {
+        spring.ApplyForce( edge );
     }
 
 }

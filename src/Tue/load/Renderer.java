@@ -132,17 +132,18 @@ public class Renderer
             if (poly != null) {
                 area = poly.getArea();
                 want = boundingPolygon.getArea()*s.getPercentage();
-                error = area-want;
+                error = area/want;
+                error = (1-error);
                 if( error < 0 )
                 {
                     error = (error*-1);
                 }
-                if( error >= 2550 )
+                error = (error*255);
+                if( error >= 255 )
                 {
-                    error = 2550;
+                    error = 255;
                 }
-                Color co = new Color(255, 255-(int)(error/10), 255-(int)(error/10));
-                Color test = new Color(34, 152, 21);
+                Color co = new Color(255, 255-(int)error, 255-(int)error);
                 g2.setColor(co);
                 g2.fill(poly);
                 g2.setColor(Color.GREEN);

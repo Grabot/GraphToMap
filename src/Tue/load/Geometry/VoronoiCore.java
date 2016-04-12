@@ -17,8 +17,10 @@ import Tue.load.voronoitreemap.diagram.PowerDiagram;
 import Tue.load.voronoitreemap.j2d.Point2D;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
+import Tue.objects.Cluster;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -88,15 +90,15 @@ public class VoronoiCore {
 
 	public void iterateSimple() {
 		// if(currentIteration<=settings.maxIterat){
-		moveSites(sites);
-		checkPointsInPolygon(sites);
+		moveSites();
+		//checkPointsInPolygon(sites);
 		// }
 
 		// voroDiagram();//does not seem to be necessary
 		// fixNoPolygonSites();
 
 		// adapt weights
-		adaptWeightsSimple(sites);
+		adaptWeightsSimple();
 		voroDiagram();
 
 		currentAreaError = computeAreaError(sites);
@@ -146,21 +148,45 @@ public class VoronoiCore {
 		return maxError;
 	}
 
-	private void moveSites(OpenList sites) {
+	public void setOldPoint()
+	{
 		for (Site point : sites) {
 			PolygonSimple poly = point.getPolygon();
 			if (poly != null) {
 				Point2D centroid = poly.getCentroid();
 				double centroidX = centroid.getX();
 				double centroidY = centroid.getY();
-				if (clipPolygon.contains(centroidX, centroidY))
+				if (clipPolygon.contains(centroidX, centroidY)) {
 					point.setOldXY(point.getX(), point.getY());
-					point.setXY(centroidX, centroidY);
+				}
 			}
 		}
 	}
 
-	private void adaptWeightsSimple(OpenList sites) {
+	public void moveSitesBack()
+	{
+		for( Site point : sites )
+		{
+			point.setXY(point.getOldX(), point.getOldY());
+		}
+	}
+
+	public void moveSites() {
+		for (Site point : sites) {
+			PolygonSimple poly = point.getPolygon();
+			if (poly != null) {
+				Point2D centroid = poly.getCentroid();
+				double centroidX = centroid.getX();
+				double centroidY = centroid.getY();
+				if (clipPolygon.contains(centroidX, centroidY)) {
+					point.setOldXY(point.getX(), point.getY());
+					point.setXY(centroidX, centroidY);
+				}
+			}
+		}
+	}
+
+	public void adaptWeightsSimple() {
 		Site[] array = sites.array;
 		int size = sites.size;
 		Random rand = new Random(5);

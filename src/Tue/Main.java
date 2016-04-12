@@ -28,6 +28,8 @@ public class Main {
     public ArrayList<ClusterEdge> clusterEdges = new ArrayList<ClusterEdge>();
     public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 
+    public Force forces;
+
     public static void main(String[] args)
     {
 
@@ -46,7 +48,7 @@ public class Main {
         //this will overrule the parser and make hand defined nodes, edges and clusters
         //handMadeGraph();
 
-        Force forces = new Force(width, height);
+        forces = new Force(width, height);
 
         PointPlacement points = new PointPlacement(nodes, edges, forces);
 
@@ -77,7 +79,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return parser;
     }
 

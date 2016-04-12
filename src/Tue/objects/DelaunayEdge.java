@@ -1,5 +1,7 @@
 package Tue.objects;
 
+import Tue.load.Forces.Force;
+
 import java.awt.*;
 import java.awt.geom.Line2D;
 
@@ -11,11 +13,17 @@ public class DelaunayEdge
 
     private Cluster source;
     private Cluster dest;
+    private Force forces;
 
-    public DelaunayEdge( Cluster source, Cluster dest )
+    private double weight = 0;
+
+    public DelaunayEdge( Cluster source, Cluster dest, Force forces )
     {
         this.source = source;
         this.dest = dest;
+        this.forces = forces;
+
+        weight = source.getPos().distance(dest.getPos());
     }
 
     public Cluster getSource()
@@ -33,6 +41,16 @@ public class DelaunayEdge
         g2.setColor(color);
         Shape shape = new Line2D.Double(this.getSource().getPos().x, this.getSource().getPos().y, this.getDest().getPos().x, this.getDest().getPos().y);
         g2.draw(shape);
+    }
+
+    public void ApplyForces()
+    {
+        forces.ApplyEdgeForce( this );
+    }
+
+    public double getWeight()
+    {
+        return weight;
     }
 
 }
