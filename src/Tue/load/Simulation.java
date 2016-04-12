@@ -116,12 +116,24 @@ public class Simulation
 //        core.iterateSimple();
 //        setClusterNodes();
 
-        calculatePosEuler();
+        //calculatePosEuler();
 //        setSiteNodes();
 //        core.setSites(sites);
 //        core.voroDiagram();
+        core.adaptWeightsSimple();
+        core.voroDiagram();
+        positionClusterNode();
 
         render.addSites( core.getSites() );
+    }
+
+    private void positionClusterNode()
+    {
+        for( Cluster c : clusters )
+        {
+            Site s = c.getSite();
+            c.setPos(new Vector2(s.getPolygon().getCentroid().x, s.getPolygon().getCentroid().y));
+        }
     }
 
     private void getDelaunay()
@@ -239,13 +251,15 @@ public class Simulation
 
     private void getVoronoiForce()
     {
-//        core.iterateSimple();
-        sites = core.getSites();
-        //core.moveSites();
-        core.adaptWeightsSimple();
-        //core.moveSitesBack();
-        core.voroDiagram();
-        setClusterNodes();
+        core.moveSites();
+//        for( Cluster c : clusters )
+//        {
+//            double distancex = (c.getPos().getX() - c.getSite().getX());
+//            double distancey = (c.getPos().getY() - c.getSite().getY());
+//            double distance = c.getPos().distance(new Vector2(c.getSite().getX(), c.getSite().getY()));
+//            c.setForce(new Vector2( c.getForce().x + distancex, c.getForce().y + distancey));
+//        }
+        core.moveSitesBack(clusters);
     }
 
     private void getEdgeForces()

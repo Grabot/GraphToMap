@@ -25,6 +25,8 @@ public class Display extends JPanel implements ActionListener
     float delta;
 
     private boolean showEdges = false;
+    private boolean showDelaunay = false;
+    private boolean showSites = false;
     private boolean movement = true;
 
     private Renderer render;
@@ -51,6 +53,14 @@ public class Display extends JPanel implements ActionListener
                 if( e.getKeyCode() == KeyEvent.VK_E )
                 {
                     showEdges = (!showEdges);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_D)
+                {
+                    showDelaunay = (!showDelaunay);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_S)
+                {
+                    showSites = (!showSites);
                 }
                 if( e.getKeyCode() == KeyEvent.VK_V )
                 {
@@ -88,7 +98,7 @@ public class Display extends JPanel implements ActionListener
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        render.draw(g, showEdges );
+        render.draw(g, showEdges, showDelaunay, showSites );
     }
 
     @Override

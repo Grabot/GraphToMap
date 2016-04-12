@@ -20,7 +20,7 @@ public class Main {
 
     public int width = 1200;
     public int height = 800;
-    public int delta = 40;
+    public int delta = 4;
 
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -68,7 +68,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
+            scanner = new DotScanner(new FileReader("datasets/random4.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

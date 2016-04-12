@@ -33,7 +33,7 @@ public class RandomGraph
     {
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter("datasets/random2.gv", "UTF-8");
+            writer = new PrintWriter("datasets/random4.gv", "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -84,7 +84,7 @@ public class RandomGraph
 
     public static void main( String[] args )
     {
-        RandomGraph run = new RandomGraph(150, 7, 500);
+        RandomGraph run = new RandomGraph(40, 14, 200);
         run.createGraphSimple();
     }
 
