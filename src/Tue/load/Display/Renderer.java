@@ -127,6 +127,7 @@ public class Renderer
         double area = 0;
         double want = 0;
         double error = 0;
+        double negerror = 0;
         g2.setColor(Colors.circleFill);
         for( Site s : sites )
         {
@@ -138,18 +139,26 @@ public class Renderer
                 error = (1-error);
                 if( error < 0 )
                 {
-                    error = (error*-1);
+                    negerror = (error*-1);
+                    error = 0;
                 }
                 error = (error*255);
+                negerror = (negerror*255);
                 if( error >= 255 )
                 {
                     error = 255;
                 }
-                Color co = new Color(255, 255-(int)error, 255-(int)error);
+                if( negerror >= 255 )
+                {
+                    negerror = 255;
+                }
+                Color co = new Color((255-(int)negerror), 255-((int)error+(int)negerror), 255-((int)error));
                 g2.setColor(co);
                 g2.fill(poly);
                 g2.setColor(Color.GREEN);
                 g2.draw(poly);
+                negerror = 0;
+                error = 0;
             }
         }
     }
