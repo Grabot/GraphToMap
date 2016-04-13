@@ -19,13 +19,15 @@ public class PointPlacement
 
     private double missingValue = 0;
     private double radiusGlobal = 10;
-    private double stepSize = 0.05;
+    private double stepSize = 0.1;
     private int width = 1200;
     private int height = 800;
 
     private Random rand;
     private int amountnewpoints = 10;
     private int posamount = 1000;
+
+    private double[][] clusterDistance;
 
     public PointPlacement(ArrayList<Node> nodes, ArrayList<Edge> edges, Force forces)
     {
@@ -44,6 +46,7 @@ public class PointPlacement
         Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
 
         double[][] clusterD = getDistanceMatrixCluster(nodes, clusterNumber, pairD);
+        clusterDistance = clusterD;
         double[][] pos = defineNodePosition2( clusterD );
 
         distortionmetric( pos, clusterD );
@@ -71,6 +74,11 @@ public class PointPlacement
         }
     }
 
+    public double[][] getClusterD()
+    {
+        return clusterDistance;
+    }
+
     private void distortionmetric(double[][] pos, double[][] clusterD)
     {
         //the maximum of the actual distance divided with the mapping distance
@@ -79,6 +87,10 @@ public class PointPlacement
         double expansion = 0;
         //distortion is the multiplication of the 2. The ideal would be a distortion of 1
         double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
 
         double[][] mapping = new double[clusterD.length][clusterD.length];
 
@@ -96,22 +108,27 @@ public class PointPlacement
         {
             for( int j = 0; j < mapping[i].length; j++ )
             {
-                double contractionlocal = (clusterD[i][j]/mapping[i][j]);
-                double expansionlocal = (mapping[i][j]/clusterD[i][j]);
+                if( i != j )
+                {
+                    total++;
+                    double contractionlocal = (clusterD[i][j] / mapping[i][j]);
+                    double expansionlocal = (mapping[i][j] / clusterD[i][j]);
 
-                if( contractionlocal > contraction )
-                {
-                    contraction = contractionlocal;
-                }
-                if( expansionlocal > expansion )
-                {
-                    expansion = expansionlocal;
+                    contractiontotal = (contractiontotal + contractionlocal);
+                    expansiontotal = (expansiontotal + expansionlocal);
                 }
             }
         }
+
+        contraction = (contractiontotal/total);
+        expansion = (expansiontotal/total);
         distortion = (contraction*expansion);
+
         contraction = 0;
         expansion = 0;
+        contractiontotal = 0;
+        expansiontotal = 0;
+        total = 0;
 
         System.out.println("distortion: " + distortion);
     }
@@ -198,12 +215,17 @@ public class PointPlacement
 
     private void getDistortion( double[][] clusterD )
     {
+
         //the maximum of the actual distance divided with the mapping distance
         double contraction = 0;
         //the maximum of the mapping distance divided with the actual distance
         double expansion = 0;
         //distortion is the multiplication of the 2. The ideal would be a distortion of 1
         double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
 
         for( double[][] nodePos : positions )
         {
@@ -223,22 +245,27 @@ public class PointPlacement
             {
                 for( int j = 0; j < mapping[i].length; j++ )
                 {
-                    double contractionlocal = (clusterD[i][j]/mapping[i][j]);
-                    double expansionlocal = (mapping[i][j]/clusterD[i][j]);
+                    if( i != j )
+                    {
+                        total++;
+                        double contractionlocal = (clusterD[i][j] / mapping[i][j]);
+                        double expansionlocal = (mapping[i][j] / clusterD[i][j]);
 
-                    if( contractionlocal > contraction )
-                    {
-                        contraction = contractionlocal;
-                    }
-                    if( expansionlocal > expansion )
-                    {
-                        expansion = expansionlocal;
+                        contractiontotal = (contractiontotal + contractionlocal);
+                        expansiontotal = (expansiontotal + expansionlocal);
                     }
                 }
             }
+
+            contraction = (contractiontotal/total);
+            expansion = (expansiontotal/total);
             distortion = (contraction*expansion);
+
             contraction = 0;
             expansion = 0;
+            contractiontotal = 0;
+            expansiontotal = 0;
+            total = 0;
 
             if( p[0].getDistortion() > distortion )
             {

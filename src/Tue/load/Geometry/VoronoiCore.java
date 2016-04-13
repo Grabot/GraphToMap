@@ -165,9 +165,9 @@ public class VoronoiCore {
 
 	public void moveSitesBack(ArrayList<Cluster> clusters)
 	{
-		for( Cluster c : clusters )
+		for( Site point : sites )
 		{
-			c.getSite().setXY(c.getSite().getOldX(), c.getSite().getOldY());
+			point.setXY(clusters.get(point.getIndex()).getPos().getX(), clusters.get(point.getIndex()).getPos().getY());
 		}
 	}
 

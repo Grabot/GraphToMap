@@ -1,9 +1,6 @@
 package Tue.load.Forces;
 
-import Tue.objects.Cluster;
-import Tue.objects.ClusterEdge;
-import Tue.objects.ClusterNode;
-import Tue.objects.DelaunayEdge;
+import Tue.objects.*;
 
 import java.util.ArrayList;
 
@@ -43,4 +40,8 @@ public class Force
         spring.ApplyForce( edge );
     }
 
+    public void ApplySiteEdgeForce( SiteEdge edge )
+    {
+        spring.ApplyForce( edge );
+    }
 }

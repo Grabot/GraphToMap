@@ -1,26 +1,23 @@
 package Tue;
 
-import Tue.load.Display;
+import Tue.load.Display.Display;
 import Tue.load.Forces.*;
 import Tue.load.PointPlacement;
-import Tue.load.Vector2;
 import Tue.objects.*;
 import Tue.parser.DotParser;
 import Tue.parser.DotScanner;
-import mdsj.MDSJ;
 
 import java.awt.EventQueue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class Main {
 
     public int width = 1200;
     public int height = 800;
-    public int delta = 4;
+    public int delta = 40;
 
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -29,6 +26,8 @@ public class Main {
     public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 
     public Force forces;
+
+    public double[][] clusterDistance;
 
     public static void main(String[] args)
     {
@@ -52,6 +51,8 @@ public class Main {
 
         PointPlacement points = new PointPlacement(nodes, edges, forces);
 
+        clusterDistance = points.getClusterD();
+
         clusters = points.getClusters();
         clusterEdges = points.getClusterEdges();
 
@@ -68,7 +69,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/random4.gv"));
+            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

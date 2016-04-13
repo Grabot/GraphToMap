@@ -1,4 +1,4 @@
-package Tue.load;
+package Tue.load.Display;
 
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.debuge.Colors;

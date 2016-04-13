@@ -1,6 +1,7 @@
-package Tue.load;
+package Tue.load.Display;
 
 import Tue.Main;
+import Tue.load.Vector2;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.ClusterNode;
@@ -29,15 +30,15 @@ public class Display extends JPanel implements ActionListener
     private boolean showSites = false;
     private boolean movement = true;
 
-    private Renderer render;
+    private Tue.load.Display.Renderer render;
     private Simulation simulation;
 
     public void create()
     {
         lastLoopTime = System.currentTimeMillis();
 
-        render = new Renderer(clusters, clusterEdges);
-        simulation = new Simulation(render, clusters, clusterEdges, main.width, main.height, main.forces);
+        render = new Tue.load.Display.Renderer(clusters, clusterEdges);
+        simulation = new Simulation(render, clusters, clusterEdges, main.width, main.height, main.forces, main.clusterDistance);
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
