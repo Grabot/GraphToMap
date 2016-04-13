@@ -18,12 +18,9 @@ public class Simulation
 {
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
-    private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
-    private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
     private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
     private ArrayList<DelaunayFace> d_faces = new ArrayList<DelaunayFace>();
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
-    private ArrayList<SiteEdge> siteEdges = new ArrayList<SiteEdge>();
     private boolean[][] neighbours;
     private float delta = 0;
 
@@ -52,7 +49,6 @@ public class Simulation
         this.height = height;
 
         this.clusters = clusters;
-        this.clusteredges = clusteredges;
         this.clusterD = clusterD;
         this.render = render;
         this.forces = forces;
@@ -64,7 +60,8 @@ public class Simulation
         core = new VoronoiCore();
 
         boundary = new ConvexHull();
-        convexBorder();
+        ellipseBorder();
+        //convexBorder();
 
         for (int i=0;i<clusters.size();i++){
             Site site = new Site(clusters.get(i).getPos().x, clusters.get(i).getPos().y);
@@ -83,8 +80,6 @@ public class Simulation
         core.voroDiagram();
         core.setOldPoint();
 
-        setSiteEdges();
-
         getDelaunay();
         render.addDelaunay(d_edges);
 
@@ -92,15 +87,21 @@ public class Simulation
         areaMove = new AreaMovement( clusters, core );
     }
 
-    private void setSiteEdges()
+    private void ellipseBorder()
     {
-        for(Cluster c : clusters )
-        {
-            SiteEdge edge = new SiteEdge(c, forces, boundingPolygon);
-            siteEdges.add( edge );
-        }
-    }
+        boundingPolygon = new PolygonSimple();
 
+        int numPoints = 40;
+        for (int j = 0; j < numPoints; j++) {
+            double angle = 2.0 * Math.PI * (j * 1.0 / numPoints);
+            double rotate = 2.0 * Math.PI / numPoints / 2;
+            double y = Math.sin(angle + rotate) * (height/2) + (height/2);
+            double x = Math.cos(angle + rotate) * (width/2) + (width/2);
+            boundingPolygon.add(x, y);
+        }
+
+        render.addBounding( boundingPolygon );
+    }
     private void convexBorder()
     {
         Vector2[] points = new Vector2[clusters.size()];

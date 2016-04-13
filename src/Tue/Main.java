@@ -69,7 +69,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
+            scanner = new DotScanner(new FileReader("datasets/random4.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

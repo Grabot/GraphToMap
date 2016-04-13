@@ -40,8 +40,4 @@ public class Force
         spring.ApplyForce( edge );
     }
 
-    public void ApplySiteEdgeForce( SiteEdge edge )
-    {
-        spring.ApplyForce( edge );
-    }
 }
