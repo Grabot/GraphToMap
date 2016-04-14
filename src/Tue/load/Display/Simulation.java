@@ -83,7 +83,7 @@ public class Simulation
         getDelaunay();
         render.addDelaunay(d_edges);
 
-        forceMove = new ForceDirectedMovement( clusters, clusteredges, core );
+        forceMove = new ForceDirectedMovement( clusters, clusteredges, d_edges,  core );
         areaMove = new AreaMovement( clusters, core );
     }
 
@@ -133,7 +133,7 @@ public class Simulation
     {
         this.delta = delta;
 
-        //forceMove.ForceMove(delta);
+        forceMove.ForceMove(delta);
         areaMove.AreaMove();
 
         render.addSites( core.getSites() );

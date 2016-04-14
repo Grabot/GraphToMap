@@ -2,8 +2,10 @@ package Tue.load.Display;
 
 import Tue.load.Geometry.VoronoiCore;
 import Tue.load.Vector2;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
+import Tue.objects.DelaunayEdge;
 
 import java.util.ArrayList;
 
@@ -15,14 +17,16 @@ public class ForceDirectedMovement
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
+    private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
 
     private float delta;
     private VoronoiCore core;
 
-    public ForceDirectedMovement(ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, VoronoiCore core)
+    public ForceDirectedMovement(ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges, VoronoiCore core)
     {
         this.clusters = clusters;
         this.clusteredges = clusteredges;
+        this.d_edges = d_edges;
         this.core = core;
     }
 
@@ -62,8 +66,9 @@ public class ForceDirectedMovement
         //calculate velocity and position for all nodes.
         for( int i = 0; i < clusters.size(); i++ )
         {
-            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
-            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * delta)), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * delta ))));
+            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getForce().x*delta)), clusters.get(i).getPos().y + (clusters.get(i).getForce().y * delta )));
+            //clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+            //clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * delta)), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * delta ))));
         }
 
         core.moveSitesBack(clusters);
@@ -76,22 +81,40 @@ public class ForceDirectedMovement
             node.setForce(new Vector2(0, 0));
         }
 
+        getVoronoiForce();
         getEdgeForces();
-        getNodeForces();
+        //getNodeForces();
+    }
+
+    private void getVoronoiForce()
+    {
+        for( Cluster c : clusters )
+        {
+            double ks = 0.3;
+            PolygonSimple poly = c.getSite().getPolygon();
+            double distance = c.getPos().distance(new Vector2(poly.getCentroid().getX(), poly.getCentroid().getY()));
+            double distanceX = c.getPos().getX() - poly.getCentroid().getX();
+            double distanceY = c.getPos().getY() - poly.getCentroid().getY();
+
+            double forceX = (-((distanceX/distance)*((ks * distance))));
+            double forceY = (-((distanceY/distance)*((ks * distance))));
+
+            c.setForce( new Vector2( c.getForce().getX() + forceX, c.getForce().getY() + forceY));
+        }
     }
 
     private void getEdgeForces()
     {
         //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
 
-        for (ClusterEdge edge : clusteredges) {
-            edge.ApplyForces();
-        }
-
-//        for( DelaunayEdge edge : d_edges )
-//        {
+//        for (ClusterEdge edge : clusteredges) {
 //            edge.ApplyForces();
 //        }
+
+        for( DelaunayEdge edge : d_edges )
+        {
+            edge.ApplyForces();
+        }
     }
 
     private void getNodeForces()

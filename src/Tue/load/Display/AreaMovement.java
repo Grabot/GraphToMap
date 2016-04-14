@@ -27,7 +27,7 @@ public class AreaMovement
     {
         core.adaptWeightsSimple();
         core.voroDiagram();
-        positionClusterNode();
+        //positionClusterNode();
     }
 
     private void positionClusterNode()
