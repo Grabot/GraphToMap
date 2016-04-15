@@ -2,9 +2,7 @@ package Tue.load.Display;
 
 import Tue.Main;
 import Tue.load.Vector2;
-import Tue.objects.Cluster;
-import Tue.objects.ClusterEdge;
-import Tue.objects.ClusterNode;
+import Tue.objects.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +19,8 @@ public class Display extends JPanel implements ActionListener
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusterEdges = new ArrayList<ClusterEdge>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Edge> edges = new ArrayList<Edge>();
 
     long lastLoopTime;
     float delta;
@@ -90,6 +90,8 @@ public class Display extends JPanel implements ActionListener
 
         this.clusters = main.clusters;
         this.clusterEdges = main.clusterEdges;
+        this.nodes = main.nodes;
+        this.edges = main.edges;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());
@@ -109,8 +111,8 @@ public class Display extends JPanel implements ActionListener
         delta = System.currentTimeMillis() - lastLoopTime;
         lastLoopTime = System.currentTimeMillis();
         //get correct delta
-        delta = (delta / 1000);
-        //delta = 0.040f;
+        //delta = (delta / 1000);
+        delta = 0.040f;
 
         simulation.update( delta );
 

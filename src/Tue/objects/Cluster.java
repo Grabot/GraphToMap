@@ -6,6 +6,8 @@ import Tue.load.Forces.FrictionForce;
 import Tue.load.Forces.WallForce;
 import Tue.load.voronoitreemap.j2d.Site;
 
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 /**
@@ -25,7 +27,7 @@ public class Cluster extends ClusterNode
 
     public Cluster(int clusternumber, Force forces )
     {
-        super( clusternumber, forces );
+        super( forces );
         this.clusternumber = clusternumber;
     }
 
@@ -83,5 +85,19 @@ public class Cluster extends ClusterNode
     public ArrayList<Cluster> getNeighbours()
     {
         return neighbours;
+    }
+
+    public void draw(Graphics2D g2, double radius, Color color )
+    {
+        Color c1 = new Color(255, 255, 0, 200 );
+        g2.setColor(c1);
+        Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(radius/2), this.getPos().y-(radius/2), radius, radius);
+        g2.fill(shape);
+
+        g2.setColor(Color.BLACK);
+        Ellipse2D.Double shape2 = new Ellipse2D.Double(this.getSite().getPolygon().getCentroid().getX()-(radius/2), this.getSite().getPolygon().getCentroid().getY()-(radius/2), radius, radius);
+        g2.fill(shape2);
+        g2.drawString("cluster " + clusternumber, (float)this.getSite().getPolygon().getCentroid().getX(), (float)this.getSite().getPolygon().getCentroid().getY()-30 );
+        g2.drawString("size " + (int)this.weight, (float)this.getSite().getPolygon().getCentroid().getX(), (float)this.getSite().getPolygon().getCentroid().getY()-20 );
     }
 }

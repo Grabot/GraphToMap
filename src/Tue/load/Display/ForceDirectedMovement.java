@@ -3,6 +3,7 @@ package Tue.load.Display;
 import Tue.load.Geometry.VoronoiCore;
 import Tue.load.Vector2;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
+import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.Cluster;
 import Tue.objects.ClusterEdge;
 import Tue.objects.DelaunayEdge;
@@ -22,12 +23,15 @@ public class ForceDirectedMovement
     private float delta;
     private VoronoiCore core;
 
-    public ForceDirectedMovement(ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges, VoronoiCore core)
+    private PolygonSimple boundingPolygon;
+
+    public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges, VoronoiCore core)
     {
         this.clusters = clusters;
         this.clusteredges = clusteredges;
         this.d_edges = d_edges;
         this.core = core;
+        this.boundingPolygon = boundingPolygon;
     }
 
     public void ForceMove( float delta )
@@ -35,6 +39,7 @@ public class ForceDirectedMovement
         this.delta = delta;
 
         calculatePosEuler();
+        //calculatePosMidPoint();
         core.voroDiagram();
     }
 
@@ -90,16 +95,17 @@ public class ForceDirectedMovement
     {
         for( Cluster c : clusters )
         {
-            double ks = 0.3;
-            PolygonSimple poly = c.getSite().getPolygon();
-            double distance = c.getPos().distance(new Vector2(poly.getCentroid().getX(), poly.getCentroid().getY()));
-            double distanceX = c.getPos().getX() - poly.getCentroid().getX();
-            double distanceY = c.getPos().getY() - poly.getCentroid().getY();
+            double ks = 10;
+            Site s = c.getSite();
+
+            double distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
+            double distanceX = c.getPos().getX() - s.getPolygon().getCentroid().getX();
+            double distanceY = c.getPos().getY() - s.getPolygon().getCentroid().getY();
 
             double forceX = (-((distanceX/distance)*((ks * distance))));
             double forceY = (-((distanceY/distance)*((ks * distance))));
 
-            c.setForce( new Vector2( c.getForce().getX() + forceX, c.getForce().getY() + forceY));
+            c.setForce( new Vector2( c.getForce().getX() + (forceX), c.getForce().getY() + (forceY)));
         }
     }
 

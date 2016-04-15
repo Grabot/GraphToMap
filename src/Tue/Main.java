@@ -7,7 +7,7 @@ import Tue.objects.*;
 import Tue.parser.DotParser;
 import Tue.parser.DotScanner;
 
-import java.awt.EventQueue;
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,10 +17,10 @@ public class Main {
 
     public int width = 1200;
     public int height = 800;
-    public int delta = 40;
+    public int delta = 1;
 
-    private ArrayList<Node> nodes = new ArrayList<Node>();
-    private ArrayList<Edge> edges = new ArrayList<Edge>();
+    public ArrayList<Node> nodes = new ArrayList<Node>();
+    public ArrayList<Edge> edges = new ArrayList<Edge>();
 
     public ArrayList<ClusterEdge> clusterEdges = new ArrayList<ClusterEdge>();
     public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
@@ -69,7 +69,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/random4.gv"));
+            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

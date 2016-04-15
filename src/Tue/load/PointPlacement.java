@@ -2,7 +2,6 @@ package Tue.load;
 
 import Tue.load.Forces.Force;
 import Tue.objects.*;
-import mdsj.MDSJ;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -326,49 +325,6 @@ public class PointPlacement
             }
         }
 
-    }
-
-    private double[][] defineNodePosition(double[][] clusterD)
-    {
-
-        //keep track of the highest number to define empty aspects of the distance matrix
-        //there are "-1" distances, these mean no connection. We connect them with a factor of the highest distance
-        //This will draw them in the plane away from the others, which is also what should happen
-        double highest = 0;
-        for( int i = 0; i < clusterD.length; i++ )
-        {
-            for( int j = 0; j < clusterD[i].length; j++ )
-            {
-                if( clusterD[i][j] > highest )
-                {
-                    highest = clusterD[i][j];
-                }
-            }
-        }
-
-        missingValue = highest*1.5;
-
-        for( int i = 0; i < clusterD.length; i++ )
-        {
-            for( int j = 0; j < clusterD[i].length; j++ )
-            {
-                if( clusterD[i][j] == -1 )
-                {
-                    clusterD[i][j] = missingValue;
-                }
-            }
-        }
-
-        double[][] output = MDSJ.stressMinimization(clusterD);
-        //double[][] output = MDSJ.classicalScaling(clusterD); // apply MDS
-
-        for(int i=0; i<output[0].length; i++) {
-            //coordinates are determined, scale them up to fit the plane
-            output[0][i] = (output[0][i]*100) + (width/2);
-            output[1][i] = (output[1][i]*100) + (height/2);
-        }
-
-        return output;
     }
 
 

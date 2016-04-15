@@ -18,7 +18,6 @@ public class Simulation
 {
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
-    private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
     private ArrayList<DelaunayFace> d_faces = new ArrayList<DelaunayFace>();
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
     private boolean[][] neighbours;
@@ -41,7 +40,6 @@ public class Simulation
     private ConvexHull boundary;
 
     private ForceDirectedMovement forceMove;
-    private AreaMovement areaMove;
 
     public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD )
     {
@@ -80,28 +78,28 @@ public class Simulation
         core.voroDiagram();
         core.setOldPoint();
 
-        getDelaunay();
+        ArrayList<DelaunayEdge> d_edges = getDelaunay();
         render.addDelaunay(d_edges);
 
-        forceMove = new ForceDirectedMovement( clusters, clusteredges, d_edges,  core );
-        areaMove = new AreaMovement( clusters, core );
+        forceMove = new ForceDirectedMovement( boundingPolygon, clusters, clusteredges, d_edges, core );
     }
 
     private void ellipseBorder()
     {
         boundingPolygon = new PolygonSimple();
 
-        int numPoints = 40;
-        for (int j = 0; j < numPoints; j++) {
+        int numPoints = 20;
+        for (int j = 0; j < numPoints; j++)
+        {
             double angle = 2.0 * Math.PI * (j * 1.0 / numPoints);
             double rotate = 2.0 * Math.PI / numPoints / 2;
             double y = Math.sin(angle + rotate) * (height/2) + (height/2);
             double x = Math.cos(angle + rotate) * (width/2) + (width/2);
             boundingPolygon.add(x, y);
         }
-
         render.addBounding( boundingPolygon );
     }
+
     private void convexBorder()
     {
         Vector2[] points = new Vector2[clusters.size()];
@@ -133,15 +131,20 @@ public class Simulation
     {
         this.delta = delta;
 
+        //applying force and do movement
         forceMove.ForceMove(delta);
-        areaMove.AreaMove();
+
+        //calculate the area's and apply them
+        core.adaptWeightsSimple();
+        core.voroDiagram();
 
         render.addSites( core.getSites() );
         //distortionmetric();
     }
 
-    private void getDelaunay()
+    private ArrayList<DelaunayEdge> getDelaunay()
     {
+        ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
         for( int i = 0; i < neighbours.length; i++ )
         {
             for( int j = 0; j < neighbours[i].length; j++ )
@@ -176,8 +179,7 @@ public class Simulation
                 }
             }
         }
-
-        render.addDelaunay(d_edges);
+        return d_edges;
     }
 
     private void distortionmetric()

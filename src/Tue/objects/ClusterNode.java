@@ -21,16 +21,14 @@ public class ClusterNode
 
     private Force forces;
 
-    private int clusternumber = -1;
     private double weight = -1;
 
-    public ClusterNode( int clusternumber, Force forces )
+    public ClusterNode( Force forces )
     {
         pos = new Vector2(0, 0);
         vel = new Vector2(0, 0);
         force = new Vector2(0, 0);
         this.forces = forces;
-        this.clusternumber = clusternumber;
     }
 
     public void setPos( Vector2 pos )
@@ -70,15 +68,6 @@ public class ClusterNode
 
     public void setFinalWeight( double weight ){
         this.weight = weight;
-    }
-
-    public void draw( Graphics2D g2, double radius, Color color )
-    {
-        g2.setColor(color);
-        Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(radius/2), this.getPos().y-(radius/2), radius, radius);
-        g2.fill(shape);
-        g2.drawString("cluster " + clusternumber, (float)this.getPos().x, (float)(this.getPos().y-30) );
-        g2.drawString("size " + (int)this.weight, (float)this.getPos().x, (float)(this.getPos().y-20));
     }
 
 }
