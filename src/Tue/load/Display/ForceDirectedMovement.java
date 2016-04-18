@@ -86,8 +86,8 @@ public class ForceDirectedMovement
             node.setForce(new Vector2(0, 0));
         }
 
-        getVoronoiForce();
         getEdgeForces();
+        getVoronoiForce();
         //getNodeForces();
     }
 

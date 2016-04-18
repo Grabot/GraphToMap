@@ -1,6 +1,7 @@
 package Tue.load.Display;
 
 import Tue.Main;
+import Tue.load.Forces.Force;
 import Tue.load.Vector2;
 import Tue.objects.*;
 
@@ -14,7 +15,6 @@ import java.util.ArrayList;
  */
 public class Display extends JPanel implements ActionListener
 {
-    private Main main;
     private final Timer timer;
 
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
@@ -33,12 +33,17 @@ public class Display extends JPanel implements ActionListener
     private Tue.load.Display.Renderer render;
     private Simulation simulation;
 
+    private Force forces;
+    private int width;
+    private int height;
+    private double[][] clusterDistance;
+
     public void create()
     {
         lastLoopTime = System.currentTimeMillis();
 
         render = new Tue.load.Display.Renderer(clusters, clusterEdges);
-        simulation = new Simulation(render, clusters, clusterEdges, main.width, main.height, main.forces, main.clusterDistance);
+        simulation = new Simulation(render, clusters, clusterEdges, width, height, forces, clusterDistance, nodes, edges );
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +51,7 @@ public class Display extends JPanel implements ActionListener
         f.pack();
         f.setLocation(400, 100);
         //f.setLocationRelativeTo(null);
-        f.setSize(main.width, main.height);
+        f.setSize(width, height);
         f.setVisible(true);
 
         f.addKeyListener(new KeyListener() {
@@ -85,13 +90,16 @@ public class Display extends JPanel implements ActionListener
     {
         super(true);
 
-        this.main = main;
         timer = new Timer(main.delta, this);
 
         this.clusters = main.clusters;
         this.clusterEdges = main.clusterEdges;
         this.nodes = main.nodes;
         this.edges = main.edges;
+        this.forces = main.forces;
+        this.width = main.width;
+        this.height = main.height;
+        this.clusterDistance = main.clusterDistance;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());

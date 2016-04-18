@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by s138362 on 27-3-2016.
@@ -20,15 +21,19 @@ public class Renderer
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
     private ArrayList<DelaunayEdge> d_edges =  new ArrayList<DelaunayEdge>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Edge> edges = new ArrayList<Edge>();
     private OpenList sites;
 
     private Graphics g;
     private Graphics2D g2;
     private PolygonSimple boundingPolygon = null;
     private PolygonSimple newBorder = null;
+    private Random rand;
 
-    public Renderer(ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges )
+    public Renderer(ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
     {
+        rand = new Random();
         this.clusternodes = clusternodes;
         this.clusteredges = clusteredges;
 
@@ -42,11 +47,31 @@ public class Renderer
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         drawVoronoiArea();
-        drawNodes(showSites);
-        drawEdges( showEdges );
+        drawClusterNodes(showSites);
         drawBounding();
         drawDelaunay(showDelaunay);
         //drawBoundary();
+
+        drawNodes();
+        drawEdges( showEdges );
+
+    }
+
+    private void drawEdges( boolean showEdges )
+    {
+        if( showEdges ) {
+            for( Edge edge : edges )
+            {
+                edge.draw( g2, Color.BLACK );
+            }
+        }
+    }
+
+    private void drawNodes()
+    {
+        for (Node node : nodes) {
+            node.draw(g2, 10, node.getColor());
+        }
     }
 
     private void drawBoundary()
@@ -67,7 +92,17 @@ public class Renderer
         }
     }
 
-    private void drawNodes(boolean showSites)
+    public void setNormalNodes( ArrayList<Node> nodes )
+    {
+        this.nodes = nodes;
+    }
+
+    public void setNormalEdges( ArrayList<Edge> edges )
+    {
+        this.edges = edges;
+    }
+
+    private void drawClusterNodes(boolean showSites)
     {
         if( showSites) {
             g2.setColor(Color.GRAY);
@@ -82,16 +117,6 @@ public class Renderer
         {
             double radius = 10;
             Cnode.draw(g2, radius, Color.BLACK);
-        }
-    }
-
-    private void drawEdges( boolean showEdges )
-    {
-        for (ClusterEdge edge : clusteredges )
-        {
-            if( showEdges ) {
-                edge.draw(g2, Color.BLACK);
-            }
         }
     }
 

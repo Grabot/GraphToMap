@@ -9,7 +9,9 @@ import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.*;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by s138362 on 27-3-2016.
@@ -20,7 +22,12 @@ public class Simulation
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<DelaunayFace> d_faces = new ArrayList<DelaunayFace>();
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Edge> edges = new ArrayList<Edge>();
     private boolean[][] neighbours;
+    private boolean clustererrors = false;
+    private boolean cluster1Pos = false;
+    private boolean clusterNodesPos = false;
     private float delta = 0;
 
     private int width;
@@ -32,6 +39,7 @@ public class Simulation
 
     private Renderer render;
     private Force forces;
+    private Random rand;
 
     private double[][] clusterD;
 
@@ -41,7 +49,7 @@ public class Simulation
 
     private ForceDirectedMovement forceMove;
 
-    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD )
+    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
         this.width = width;
         this.height = height;
@@ -50,6 +58,9 @@ public class Simulation
         this.clusterD = clusterD;
         this.render = render;
         this.forces = forces;
+        this.nodes = nodes;
+        this.edges = edges;
+        rand = new Random();
 
         neighbours = new boolean[clusters.size()][clusters.size()];
 
@@ -131,17 +142,122 @@ public class Simulation
     {
         this.delta = delta;
 
-        //applying force and do movement
-        forceMove.ForceMove(delta);
+        if( clustererrors )
+        {
+            if( !clusterNodesPos ) {
+                positionClusterNodes();
+            }
+        }
+        else
+        {
+            //applying force and do movement
+            forceMove.ForceMove(delta);
 
-        //calculate the area's and apply them
-        core.adaptWeightsSimple();
-        core.voroDiagram();
+            //calculate the area's and apply them
+            core.adaptWeightsSimple();
+            core.voroDiagram();
 
-        render.addSites( core.getSites() );
-        //distortionmetric();
+            render.addSites( core.getSites() );
+            //distortionmetric();
+            checkError();
+        }
+
     }
 
+    private void checkError()
+    {
+        double areaHave = 1;
+        double areaWant = 1;
+        double error = 1;
+        int doneclusters = 0;
+        for( Cluster c : clusters )
+        {
+            Site s = c.getSite();
+            PolygonSimple p = s.getPolygon();
+            areaHave = p.getArea();
+            areaWant = boundingPolygon.getArea()*s.getPercentage();
+            error = Math.abs(areaWant - areaHave) / (areaWant);
+
+            if( error < 0.011 )
+            {
+                doneclusters++;
+            }
+        }
+        if( doneclusters == clusters.size() )
+        {
+            clustererrors = true;
+            System.out.println("all area's low error");
+        }
+        doneclusters = 0;
+    }
+
+    private void positionCluster1()
+    {
+        ArrayList<Node> cluster1 = new ArrayList<Node>();
+        Cluster c = clusters.get(0);
+        PolygonSimple p = c.getSite().getPolygon();
+        cluster1 = c.getNodes();
+        boolean set = false;
+        for( Node n : cluster1 )
+        {
+            while( !set ) {
+                double xPos = rand.nextDouble() * width;
+                double yPos = rand.nextDouble() * height;
+                if (pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos)) {
+                    n.setPos(new Vector2(xPos, yPos));
+                    set = true;
+                }
+            }
+            set = false;
+        }
+        cluster1Pos = true;
+        render.setNormalNodes(nodes);
+    }
+
+    private void positionClusterNodes()
+    {
+        for( Cluster c : clusters ) {
+            ArrayList<Node> clusternodes;
+            PolygonSimple p = c.getSite().getPolygon();
+            clusternodes = c.getNodes();
+            Color nodeColour = new Color( rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+            boolean set = false;
+            for (Node n : clusternodes) {
+                while (!set) {
+                    double xPos = rand.nextDouble() * width;
+                    double yPos = rand.nextDouble() * height;
+                    if (pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos)) {
+                        n.setPos(new Vector2(xPos, yPos));
+                        n.setColor(nodeColour);
+                        set = true;
+                    }
+                }
+                set = false;
+            }
+        }
+        clusterNodesPos = true;
+        render.setNormalNodes(nodes);
+        render.setNormalEdges(edges);
+    }
+
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
+    }
     private ArrayList<DelaunayEdge> getDelaunay()
     {
         ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();

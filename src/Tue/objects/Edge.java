@@ -1,5 +1,8 @@
 package Tue.objects;
 
+import java.awt.*;
+import java.awt.geom.Line2D;
+
 /**
  * Created by s138362 on 16-3-2016.
  */
@@ -35,4 +38,10 @@ public class Edge
         return weight;
     }
 
+    public void draw(Graphics2D g2, Color color )
+    {
+        g2.setColor(color);
+        Shape shape = new Line2D.Double(this.getSource().getPos().x, this.getSource().getPos().y, this.getDest().getPos().x, this.getDest().getPos().y);
+        g2.draw(shape);
+    }
 }
