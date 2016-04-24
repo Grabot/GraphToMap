@@ -1,8 +1,10 @@
 package Tue.load;
 
 import Tue.load.Forces.Force;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -14,7 +16,10 @@ public class PointPlacement
 {
     public ArrayList<ClusterEdge> clusterEdges = new ArrayList<ClusterEdge>();
     public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Edge> edges = new ArrayList<Edge>();
     private ArrayList<double[][]> positions = new ArrayList<double[][]>();
+    private Force forces;
 
     private double missingValue = 0;
     private double radiusGlobal = 10;
@@ -27,26 +32,177 @@ public class PointPlacement
     private int posamount = 1000;
 
     private double[][] clusterDistance;
+    private double[][] pairD;
 
-    public PointPlacement(ArrayList<Node> nodes, ArrayList<Edge> edges, Force forces)
+    public PointPlacement(ArrayList<Node> nodes, ArrayList<Edge> edges, Force forces )
     {
         rand = new Random();
+        this.forces = forces;
+        this.nodes = nodes;
+        this.edges = edges;
 
         Graph g = new Graph(nodes, edges);
 
-        double[][] pairD = new double[nodes.size()][nodes.size()];
+        pairD = new double[nodes.size()][nodes.size()];
 
         for( int i = 0; i < nodes.size(); i++ )
         {
             pairD[i] = g.BFS(nodes.get(i));
         }
+    }
 
+
+    private void getDistortionNormal()
+    {
+        //the maximum of the actual distance divided with the mapping distance
+        double contraction = 0;
+        //the maximum of the mapping distance divided with the actual distance
+        double expansion = 0;
+        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
+        double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
+
+        for( double[][] nodePos : positions )
+        {
+            double[][] mapping = new double[pairD.length][pairD.length];
+
+            for (int i = 0; i < pairD.length; i++) {
+                Vector2 node1 = new Vector2(nodePos[0][i], nodePos[1][i]);
+                for (int j = 0; j < pairD.length; j++)
+                {
+                    Vector2 node2 = new Vector2(nodePos[0][j], nodePos[1][j]);
+                    //get the actual distances between all nodes to calculate the distorion metrics
+                    mapping[i][j] = node1.distance(node2);
+                }
+            }
+
+            for( int i = 0; i < mapping.length; i++ )
+            {
+                for( int j = 0; j < mapping[i].length; j++ )
+                {
+                    if( i != j )
+                    {
+                        total++;
+                        double contractionlocal = (pairD[i][j] / mapping[i][j]);
+                        double expansionlocal = (mapping[i][j] / pairD[i][j]);
+
+                        contractiontotal = (contractiontotal + contractionlocal);
+                        expansiontotal = (expansiontotal + expansionlocal);
+                    }
+                }
+            }
+
+            contraction = (contractiontotal/total);
+            expansion = (expansiontotal/total);
+            distortion = (contraction*expansion);
+
+            contraction = 0;
+            expansion = 0;
+            contractiontotal = 0;
+            expansiontotal = 0;
+            total = 0;
+
+            if( normalP[0].getDistortion() > distortion )
+            {
+                Positioning pos = new Positioning( nodePos, distortion );
+                normalP[0] = pos;
+            }
+            sortNormal();
+        }
+
+        getNewPointsNormal(pairD.length);
+    }
+
+    private Positioning[] normalP = new Positioning[100];
+    public double[][] defineNormalNodePosition()
+    {
+        for( int i = 0; i < normalP.length; i++ )
+        {
+            Positioning pos = new Positioning( null, Double.MAX_VALUE );
+            normalP[i] = pos;
+        }
+
+        positions.clear();
+
+        double[][] result = new double[pairD.length][pairD.length];
+
+        System.out.println("test");
+
+        int countFrom = 0;
+        int countTo = 0;
+        for( int i = 0; i < posamount; i++ ) {
+            double[][] output = new double[2][pairD.length];
+            for (Cluster c : clusters) {
+                ArrayList<Node> clusternodes;
+                PolygonSimple p = c.getSite().getPolygon();
+                clusternodes = c.getNodes();
+                countTo = (countTo + clusternodes.size());
+                boolean set = false;
+                for (int j = countFrom; j < countTo; j++) {
+
+                    while (!set) {
+                        double xPos = rand.nextDouble() * width;
+                        double yPos = rand.nextDouble() * height;
+                        if (pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos)) {
+                            output[0][j] = xPos;
+                            output[1][j] = yPos;
+                            set = true;
+                        }
+                    }
+                    set = false;
+                }
+                countFrom = countTo;
+            }
+            positions.add(output);
+            countFrom = 0;
+            countTo = 0;
+        }
+
+        while( radiusGlobal > 0.1 )
+        {
+            getDistortionNormal();
+            radiusGlobal=(radiusGlobal-stepSize);
+        }
+
+        return normalP[99].getPos();
+    }
+
+    public void PointPlacementNormal(ArrayList<Cluster> clusters)
+    {
+        this.clusters = clusters;
+        System.out.println("size test: " + clusters.get(0).getNodes().size());
+    }
+
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
+    }
+
+    public void PointPlacementCluster()
+    {
         int clusterNumber = getClusterNumber(nodes, edges);
         Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
 
-        double[][] clusterD = getDistanceMatrixCluster(nodes, clusterNumber, pairD);
+        double[][] clusterD = getDistanceMatrixCluster(nodes, clusterNumber);
         clusterDistance = clusterD;
-        double[][] pos = defineNodePosition2( clusterD );
+        double[][] pos = defineClusterNodePosition( clusterD );
 
         distortionmetric( pos, clusterD );
 
@@ -78,61 +234,7 @@ public class PointPlacement
         return clusterDistance;
     }
 
-    private void distortionmetric(double[][] pos, double[][] clusterD)
-    {
-        //the maximum of the actual distance divided with the mapping distance
-        double contraction = 0;
-        //the maximum of the mapping distance divided with the actual distance
-        double expansion = 0;
-        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
-        double distortion;
-
-        double contractiontotal = 0;
-        double expansiontotal = 0;
-        int total = 0;
-
-        double[][] mapping = new double[clusterD.length][clusterD.length];
-
-        for (int i = 0; i < clusterD.length; i++) {
-            Vector2 node1 = new Vector2(pos[0][i], pos[1][i]);
-            for (int j = 0; j < clusterD.length; j++)
-            {
-                Vector2 node2 = new Vector2(pos[0][j], pos[1][j]);
-                //get the actual distances between all nodes to calculate the distorion metrics
-                mapping[i][j] = node1.distance(node2);
-            }
-        }
-
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            for( int j = 0; j < mapping[i].length; j++ )
-            {
-                if( i != j )
-                {
-                    total++;
-                    double contractionlocal = (clusterD[i][j] / mapping[i][j]);
-                    double expansionlocal = (mapping[i][j] / clusterD[i][j]);
-
-                    contractiontotal = (contractiontotal + contractionlocal);
-                    expansiontotal = (expansiontotal + expansionlocal);
-                }
-            }
-        }
-
-        contraction = (contractiontotal/total);
-        expansion = (expansiontotal/total);
-        distortion = (contraction*expansion);
-
-        contraction = 0;
-        expansion = 0;
-        contractiontotal = 0;
-        expansiontotal = 0;
-        total = 0;
-
-        System.out.println("distortion: " + distortion);
-    }
-
-    private double[][] getDistanceMatrixCluster(ArrayList<Node> nodes, int clusterNumber, double[][] pairD)
+    private double[][] getDistanceMatrixCluster(ArrayList<Node> nodes, int clusterNumber)
     {
         double[][] clusterD = new double[clusterNumber][clusterNumber];
 
@@ -180,13 +282,13 @@ public class PointPlacement
         return clusterD;
     }
 
-    private Positioning[] p = new Positioning[100];
-    private double[][] defineNodePosition2( double[][] clusterD )
+    private Positioning[] clusterP = new Positioning[100];
+    private double[][] defineClusterNodePosition( double[][] clusterD )
     {
-        for( int i = 0; i < p.length; i++ )
+        for( int i = 0; i < clusterP.length; i++ )
         {
             Positioning pos = new Positioning( null, Double.MAX_VALUE );
-            p[i] = pos;
+            clusterP[i] = pos;
         }
 
         positions.clear();
@@ -205,14 +307,17 @@ public class PointPlacement
 
         while( radiusGlobal > 0.1 )
         {
-            getDistortion(clusterD);
+            getDistortionCluster(clusterD);
             radiusGlobal=(radiusGlobal-stepSize);
         }
 
-        return p[99].getPos();
+        radiusGlobal = 2;
+
+        return clusterP[99].getPos();
     }
 
-    private void getDistortion( double[][] clusterD )
+
+    private void getDistortionCluster( double[][] clusterD )
     {
 
         //the maximum of the actual distance divided with the mapping distance
@@ -266,18 +371,18 @@ public class PointPlacement
             expansiontotal = 0;
             total = 0;
 
-            if( p[0].getDistortion() > distortion )
+            if( clusterP[0].getDistortion() > distortion )
             {
                 Positioning pos = new Positioning( nodePos, distortion );
-                p[0] = pos;
+                clusterP[0] = pos;
             }
-            sort();
+            sortCluster();
         }
 
-        getNewPoints(clusterD.length);
+        getNewPointsCluster(clusterD.length);
     }
 
-    private void getNewPoints( int matrixLength )
+    private void getNewPointsNormal( int matrixLength )
     {
         positions.clear();
 
@@ -289,11 +394,11 @@ public class PointPlacement
         double newY;
 
 
-        for( int i = 0; i < p.length; i++ )
+        for( int i = 0; i < normalP.length; i++ )
         {
             for( int j = 0; j < amountnewpoints; j++ )
             {
-                double[][] pos = p[i].getPos();
+                double[][] pos = normalP[i].getPos();
                 double[][] newPos = new double[2][matrixLength];
                 for( int k = 0; k < matrixLength; k++ )
                 {
@@ -313,15 +418,65 @@ public class PointPlacement
         }
     }
 
-    private void sort()
+    private void getNewPointsCluster( int matrixLength )
     {
-        int n = p.length;
+        positions.clear();
+
+        double radius;
+        double degree;
+        double x;
+        double y;
+        double newX;
+        double newY;
+
+
+        for( int i = 0; i < clusterP.length; i++ )
+        {
+            for( int j = 0; j < amountnewpoints; j++ )
+            {
+                double[][] pos = clusterP[i].getPos();
+                double[][] newPos = new double[2][matrixLength];
+                for( int k = 0; k < matrixLength; k++ )
+                {
+                    //get a random angle and a random length to find the next point placement.
+                    degree = ((rand.nextDouble()*360)*(Math.PI / 180));
+                    radius = rand.nextDouble()*radiusGlobal;
+                    x = pos[0][k];
+                    y = pos[1][k];
+                    newX = (x + radius*Math.sin(degree));
+                    newY = (y + radius*Math.cos(degree));
+                    newPos[0][k] = newX;
+                    newPos[1][k] = newY;
+
+                }
+                positions.add(newPos);
+            }
+        }
+    }
+
+    private void sortNormal()
+    {
+        int n = normalP.length;
         Positioning temp;
         for (int v = 1; v < n; v++) {
-            if (p[v - 1].getDistortion() < p[v].getDistortion()) {
-                temp = p[v - 1];
-                p[v - 1] = p[v];
-                p[v] = temp;
+            if (normalP[v - 1].getDistortion() < normalP[v].getDistortion()) {
+                temp = normalP[v - 1];
+                normalP[v - 1] = normalP[v];
+                normalP[v] = temp;
+            }
+        }
+
+    }
+
+    private void sortCluster()
+    {
+        int n = clusterP.length;
+        Positioning temp;
+        for (int v = 1; v < n; v++) {
+            if (clusterP[v - 1].getDistortion() < clusterP[v].getDistortion()) {
+                temp = clusterP[v - 1];
+                clusterP[v - 1] = clusterP[v];
+                clusterP[v] = temp;
             }
         }
 
@@ -410,6 +565,62 @@ public class PointPlacement
             cluster.setPercentage(cluster.getWeight()/total);
         }
     }
+
+
+    private void distortionmetric(double[][] pos, double[][] clusterD)
+    {
+        //the maximum of the actual distance divided with the mapping distance
+        double contraction = 0;
+        //the maximum of the mapping distance divided with the actual distance
+        double expansion = 0;
+        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
+        double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
+
+        double[][] mapping = new double[clusterD.length][clusterD.length];
+
+        for (int i = 0; i < clusterD.length; i++) {
+            Vector2 node1 = new Vector2(pos[0][i], pos[1][i]);
+            for (int j = 0; j < clusterD.length; j++)
+            {
+                Vector2 node2 = new Vector2(pos[0][j], pos[1][j]);
+                //get the actual distances between all nodes to calculate the distorion metrics
+                mapping[i][j] = node1.distance(node2);
+            }
+        }
+
+        for( int i = 0; i < mapping.length; i++ )
+        {
+            for( int j = 0; j < mapping[i].length; j++ )
+            {
+                if( i != j )
+                {
+                    total++;
+                    double contractionlocal = (clusterD[i][j] / mapping[i][j]);
+                    double expansionlocal = (mapping[i][j] / clusterD[i][j]);
+
+                    contractiontotal = (contractiontotal + contractionlocal);
+                    expansiontotal = (expansiontotal + expansionlocal);
+                }
+            }
+        }
+
+        contraction = (contractiontotal/total);
+        expansion = (expansiontotal/total);
+        distortion = (contraction*expansion);
+
+        contraction = 0;
+        expansion = 0;
+        contractiontotal = 0;
+        expansiontotal = 0;
+        total = 0;
+
+        System.out.println("distortion: " + distortion);
+    }
+
 
     public ArrayList<Cluster> getClusters()
     {

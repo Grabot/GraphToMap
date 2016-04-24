@@ -22,8 +22,6 @@ public class DelaunayEdge
         this.source = source;
         this.dest = dest;
         this.forces = forces;
-
-        weight = source.getPos().distance(dest.getPos());
     }
 
     public Cluster getSource()
@@ -53,4 +51,8 @@ public class DelaunayEdge
         return weight;
     }
 
+    public void setWeight( double weight )
+    {
+        this.weight = weight;
+    }
 }

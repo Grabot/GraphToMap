@@ -16,7 +16,7 @@ public class FrictionForce
 
     public void ApplyForces(ClusterNode node)
     {
-        node.setVel( new Vector2((node.getVel().x * 0.9f), (node.getVel().y * 0.9f)));
+        node.setVel( new Vector2((node.getVel().x * 0.8f), (node.getVel().y * 0.8f)));
     }
 }
 

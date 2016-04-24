@@ -2,6 +2,7 @@ package Tue.load.Display;
 
 import Tue.Main;
 import Tue.load.Forces.Force;
+import Tue.load.PointPlacement;
 import Tue.load.Vector2;
 import Tue.objects.*;
 
@@ -26,14 +27,16 @@ public class Display extends JPanel implements ActionListener
     float delta;
 
     private boolean showEdges = false;
-    private boolean showDelaunay = false;
+    private boolean showDelaunay = true;
     private boolean showSites = false;
     private boolean movement = true;
+    private boolean showData = true;
 
     private Tue.load.Display.Renderer render;
     private Simulation simulation;
 
     private Force forces;
+    private PointPlacement points;
     private int width;
     private int height;
     private double[][] clusterDistance;
@@ -43,7 +46,7 @@ public class Display extends JPanel implements ActionListener
         lastLoopTime = System.currentTimeMillis();
 
         render = new Tue.load.Display.Renderer(clusters, clusterEdges);
-        simulation = new Simulation(render, clusters, clusterEdges, width, height, forces, clusterDistance, nodes, edges );
+        simulation = new Simulation(render, clusters, clusterEdges, width, height, forces, clusterDistance, points, nodes, edges );
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,6 +70,10 @@ public class Display extends JPanel implements ActionListener
                 if( e.getKeyCode() == KeyEvent.VK_S)
                 {
                     showSites = (!showSites);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_X)
+                {
+                    showData = (!showData);
                 }
                 if( e.getKeyCode() == KeyEvent.VK_V )
                 {
@@ -100,6 +107,7 @@ public class Display extends JPanel implements ActionListener
         this.width = main.width;
         this.height = main.height;
         this.clusterDistance = main.clusterDistance;
+        this.points = main.points;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());
@@ -109,7 +117,7 @@ public class Display extends JPanel implements ActionListener
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        render.draw(g, showEdges, showDelaunay, showSites );
+        render.draw(g, showEdges, showDelaunay, showSites, showData );
     }
 
     @Override

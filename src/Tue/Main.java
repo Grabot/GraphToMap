@@ -26,6 +26,7 @@ public class Main {
     public ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 
     public Force forces;
+    public PointPlacement points;
 
     public double[][] clusterDistance;
 
@@ -49,7 +50,8 @@ public class Main {
 
         forces = new Force(width, height);
 
-        PointPlacement points = new PointPlacement(nodes, edges, forces);
+        points = new PointPlacement(nodes, edges, forces);
+        points.PointPlacementCluster();
 
         clusterDistance = points.getClusterD();
 

@@ -3,6 +3,7 @@ package Tue.load.Display;
 import Tue.load.Forces.Force;
 import Tue.load.Geometry.ConvexHull;
 import Tue.load.Geometry.VoronoiCore;
+import Tue.load.PointPlacement;
 import Tue.load.Vector2;
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
@@ -46,10 +47,10 @@ public class Simulation
     private int iterations = 0;
 
     private ConvexHull boundary;
-
     private ForceDirectedMovement forceMove;
+    private PointPlacement points;
 
-    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD, ArrayList<Node> nodes, ArrayList<Edge> edges )
+    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
         this.width = width;
         this.height = height;
@@ -60,6 +61,7 @@ public class Simulation
         this.forces = forces;
         this.nodes = nodes;
         this.edges = edges;
+        this.points = points;
         rand = new Random();
 
         neighbours = new boolean[clusters.size()][clusters.size()];
@@ -141,15 +143,11 @@ public class Simulation
     public void update( float delta )
     {
         this.delta = delta;
+        //calculate the area's and apply them
 
-        if( clustererrors )
+        if( !clustererrors )
         {
-            if( !clusterNodesPos ) {
-                positionClusterNodes();
-            }
-        }
-        else
-        {
+            iterations++;
             //applying force and do movement
             forceMove.ForceMove(delta);
 
@@ -160,6 +158,19 @@ public class Simulation
             render.addSites( core.getSites() );
             //distortionmetric();
             checkError();
+        }
+
+        if( clustererrors )
+        {
+            if( !clusterNodesPos )
+            {
+                System.out.println("iterations: " + iterations );
+                positionNodes();
+            }
+        }
+        else
+        {
+
         }
 
     }
@@ -186,7 +197,7 @@ public class Simulation
         if( doneclusters == clusters.size() )
         {
             clustererrors = true;
-            System.out.println("all area's low error");
+            System.out.println("all area's low error with lower than 0.011 error for all area's");
         }
         doneclusters = 0;
     }
@@ -214,8 +225,31 @@ public class Simulation
         render.setNormalNodes(nodes);
     }
 
-    private void positionClusterNodes()
+    private void positionNodes()
     {
+//        double[][] nodePos = points.defineNormalNodePosition();
+//
+//        clusterNodesPos = true;
+//
+//        //define all cluster nodes
+//        for( int i = 0; i < nodes.size(); i++ )
+//        {
+//            nodes.get(i).setPos( new Vector2(nodePos[0][i], nodePos[1][i] ));
+//        }
+//
+//        for( Cluster c : clusters )
+//        {
+//            Color color = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+//            for( Node n : c.getNodes() )
+//            {
+//                n.setColor(color);
+//            }
+//        }
+//
+//        render.setNormalNodes(nodes);
+//        render.setNormalEdges(edges);
+
+        //points.PointPlacementNormal(clusters);
         for( Cluster c : clusters ) {
             ArrayList<Node> clusternodes;
             PolygonSimple p = c.getSite().getPolygon();
@@ -235,9 +269,9 @@ public class Simulation
                 set = false;
             }
         }
-        clusterNodesPos = true;
         render.setNormalNodes(nodes);
         render.setNormalEdges(edges);
+        clusterNodesPos = true;
     }
 
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
@@ -269,32 +303,44 @@ public class Simulation
             }
         }
         d_edges.clear();
+
         for( Site s : sites )
         {
             for( Site s2 : s.getNeighbours())
             {
-                d_edges.add(new DelaunayEdge( clusters.get(s.getIndex()), clusters.get(s2.getIndex()), forces));
+                DelaunayEdge e = new DelaunayEdge( clusters.get(s.getIndex()), clusters.get(s2.getIndex()), forces );
+                d_edges.add(e);
                 neighbours[s.getIndex()][s2.getIndex()] = true;
             }
         }
 
-        for( int i = 0; i < neighbours.length; i++ )
+        double[] increase = new double[d_edges.size()];
+        for( int i = 0; i < d_edges.size(); i++ )
         {
-            for( int j = (i+1); j < neighbours[i].length; j++ )
-            {
-                for( int k = j+1; k < neighbours[i].length; k++ )
-                {
-                    if( neighbours[i][j] && neighbours[i][k])
-                    {
-                        //if there are 2 neighbouring faces, check if those faces are also neighbouring
-                        if( neighbours[j][k])
-                        {
-                            d_faces.add( new DelaunayFace(clusters.get(i), clusters.get(j), clusters.get(k)));
-                        }
-                    }
-                }
-            }
+            double distance = clusterD[d_edges.get(i).getSource().getNumber()][d_edges.get(i).getDest().getNumber()];
+            double weight = d_edges.get(i).getSource().getPos().distance(d_edges.get(i).getDest().getPos());
+            increase[i] = (distance/weight);
         }
+
+        double total = 0;
+        for( int i = 0; i < increase.length; i++ )
+        {
+            total = (total + increase[i]);
+        }
+
+        total = (total/increase.length);
+        for( int i = 0; i < increase.length; i++ )
+        {
+            increase[i] = ((increase[i] - total) + 1);
+        }
+
+        for( int i = 0; i < increase.length; i++ )
+        {
+            double weight = d_edges.get(i).getSource().getPos().distance(d_edges.get(i).getDest().getPos());
+            weight = (weight*increase[i]);
+            d_edges.get(i).setWeight(weight);
+        }
+
         return d_edges;
     }
 

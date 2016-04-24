@@ -25,6 +25,9 @@ public class ForceDirectedMovement
 
     private PolygonSimple boundingPolygon;
 
+    private double moveXMax = 100;
+    private double moveYMax = 50;
+
     public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges, VoronoiCore core)
     {
         this.clusters = clusters;
@@ -38,9 +41,11 @@ public class ForceDirectedMovement
     {
         this.delta = delta;
 
-        calculatePosEuler();
+        if( moveXMax != 0|| moveYMax != 0 )
+        {
+            calculatePosEuler();
+        }
         //calculatePosMidPoint();
-        core.voroDiagram();
     }
 
     private void calculatePosMidPoint()
@@ -71,9 +76,30 @@ public class ForceDirectedMovement
         //calculate velocity and position for all nodes.
         for( int i = 0; i < clusters.size(); i++ )
         {
-            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getForce().x*delta)), clusters.get(i).getPos().y + (clusters.get(i).getForce().y * delta )));
-            //clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
-            //clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * delta)), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * delta ))));
+            double xMove = (clusters.get(i).getForce().x * delta);
+            double yMove = (clusters.get(i).getForce().y * delta);
+
+            if( xMove > moveXMax )
+            {
+                xMove = moveXMax;
+            }
+            if( yMove > moveYMax )
+            {
+                yMove = moveYMax;
+            }
+            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + xMove), clusters.get(i).getPos().y + yMove));
+        }
+
+        moveXMax = (moveXMax-0.1);
+        moveYMax = (moveYMax-0.05);
+
+        if( moveXMax < 0 )
+        {
+            moveXMax = 0;
+        }
+        if( moveYMax < 0 )
+        {
+            moveYMax = 0;
         }
 
         core.moveSitesBack(clusters);
@@ -87,7 +113,7 @@ public class ForceDirectedMovement
         }
 
         getEdgeForces();
-        getVoronoiForce();
+        //getVoronoiForce();
         //getNodeForces();
     }
 
@@ -95,7 +121,7 @@ public class ForceDirectedMovement
     {
         for( Cluster c : clusters )
         {
-            double ks = 10;
+            double ks = 14;
             Site s = c.getSite();
 
             double distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
