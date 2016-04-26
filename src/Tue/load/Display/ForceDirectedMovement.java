@@ -113,15 +113,15 @@ public class ForceDirectedMovement
         }
 
         getEdgeForces();
-        //getVoronoiForce();
-        //getNodeForces();
+        getVoronoiForce();
+        getNodeForces();
     }
 
     private void getVoronoiForce()
     {
         for( Cluster c : clusters )
         {
-            double ks = 14;
+            double ks = 10;
             Site s = c.getSite();
 
             double distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));

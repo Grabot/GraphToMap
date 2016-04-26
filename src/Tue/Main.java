@@ -29,6 +29,7 @@ public class Main {
     public PointPlacement points;
 
     public double[][] clusterDistance;
+    public double[][] pairD;
 
     public static void main(String[] args)
     {
@@ -54,6 +55,7 @@ public class Main {
         points.PointPlacementCluster();
 
         clusterDistance = points.getClusterD();
+        pairD = points.getPairD();
 
         clusters = points.getClusters();
         clusterEdges = points.getClusterEdges();

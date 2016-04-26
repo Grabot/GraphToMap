@@ -85,9 +85,8 @@ public class Renderer
     private void drawDelaunay( boolean showDelaunay )
     {
         if( showDelaunay ) {
-            g2.setColor(Color.YELLOW);
             for (DelaunayEdge edge : d_edges) {
-                edge.draw(g2, Color.YELLOW);
+                edge.draw(g2, Color.RED);
             }
         }
     }

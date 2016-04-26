@@ -4,13 +4,17 @@ import Tue.load.Forces.Force;
 import Tue.load.Geometry.ConvexHull;
 import Tue.load.Geometry.VoronoiCore;
 import Tue.load.PointPlacement;
+import Tue.load.Positioning;
 import Tue.load.Vector2;
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -33,6 +37,8 @@ public class Simulation
 
     private int width;
     private int height;
+    private double radiusGlobal = 10;
+    private double stepSize = 0.1;
 
     private PolygonSimple boundingPolygon;
     private OpenList sites;
@@ -43,6 +49,7 @@ public class Simulation
     private Random rand;
 
     private double[][] clusterD;
+    private double[][] pairD;
 
     private int iterations = 0;
 
@@ -50,14 +57,21 @@ public class Simulation
     private ForceDirectedMovement forceMove;
     private PointPlacement points;
 
-    public Simulation(Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
+    private Display display;
+
+    private boolean firstImage = true;
+    private boolean secondImage = false;
+
+    public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
         this.width = width;
         this.height = height;
 
         this.clusters = clusters;
         this.clusterD = clusterD;
+        this.pairD = pairD;
         this.render = render;
+        this.display = display;
         this.forces = forces;
         this.nodes = nodes;
         this.edges = edges;
@@ -140,12 +154,46 @@ public class Simulation
 
     }
 
+    private void checkImage()
+    {
+        if( firstImage )
+        {
+            writeImage("3withDelaunayInitial.png");
+            firstImage = false;
+        }
+        else if( secondImage )
+        {
+            writeImage("3withDelaunaylowError.png");
+            secondImage = false;
+        }
+    }
+
+    private void writeImage(String fileName)
+    {
+        try
+        {
+            BufferedImage test = display.createImage();
+            File outputfile = new File(fileName);
+            ImageIO.write(test, "png", outputfile);
+        }
+        catch(Exception e)
+        {
+            System.out.println("error: " + e );
+        }
+    }
+
     public void update( float delta )
     {
         this.delta = delta;
         //calculate the area's and apply them
 
-        if( !clustererrors )
+        core.adaptWeightsSimple();
+        core.voroDiagram();
+        render.addSites( core.getSites() );
+        checkImage();
+
+
+        while( !clustererrors )
         {
             iterations++;
             //applying force and do movement
@@ -173,6 +221,8 @@ public class Simulation
 
         }
 
+
+        checkImage();
     }
 
     private void checkError()
@@ -197,81 +247,210 @@ public class Simulation
         if( doneclusters == clusters.size() )
         {
             clustererrors = true;
+            secondImage = true;
             System.out.println("all area's low error with lower than 0.011 error for all area's");
         }
         doneclusters = 0;
     }
 
-    private void positionCluster1()
-    {
-        ArrayList<Node> cluster1 = new ArrayList<Node>();
-        Cluster c = clusters.get(0);
-        PolygonSimple p = c.getSite().getPolygon();
-        cluster1 = c.getNodes();
-        boolean set = false;
-        for( Node n : cluster1 )
-        {
-            while( !set ) {
-                double xPos = rand.nextDouble() * width;
-                double yPos = rand.nextDouble() * height;
-                if (pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos)) {
-                    n.setPos(new Vector2(xPos, yPos));
-                    set = true;
-                }
-            }
-            set = false;
-        }
-        cluster1Pos = true;
-        render.setNormalNodes(nodes);
-    }
-
     private void positionNodes()
     {
-//        double[][] nodePos = points.defineNormalNodePosition();
-//
-//        clusterNodesPos = true;
-//
-//        //define all cluster nodes
-//        for( int i = 0; i < nodes.size(); i++ )
-//        {
-//            nodes.get(i).setPos( new Vector2(nodePos[0][i], nodePos[1][i] ));
-//        }
-//
-//        for( Cluster c : clusters )
-//        {
-//            Color color = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
-//            for( Node n : c.getNodes() )
-//            {
-//                n.setColor(color);
-//            }
-//        }
-//
-//        render.setNormalNodes(nodes);
-//        render.setNormalEdges(edges);
+        double[][] nodeToCluster = new double[pairD.length][clusterD.length];
 
-        //points.PointPlacementNormal(clusters);
-        for( Cluster c : clusters ) {
-            ArrayList<Node> clusternodes;
-            PolygonSimple p = c.getSite().getPolygon();
-            clusternodes = c.getNodes();
-            Color nodeColour = new Color( rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
-            boolean set = false;
-            for (Node n : clusternodes) {
-                while (!set) {
-                    double xPos = rand.nextDouble() * width;
-                    double yPos = rand.nextDouble() * height;
-                    if (pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos)) {
-                        n.setPos(new Vector2(xPos, yPos));
-                        n.setColor(nodeColour);
-                        set = true;
-                    }
+        for( int i = 0; i < nodes.size(); i++ )
+        {
+            for( Cluster c : clusters )
+            {
+                double total = 0;
+                int amount = 0;
+                for( Node n : c.getNodes() )
+                {
+                    amount++;
+                    total = (total + pairD[i][n.getIndex()]);
                 }
-                set = false;
+                if((total/amount) == 0)
+                {
+                    nodeToCluster[i][c.getNumber()] = 0.01;
+                }
+                else {
+                    nodeToCluster[i][c.getNumber()] = (total / amount);
+                }
+                total = 0;
+                amount = 0;
             }
         }
+
+        for( Cluster c : clusters )
+        {
+            Color color = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+            for (Node n : c.getNodes())
+            {
+                SimulatedAnnealingNode(c, n, nodeToCluster);
+                n.setPos(new Vector2( normalP[99].getNormalPos()[0], normalP[99].getNormalPos()[1] ));
+                n.setColor(color);
+            }
+        }
+
         render.setNormalNodes(nodes);
         render.setNormalEdges(edges);
         clusterNodesPos = true;
+    }
+
+    private Positioning[] normalP = new Positioning[100];
+    private ArrayList<double[]> positions = new ArrayList<double[]>();
+    private void SimulatedAnnealingNode( Cluster c, Node n, double[][] nodeToCluster )
+    {
+        double[]empty = null;
+        for( int i = 0; i < normalP.length; i++ )
+        {
+            Positioning pos = new Positioning( empty, Double.MAX_VALUE );
+            normalP[i] = pos;
+        }
+        positions.clear();
+
+        double xPos;
+        double yPos;
+        PolygonSimple p = c.getSite().getPolygon();
+
+        for( int i = 0; i < 1000; i++ )
+        {
+            xPos = rand.nextDouble()*width;
+            yPos = rand.nextDouble()*height;
+
+            while( !(pnpoly(p.length, p.getXPoints(), p.getYPoints(), xPos, yPos )))
+            {
+                xPos = rand.nextDouble() * width;
+                yPos = rand.nextDouble() * height;
+            }
+
+            double[] pos = new double[2];
+            pos[0] = xPos;
+            pos[1] = yPos;
+
+            positions.add(pos);
+        }
+
+        getDistortionNormal(c, n, nodeToCluster);
+        while( radiusGlobal > 0.1 )
+        {
+            getDistortionNormal(c, n, nodeToCluster);
+            radiusGlobal=(radiusGlobal-stepSize);
+        }
+
+
+    }
+
+    private void getDistortionNormal( Cluster c, Node n, double[][] nodeToCluster )
+    {
+        //the maximum of the actual distance divided with the mapping distance
+        double contraction = 0;
+        //the maximum of the mapping distance divided with the actual distance
+        double expansion = 0;
+        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
+        double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
+
+        for( double[] nodePos : positions )
+        {
+            double[] mapping = new double[clusterD.length];
+
+            for (int i = 0; i < clusterD.length; i++) {
+                Vector2 node1 = new Vector2(nodePos[0], nodePos[1]);
+                for (int j = 0; j < clusterD.length; j++)
+                {
+                    Vector2 node2 = clusters.get(j).getPos();
+                    //get the actual distances between all nodes to calculate the distorion metrics
+                    mapping[j] = node1.distance(node2);
+                }
+            }
+
+            for( int i = 0; i < mapping.length; i++ )
+            {
+                total++;
+                double contractionlocal = (nodeToCluster[n.getIndex()][i] / mapping[i]);
+                double expansionlocal = (mapping[i] / nodeToCluster[n.getIndex()][i]);
+
+                contractiontotal = (contractiontotal + contractionlocal);
+                expansiontotal = (expansiontotal + expansionlocal);
+            }
+
+            contraction = (contractiontotal/total);
+            expansion = (expansiontotal/total);
+            distortion = (contraction*expansion);
+
+
+            contraction = 0;
+            expansion = 0;
+            contractiontotal = 0;
+            expansiontotal = 0;
+            total = 0;
+
+            if( normalP[0].getDistortion() > distortion )
+            {
+                Positioning pos = new Positioning( nodePos, distortion );
+                normalP[0] = pos;
+            }
+
+            sortNormal();
+        }
+
+        getNewPointsNormal( c.getSite().getPolygon() );
+    }
+
+    private void getNewPointsNormal( PolygonSimple p )
+    {
+        positions.clear();
+
+        double radius;
+        double degree;
+        double x;
+        double y;
+        double newX = 0;
+        double newY = 0;
+
+        for( int i = 0; i < normalP.length; i++ )
+        {
+            for( int j = 0; j < 10; j++ )
+            {
+                double[] pos = normalP[i].getNormalPos();
+                double[] newPos = new double[2];
+                x = pos[0];
+                y = pos[1];
+                degree = ((rand.nextDouble()*360)*(Math.PI / 180));
+                radius = rand.nextDouble()*radiusGlobal;
+                newX = (x + radius*Math.sin(degree));
+                newY = (y + radius*Math.cos(degree));
+
+                while( !(pnpoly(p.length, p.getXPoints(), p.getYPoints(), newX, newY )))
+                {
+                    //get a random angle and a random length to find the next point placement.
+                    degree = ((rand.nextDouble()*360)*(Math.PI / 180));
+                    radius = rand.nextDouble()*radiusGlobal;
+                    newX = (x + radius*Math.sin(degree));
+                    newY = (y + radius*Math.cos(degree));
+                }
+                newPos[0] = newX;
+                newPos[1] = newY;
+                positions.add(newPos);
+            }
+        }
+    }
+
+    private void sortNormal()
+    {
+        int n = normalP.length;
+        Positioning temp;
+        for (int v = 1; v < n; v++) {
+            if (normalP[v - 1].getDistortion() < normalP[v].getDistortion()) {
+                temp = normalP[v - 1];
+                normalP[v - 1] = normalP[v];
+                normalP[v] = temp;
+            }
+        }
+
     }
 
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
@@ -322,16 +501,16 @@ public class Simulation
             increase[i] = (distance/weight);
         }
 
-        double total = 0;
+        double average = 0;
         for( int i = 0; i < increase.length; i++ )
         {
-            total = (total + increase[i]);
+            average = (average + increase[i]);
         }
 
-        total = (total/increase.length);
+        average = (average/increase.length);
         for( int i = 0; i < increase.length; i++ )
         {
-            increase[i] = ((increase[i] - total) + 1);
+            increase[i] = ((increase[i] - average) + 1);
         }
 
         for( int i = 0; i < increase.length; i++ )

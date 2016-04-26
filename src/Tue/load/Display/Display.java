@@ -6,9 +6,12 @@ import Tue.load.PointPlacement;
 import Tue.load.Vector2;
 import Tue.objects.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -40,13 +43,14 @@ public class Display extends JPanel implements ActionListener
     private int width;
     private int height;
     private double[][] clusterDistance;
+    private double[][] pairD;
 
     public void create()
     {
         lastLoopTime = System.currentTimeMillis();
 
         render = new Tue.load.Display.Renderer(clusters, clusterEdges);
-        simulation = new Simulation(render, clusters, clusterEdges, width, height, forces, clusterDistance, points, nodes, edges );
+        simulation = new Simulation(this, render, clusters, clusterEdges, width, height, forces, pairD, clusterDistance, points, nodes, edges );
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,6 +95,7 @@ public class Display extends JPanel implements ActionListener
         });
 
         timer.start();
+
     }
 
     public Display( Main main )
@@ -106,6 +111,7 @@ public class Display extends JPanel implements ActionListener
         this.forces = main.forces;
         this.width = main.width;
         this.height = main.height;
+        this.pairD = main.pairD;
         this.clusterDistance = main.clusterDistance;
         this.points = main.points;
 
@@ -141,5 +147,16 @@ public class Display extends JPanel implements ActionListener
         public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
         }
+    }
+
+
+    public BufferedImage createImage() {
+
+        int w = this.getWidth();
+        int h = this.getHeight();
+        BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = bi.createGraphics();
+        this.paint(g);
+        return bi;
     }
 }

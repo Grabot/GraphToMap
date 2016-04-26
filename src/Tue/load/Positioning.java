@@ -6,12 +6,19 @@ package Tue.load;
 public class Positioning
 {
     private double distortion = Double.MAX_VALUE;
-    private double[][] pos;
+    private double[][] Clusterpos;
+    private double[] normalPos;
 
-    public Positioning( double[][] pos, double distortion )
+    public Positioning( double[][] Clusterpos, double distortion )
     {
         this.distortion = distortion;
-        this.pos = pos;
+        this.Clusterpos = Clusterpos;
+    }
+
+    public Positioning( double[] normalPos, double distortion )
+    {
+        this.distortion = distortion;
+        this.normalPos = normalPos;
     }
 
     public double getDistortion()
@@ -19,8 +26,13 @@ public class Positioning
         return distortion;
     }
 
-    public double[][] getPos()
+    public double[][] getClusterPos()
     {
-        return pos;
+        return Clusterpos;
+    }
+
+    public double[] getNormalPos()
+    {
+        return normalPos;
     }
 }
