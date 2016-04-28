@@ -41,7 +41,8 @@ public class Main {
 
     private void execute(final Main main ) {
 
-        final DotParser parser = parserInput();
+        forces = new Force(width, height);
+        final DotParser parser = parserInput(forces);
 
         nodes = parser.getNodes();
         edges = parser.getEdges();
@@ -49,7 +50,6 @@ public class Main {
         //this will overrule the parser and make hand defined nodes, edges and clusters
         //handMadeGraph();
 
-        forces = new Force(width, height);
 
         points = new PointPlacement(nodes, edges, forces);
         points.PointPlacementCluster();
@@ -69,7 +69,7 @@ public class Main {
         });
     }
 
-    private DotParser parserInput()
+    private DotParser parserInput(Force forces)
     {
         DotScanner scanner = null;
         try {
@@ -78,7 +78,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        DotParser parser = new DotParser(scanner, nodes, edges);
+        DotParser parser = new DotParser(scanner, nodes, edges, forces);
         try {
             parser.graph();
         } catch (IOException e) {
@@ -89,31 +89,31 @@ public class Main {
 
     private void handMadeGraph()
     {
-        Node node1 = new Node("node1", 0);
-        node1.addLabel("node1");
-        Node node2 = new Node("node2", 1);
-        node2.addLabel("node2");
-        Node node3 = new Node("node3", 2);
-        node3.addLabel("node3");
-
-        node1.addWeight(10);
-        node1.addCluster("1");
-        node2.addWeight(10);
-        node2.addCluster("2");
-        node3.addWeight(10);
-        node3.addCluster("3");
-        nodes.clear();
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(node3);
-
-        Edge edge1 = new Edge(nodes.get(0), nodes.get(1));
-        Edge edge2 = new Edge(nodes.get(1), nodes.get(2));
-        Edge edge3 = new Edge(nodes.get(2), nodes.get(0));
-
-        edges.clear();
-        edges.add(edge1);
-        edges.add(edge2);
-        edges.add(edge3);
+//        Node node1 = new Node("node1", 0);
+//        node1.addLabel("node1");
+//        Node node2 = new Node("node2", 1);
+//        node2.addLabel("node2");
+//        Node node3 = new Node("node3", 2);
+//        node3.addLabel("node3");
+//
+//        node1.addWeight(10);
+//        node1.addCluster("1");
+//        node2.addWeight(10);
+//        node2.addCluster("2");
+//        node3.addWeight(10);
+//        node3.addCluster("3");
+//        nodes.clear();
+//        nodes.add(node1);
+//        nodes.add(node2);
+//        nodes.add(node3);
+//
+//        Edge edge1 = new Edge(nodes.get(0), nodes.get(1));
+//        Edge edge2 = new Edge(nodes.get(1), nodes.get(2));
+//        Edge edge3 = new Edge(nodes.get(2), nodes.get(0));
+//
+//        edges.clear();
+//        edges.add(edge1);
+//        edges.add(edge2);
+//        edges.add(edge3);
     }
 }

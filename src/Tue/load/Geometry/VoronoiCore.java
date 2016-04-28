@@ -18,6 +18,7 @@ import Tue.load.voronoitreemap.j2d.Point2D;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.Cluster;
+import Tue.objects.Node;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -163,11 +164,21 @@ public class VoronoiCore {
 		}
 	}
 
-	public void moveSitesBack(ArrayList<Cluster> clusters)
+	public void moveSitesBackNormal(ArrayList<Node> nodes )
 	{
-		for( Site point : sites )
+		for( Node n : nodes )
 		{
-			point.setXY(clusters.get(point.getIndex()).getPos().getX(), clusters.get(point.getIndex()).getPos().getY());
+			Site s = n.getSite();
+			s.setXY(n.getPos().getX(), n.getPos().getY());
+		}
+	}
+
+	public void moveSitesBackCluster(ArrayList<Cluster> clusters)
+	{
+		for( Cluster c : clusters )
+		{
+			Site s = c.getSite();
+			s.setXY(c.getPos().getX(), c.getPos().getY());
 		}
 	}
 

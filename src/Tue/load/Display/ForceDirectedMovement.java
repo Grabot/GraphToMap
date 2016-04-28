@@ -17,27 +17,36 @@ public class ForceDirectedMovement
     private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<DelaunayEdge> d_edges = new ArrayList<DelaunayEdge>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private ArrayList<Edge> edges = new ArrayList<Edge>();
 
     private float delta;
-    private VoronoiCore core;
 
     private PolygonSimple boundingPolygon;
+    private PolygonSimple boundingClusters[];
 
     private double moveXMax = 100;
     private double moveYMax = 50;
 
-    public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges, VoronoiCore core)
+    public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges)
     {
         this.clusters = clusters;
         this.clusteredges = clusteredges;
         this.d_edges = d_edges;
-        this.core = core;
         this.boundingPolygon = boundingPolygon;
+        boundingClusters = new PolygonSimple[clusters.size()];
     }
 
-    public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Node> nodes, ArrayList<Edge> edges, VoronoiCore coreNormal )
+    public ForceDirectedMovement(ArrayList<Node> nodes, ArrayList<Edge> edges)
     {
+        this.nodes = nodes;
+        this.edges = edges;
+    }
 
+    public void ForceMoveNormal( float delta )
+    {
+        this.delta = delta;
+        calculatePosEulerNormal();
     }
 
     public void ForceMoveCluster( float delta )
@@ -46,36 +55,52 @@ public class ForceDirectedMovement
 
         if( moveXMax != 0|| moveYMax != 0 )
         {
-            calculatePosEuler();
+            calculatePosEulerCluster();
         }
         //calculatePosMidPoint();
     }
 
-    private void calculatePosMidPoint()
+    private void calculatePosEulerNormal()
     {
-        Vector2[] oldpos = new Vector2[clusters.size()];
+        calculateForcesNormal();
 
-        //we will use a midpoint calculation to numerically solve the differential equation
+        for( int i = 0; i < nodes.size(); i++ )
+        {
+            double xMove = (nodes.get(i).getForce().x * delta);
+            double yMove = (nodes.get(i).getForce().y * delta);
 
-        calculateForces();
-        //calculate velocity and position for all nodes.
-        for( int i = 0; i < clusters.size(); i++ )
-        {
-            oldpos[i] = clusters.get(i).getPos();
-            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
-            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * (delta/2))), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * (delta/2) ))));
-        }
-        calculateForces();
-        for( int i = 0; i < clusters.size(); i++ )
-        {
-            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
-            clusters.get(i).setPos( new Vector2((oldpos[i].x + (clusters.get(i).getVel().x * delta)), (oldpos[i].y + (clusters.get(i).getVel().y * delta ))));
+            Vector2 newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
+
+            PolygonSimple poly = nodes.get(i).getSite().getPolygon();
+            if( pnpoly( poly.length, poly.getXPoints(), poly.getYPoints(), newPos.getX(), newPos.getY() ))
+            {
+                nodes.get(i).setPos( newPos );
+            }
         }
     }
 
-    private void calculatePosEuler()
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
     {
-        calculateForces();
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
+    }
+
+    private void calculatePosEulerCluster()
+    {
+        calculateForcesCluster();
         //calculate velocity and position for all nodes.
         for( int i = 0; i < clusters.size(); i++ )
         {
@@ -104,23 +129,49 @@ public class ForceDirectedMovement
         {
             moveYMax = 0;
         }
-
-        core.moveSitesBack(clusters);
     }
 
-    private void calculateForces()
+    private void calculateForcesNormal()
+    {
+        for( Node n : nodes )
+        {
+            n.setForce( new Vector2(0, 0));
+        }
+
+        getVoronoiForceNormal();
+    }
+
+    private void calculateForcesCluster()
     {
         //clear forces
         for (Cluster node : clusters) {
             node.setForce(new Vector2(0, 0));
         }
 
-        getEdgeForces();
-        getVoronoiForce();
-        getNodeForces();
+        getEdgeForcesCluster();
+        getVoronoiForceCluster();
+        getNodeForcesCluster();
     }
 
-    private void getVoronoiForce()
+    private void getVoronoiForceNormal()
+    {
+        for( Node n : nodes )
+        {
+            double ks = 4;
+            Site s = n.getSite();
+
+            double distance = n.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
+            double distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
+            double distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
+
+            double forceX = (-((distanceX/distance)*((ks * distance))));
+            double forceY = (-((distanceY/distance)*((ks * distance))));
+
+            n.setForce( new Vector2( n.getForce().getX() + (forceX), n.getForce().getY() + (forceY)));
+        }
+    }
+
+    private void getVoronoiForceCluster()
     {
         for( Cluster c : clusters )
         {
@@ -138,7 +189,7 @@ public class ForceDirectedMovement
         }
     }
 
-    private void getEdgeForces()
+    private void getEdgeForcesCluster()
     {
         //apply new forces, we clear them first since nodes can occur for multiple edges and the forces accumulate
 
@@ -152,7 +203,7 @@ public class ForceDirectedMovement
         }
     }
 
-    private void getNodeForces()
+    private void getNodeForcesCluster()
     {
         //apply forces node specific, so coulomb forces and wallforces
         for( Cluster node : clusters )
@@ -160,4 +211,29 @@ public class ForceDirectedMovement
             node.ApplyForces( clusters, delta );
         }
     }
+
+
+
+//    private void calculatePosMidPoint()
+//    {
+//        Vector2[] oldpos = new Vector2[clusters.size()];
+//
+//        //we will use a midpoint calculation to numerically solve the differential equation
+//
+//        calculateForcesCluster();
+//        //calculate velocity and position for all nodes.
+//        for( int i = 0; i < clusters.size(); i++ )
+//        {
+//            oldpos[i] = clusters.get(i).getPos();
+//            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+//            clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + (clusters.get(i).getVel().x * (delta/2))), (clusters.get(i).getPos().y + (clusters.get(i).getVel().y * (delta/2) ))));
+//        }
+//        calculateForcesCluster();
+//        for( int i = 0; i < clusters.size(); i++ )
+//        {
+//            clusters.get(i).setVel( new Vector2((clusters.get(i).getVel().x + (clusters.get(i).getForce().x * delta)), (clusters.get(i).getVel().y + (clusters.get(i).getForce().y * delta ))));
+//            clusters.get(i).setPos( new Vector2((oldpos[i].x + (clusters.get(i).getVel().x * delta)), (oldpos[i].y + (clusters.get(i).getVel().y * delta ))));
+//        }
+//    }
+
 }

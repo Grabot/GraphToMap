@@ -1,6 +1,7 @@
 package Tue.objects;
 
 
+import Tue.load.Forces.Force;
 import Tue.load.Vector2;
 import Tue.load.voronoitreemap.j2d.Site;
 
@@ -13,7 +14,9 @@ import java.awt.geom.Ellipse2D;
 public class Node
 {
 
-    Vector2 pos;
+    private Vector2 pos;
+    private Vector2 vel;
+    private Vector2 force;
 
     private String name;
     private String label = "";
@@ -23,12 +26,16 @@ public class Node
     private Site s;
 
     private Color color;
+    private Force forces;
 
     private double weight = 1;
 
-    public Node(String name, int index)
+    public Node(Force forces, String name, int index)
     {
         pos = new Vector2(0, 0);
+        vel = new Vector2(0, 0);
+        force = new Vector2(0, 0);
+        this.forces = forces;
         this.name = name;
         this.index = index;
     }
@@ -36,6 +43,26 @@ public class Node
     public void setPos( Vector2 pos )
     {
         this.pos = pos;
+    }
+
+    public void setVel( Vector2 vel )
+    {
+        this.vel = vel;
+    }
+
+    public Vector2 getVel()
+    {
+        return vel;
+    }
+
+    public void setForce( Vector2 force )
+    {
+        this.force = force;
+    }
+
+    public Vector2 getForce()
+    {
+        return force;
     }
 
     public void addCluster( String cluster )

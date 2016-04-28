@@ -114,7 +114,7 @@ public class Simulation
         ArrayList<DelaunayEdge> d_edges = getDelaunay();
         render.addDelaunay(d_edges);
 
-        forceMove = new ForceDirectedMovement( boundingPolygon, clusters, clusteredges, d_edges, core );
+        forceMove = new ForceDirectedMovement( boundingPolygon, clusters, clusteredges, d_edges );
 
         sites2 = new OpenList();
         core2 = new VoronoiCore();
@@ -209,6 +209,7 @@ public class Simulation
             iterations++;
             //applying force and do movement
             forceMove.ForceMoveCluster(delta);
+            core.moveSitesBackCluster(clusters);
 
             //calculate the area's and apply them
             core.adaptWeightsSimple();
@@ -227,30 +228,23 @@ public class Simulation
         }
         else
         {
-            clusterVoronoi();
-            setSiteCluster();
+            clusterVoronoi( delta );
         }
 
 
         checkImage();
     }
 
-    private void setSiteCluster()
-    {
-        for( int i = 0; i < clusterD.length; i++ )
-        {
-            for( Node n : clusters.get(i).getNodes() )
-            {
-                n.setPos(new Vector2(n.getSite().getX(), n.getSite().getY()));
-            }
-        }
-    }
-
-    private void clusterVoronoi()
+    private void clusterVoronoi( float delta )
     {
         for( int i = 0; i < clusterD.length; i++ ) {
             //calculate the area's and apply them
-            coreCluster[i].iterateSimple();
+            forceMove.ForceMoveNormal(delta);
+            coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
+
+            //calculate the area's and apply them
+            coreCluster[i].adaptWeightsSimple();
+            coreCluster[i].voroDiagram();
 
             render.addSites2(coreCluster[i].getSites(), i);
         }
@@ -258,7 +252,6 @@ public class Simulation
 
     private void clusterVoronoiInit()
     {
-        double[] clusterWeight = new double[clusterD.length];
         PolygonSimple[] boundingCluster = new PolygonSimple[clusterD.length];
         for( int i = 0; i < clusterD.length; i++ ) {
             boundingCluster[i] = clusters.get(i).getSite().getPolygon();
@@ -280,8 +273,10 @@ public class Simulation
             coreCluster[i].setClipPolygon(boundingCluster[i]);
             coreCluster[i].voroDiagram();
             coreCluster[i].setOldPoint();
+
         }
 
+        forceMove = new ForceDirectedMovement( nodes, edges );
     }
 
     private void checkError()

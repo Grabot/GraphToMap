@@ -1,5 +1,6 @@
 package Tue.parser;
 
+import Tue.load.Forces.Force;
 import Tue.objects.Edge;
 import Tue.objects.Node;
 
@@ -17,11 +18,13 @@ public class DotParser {
     private int index = -1;
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
+    private Force forces;
 
-    public DotParser(DotScanner s, ArrayList<Node> m_nodes, ArrayList<Edge> m_edges) {
+    public DotParser(DotScanner s, ArrayList<Node> m_nodes, ArrayList<Edge> m_edges, Force forces) {
         scanner = s;
         this.nodes = m_nodes;
         this.edges = m_edges;
+        this.forces = forces;
     }
 
     public void next() throws IOException {
@@ -175,7 +178,7 @@ public class DotParser {
         if (nodes != null) {
             //add new node.
             index++;
-            nodes.add(new Node(t.text, index));
+            nodes.add(new Node(forces, t.text, index));
         }
     }
 
