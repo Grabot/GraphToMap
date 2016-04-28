@@ -4,9 +4,7 @@ import Tue.load.Geometry.VoronoiCore;
 import Tue.load.Vector2;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
-import Tue.objects.Cluster;
-import Tue.objects.ClusterEdge;
-import Tue.objects.DelaunayEdge;
+import Tue.objects.*;
 
 import java.util.ArrayList;
 
@@ -37,7 +35,12 @@ public class ForceDirectedMovement
         this.boundingPolygon = boundingPolygon;
     }
 
-    public void ForceMove( float delta )
+    public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Node> nodes, ArrayList<Edge> edges, VoronoiCore coreNormal )
+    {
+
+    }
+
+    public void ForceMoveCluster( float delta )
     {
         this.delta = delta;
 

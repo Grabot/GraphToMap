@@ -33,7 +33,6 @@ public class Simulation
     private boolean clustererrors = false;
     private boolean cluster1Pos = false;
     private boolean clusterNodesPos = false;
-    private float delta = 0;
 
     private int width;
     private int height;
@@ -197,7 +196,6 @@ public class Simulation
 
     public void update( float delta )
     {
-        this.delta = delta;
         //calculate the area's and apply them
 
         core.adaptWeightsSimple();
@@ -210,7 +208,7 @@ public class Simulation
         {
             iterations++;
             //applying force and do movement
-            forceMove.ForceMove(delta);
+            forceMove.ForceMoveCluster(delta);
 
             //calculate the area's and apply them
             core.adaptWeightsSimple();
@@ -225,27 +223,19 @@ public class Simulation
         {
             System.out.println("iterations: " + iterations );
             positionNodes();
-            clusterVoronoiInitTest();
+            clusterVoronoiInit();
         }
         else
         {
-            clusterVoronoiTest();
-            setSiteClusterTest();
+            clusterVoronoi();
+            setSiteCluster();
         }
 
 
         checkImage();
     }
 
-    private void clusterVoronoi()
-    {
-        //calculate the area's and apply them
-        core2.iterateSimple();
-
-        render.addSites2( core2.getSites(), 0 );
-    }
-
-    private void setSiteClusterTest()
+    private void setSiteCluster()
     {
         for( int i = 0; i < clusterD.length; i++ )
         {
@@ -256,7 +246,7 @@ public class Simulation
         }
     }
 
-    private void clusterVoronoiTest()
+    private void clusterVoronoi()
     {
         for( int i = 0; i < clusterD.length; i++ ) {
             //calculate the area's and apply them
@@ -266,8 +256,9 @@ public class Simulation
         }
     }
 
-    private void clusterVoronoiInitTest()
+    private void clusterVoronoiInit()
     {
+        double[] clusterWeight = new double[clusterD.length];
         PolygonSimple[] boundingCluster = new PolygonSimple[clusterD.length];
         for( int i = 0; i < clusterD.length; i++ ) {
             boundingCluster[i] = clusters.get(i).getSite().getPolygon();
@@ -279,39 +270,17 @@ public class Simulation
 
             for (Node n : clusters.get(i).getNodes()) {
                 Site site = new Site(n.getPos().getX(), n.getPos().getY());
+                site.setPercentage(n.getWeight());
                 n.setSite(site);
                 sitesCluster[i].add(site);
             }
 
             coreCluster[i].normalizeSites(sitesCluster[i]);
-
             coreCluster[i].setSites(sitesCluster[i]);
             coreCluster[i].setClipPolygon(boundingCluster[i]);
             coreCluster[i].voroDiagram();
             coreCluster[i].setOldPoint();
         }
-
-    }
-
-    private void clusterVoronoiInit()
-    {
-        PolygonSimple boundingcluster = clusters.get(0).getSite().getPolygon();
-
-        sites2 = new OpenList();
-        core2 = new VoronoiCore();
-
-        for( Node n : clusters.get(0).getNodes() )
-        {
-            Site site = new Site( n.getPos().getX(), n.getPos().getY());
-            sites2.add(site);
-        }
-
-        core2.normalizeSites(sites2);
-
-        core2.setSites(sites2);
-        core2.setClipPolygon(boundingcluster);
-        core2.voroDiagram();
-        core2.setOldPoint();
 
     }
 

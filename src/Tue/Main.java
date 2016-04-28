@@ -17,7 +17,7 @@ public class Main {
 
     public int width = 1200;
     public int height = 800;
-    public int delta = 1;
+    public int delta = 40;
 
     public ArrayList<Node> nodes = new ArrayList<Node>();
     public ArrayList<Edge> edges = new ArrayList<Edge>();
