@@ -138,6 +138,7 @@ public class ForceDirectedMovement
             n.setForce( new Vector2(0, 0));
         }
 
+        getEdgeForcesNormal();
         getVoronoiForceNormal();
     }
 
@@ -153,11 +154,19 @@ public class ForceDirectedMovement
         getNodeForcesCluster();
     }
 
+    private void getEdgeForcesNormal()
+    {
+        for( Edge e : edges )
+        {
+            e.ApplyForces();
+        }
+    }
+
     private void getVoronoiForceNormal()
     {
         for( Node n : nodes )
         {
-            double ks = 4;
+            double ks = 3;
             Site s = n.getSite();
 
             double distance = n.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));

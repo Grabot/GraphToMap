@@ -155,7 +155,7 @@ public class DotParser {
                 }
             }
 
-            Edge edge = new Edge(origin, dest);
+            Edge edge = new Edge(origin, dest, forces);
             edges.add(edge);
 
             next();

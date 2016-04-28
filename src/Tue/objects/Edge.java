@@ -1,5 +1,7 @@
 package Tue.objects;
 
+import Tue.load.Forces.Force;
+
 import java.awt.*;
 import java.awt.geom.Line2D;
 
@@ -11,11 +13,13 @@ public class Edge
     private int weight = 1;
     Node source;
     Node dest;
+    Force forces;
 
-    public Edge( Node source, Node dest )
+    public Edge( Node source, Node dest, Force forces)
     {
         this.source = source;
         this.dest = dest;
+        this.forces = forces;
     }
 
     public void setWeight()
@@ -43,5 +47,10 @@ public class Edge
         g2.setColor(color);
         Shape shape = new Line2D.Double(this.getSource().getPos().x, this.getSource().getPos().y, this.getDest().getPos().x, this.getDest().getPos().y);
         g2.draw(shape);
+    }
+
+    public void ApplyForces()
+    {
+        forces.ApplyEdgeForce( this );
     }
 }
