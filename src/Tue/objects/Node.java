@@ -2,6 +2,7 @@ package Tue.objects;
 
 
 import Tue.load.Vector2;
+import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -19,6 +20,7 @@ public class Node
     private String cluster = "";
     private int clusterNumber = -1;
     private int index;
+    private Site s;
 
     private Color color;
 
@@ -101,5 +103,15 @@ public class Node
         g2.setColor(color);
         Ellipse2D.Double shape2 = new Ellipse2D.Double(this.getX()-(radius/2), this.getY()-(radius/2), radius, radius);
         g2.fill(shape2);
+    }
+
+    public void setSite( Site s )
+    {
+        this.s = s;
+    }
+
+    public Site getSite()
+    {
+        return s;
     }
 }

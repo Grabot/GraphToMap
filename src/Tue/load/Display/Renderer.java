@@ -24,6 +24,7 @@ public class Renderer
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
     private OpenList sites;
+    private OpenList[] siteCluster;
 
     private Graphics g;
     private Graphics2D g2;
@@ -38,6 +39,11 @@ public class Renderer
         this.clusteredges = clusteredges;
 
         sites = new OpenList();
+        siteCluster = new OpenList[clusternodes.size()];
+        for( int i = 0; i < clusternodes.size(); i++ )
+        {
+            siteCluster[i] = new OpenList();
+        }
     }
 
     public void draw( Graphics g, boolean showEdges, boolean showDelaunay, boolean showSites, boolean showData )
@@ -47,14 +53,42 @@ public class Renderer
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         drawVoronoiArea();
-        drawClusterNodes(showSites, showData);
         drawBounding();
+
+        drawVoronoiCluster();
+        drawClusterNodes(showSites, showData);
+
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
         drawNodes();
         drawEdges( showEdges );
+    }
 
+    private void drawVoronoiCluster()
+    {
+        for( int i = 0; i < siteCluster.length; i++ ) {
+            if (siteCluster[i] != null) {
+
+                g2.setColor(Colors.circleFill);
+                for (Site s : siteCluster[i]) {
+                    PolygonSimple poly = s.getPolygon();
+                    if (poly != null) {
+                        g2.setColor(Color.WHITE);
+                        g2.fill(poly);
+                        g2.setColor(Color.GREEN);
+                        g2.draw(poly);
+                    }
+                }
+
+                g2.setColor(Color.GRAY);
+                for (Site site : siteCluster[i]) {
+                    double radius = 10;
+                    Ellipse2D.Double shape = new Ellipse2D.Double(site.getPoint().getX() - (radius / 2), site.getPoint().getY() - (radius / 2), radius, radius);
+                    g2.fill(shape);
+                }
+            }
+        }
     }
 
     private void drawEdges( boolean showEdges )
@@ -140,6 +174,11 @@ public class Renderer
     public void addSites( OpenList sites )
     {
         this.sites = sites;
+    }
+
+    public void addSites2( OpenList sitesC, int index )
+    {
+        this.siteCluster[index] = sitesC;
     }
 
     public void addDelaunay( ArrayList<DelaunayEdge> d_edges )
