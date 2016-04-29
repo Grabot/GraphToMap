@@ -29,6 +29,7 @@ public class Simulation
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
+    private ArrayList<TestEdge> t_edges = new ArrayList<TestEdge>();
     private boolean[][] neighbours;
     private boolean clustererrors = false;
     private boolean cluster1Pos = false;
@@ -222,17 +223,178 @@ public class Simulation
 
         if( !clusterNodesPos )
         {
+            clusterNodesPos = true;
             System.out.println("iterations: " + iterations );
-            positionNodes();
-            clusterVoronoiInit();
+            //positionNodesRandom();
+            //clusterVoronoiInit();
+            positionNodeTest2();
         }
         else
         {
-            clusterVoronoi( delta );
+            getTestEdgeForces( delta );
+            //positionNodeTest();
+            //clusterVoronoi( delta );
         }
 
 
         checkImage();
+    }
+
+    private void getTestEdgeForces( float delta )
+    {
+        for( Node n : nodes )
+        {
+            n.setForce( new Vector2(0, 0));
+        }
+
+        for( TestEdge e : t_edges )
+        {
+            e.ApplyForces();
+        }
+        render.addTestEdge(t_edges);
+
+        double xMove = (nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getForce()).getX() * delta;
+        double yMove = (nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getForce()).getY() * delta;
+
+        nodes.get(clusters.get(3).getNodes().get(0).getIndex()).setPos( new Vector2(nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getPos().getX() + xMove, nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getPos().y + yMove));
+    }
+
+    private void positionNodeTest2()
+    {
+        double xPos = rand.nextDouble()*1200;
+        double yPos = rand.nextDouble()*800;
+
+        Cluster cl = clusters.get(3);
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] nodeToCluster = new double[clusterD.length];
+
+        for( Cluster c : clusters )
+        {
+            double total = 0;
+            int amount = 0;
+            for( Node n : c.getNodes() )
+            {
+                amount++;
+                total = (total + pairD[cl.getNodes().get(0).getIndex()][n.getIndex()]);
+            }
+            if((total/amount) == 0)
+            {
+                nodeToCluster[c.getNumber()] = 0.01;
+            }
+            else {
+                nodeToCluster[c.getNumber()] = (total / amount);
+            }
+            total = 0;
+            amount = 0;
+        }
+
+
+        while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+        {
+            xPos = rand.nextDouble()*1200;
+            yPos = rand.nextDouble()*800;
+        }
+
+        nodes.get(cl.getNodes().get(0).getIndex()).setPos(new Vector2(xPos, yPos));
+
+        for( int i = 0; i < nodeToCluster.length; i++ ) {
+            TestEdge e = new TestEdge(nodes.get(cl.getNodes().get(0).getIndex()), clusters.get(i), forces);
+            t_edges.add(e);
+        }
+
+        render.setNormalNodes(nodes);
+    }
+
+    private double currentDistortion = 100000;
+    private void positionNodeTest()
+    {
+        double xPos = rand.nextDouble()*1200;
+        double yPos = rand.nextDouble()*800;
+
+        Cluster cl = clusters.get(3);
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] nodeToCluster = new double[clusterD.length];
+
+        for( Cluster c : clusters )
+        {
+            double total = 0;
+            int amount = 0;
+            for( Node n : c.getNodes() )
+            {
+                amount++;
+                total = (total + pairD[cl.getNodes().get(0).getIndex()][n.getIndex()]);
+            }
+            if((total/amount) == 0)
+            {
+                nodeToCluster[c.getNumber()] = 0.01;
+            }
+            else {
+                nodeToCluster[c.getNumber()] = (total / amount);
+            }
+            total = 0;
+            amount = 0;
+        }
+
+
+        while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+        {
+            xPos = rand.nextDouble()*1200;
+            yPos = rand.nextDouble()*800;
+        }
+
+        double[] mapping = new double[clusterD.length];
+
+        for (int i = 0; i < clusterD.length; i++) {
+            Vector2 node1 = new Vector2(xPos, yPos);
+            for (int j = 0; j < clusterD.length; j++)
+            {
+                Vector2 node2 = clusters.get(j).getPos();
+                //get the actual distances between all nodes to calculate the distorion metrics
+                mapping[j] = node1.distance(node2);
+            }
+        }
+
+        //the maximum of the actual distance divided with the mapping distance
+        double contraction = 0;
+        //the maximum of the mapping distance divided with the actual distance
+        double expansion = 0;
+        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
+        double distortion;
+
+        double contractiontotal = 0;
+        double expansiontotal = 0;
+        int total = 0;
+
+        for( int i = 0; i < mapping.length; i++ )
+        {
+            total++;
+            double contractionlocal = (nodeToCluster[i] / mapping[i]);
+            double expansionlocal = (mapping[i] / nodeToCluster[i]);
+
+            contractiontotal = (contractiontotal + contractionlocal);
+            expansiontotal = (expansiontotal + expansionlocal);
+        }
+
+        contraction = (contractiontotal/total);
+        expansion = (expansiontotal/total);
+        distortion = (contraction*expansion);
+
+        contraction = 0;
+        expansion = 0;
+        contractiontotal = 0;
+        expansiontotal = 0;
+        total = 0;
+
+        if( distortion < currentDistortion ) {
+            nodes.get(cl.getNodes().get(0).getIndex()).setPos(new Vector2(xPos, yPos));
+            currentDistortion = distortion;
+            System.out.println("current: " + currentDistortion );
+            for( int i = 0; i < mapping.length; i++ ) {
+                System.out.println("to cluster: " + i + " mapping: " + mapping[i] + " actual: " + nodeToCluster[i]);
+            }
+        }
+
+        render.setNormalNodes(nodes);
     }
 
     private void clusterVoronoi( float delta )
@@ -314,6 +476,54 @@ public class Simulation
         render.setNormalNodes(nodes);
         render.setNormalEdges(edges);
         clusterNodesPos = true;
+    }
+
+    private void positionNodesRandom()
+    {
+        double xPos = 0;
+        double yPos = 0;
+
+        PolygonSimple poly = null;
+
+        for( Cluster c : clusters )
+        {
+            poly = c.getSite().getPolygon();
+            for( Node n : c.getNodes() )
+            {
+                xPos = rand.nextDouble()*width;
+                yPos = rand.nextDouble()*height;
+
+                while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+                {
+                    xPos = rand.nextDouble()*width;
+                    yPos = rand.nextDouble()*height;
+                }
+                n.setPos(new Vector2( xPos, yPos ));
+            }
+        }
+
+        render.setNormalNodes(nodes);
+        render.setNormalEdges(edges);
+        clusterNodesPos = true;
+    }
+
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
     }
 
     private ArrayList<DelaunayEdge> getDelaunay()

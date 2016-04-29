@@ -23,8 +23,11 @@ public class Renderer
     private ArrayList<DelaunayEdge> d_edges =  new ArrayList<DelaunayEdge>();
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
+    private ArrayList<TestEdge> t_edges = new ArrayList<TestEdge>();
     private OpenList sites;
     private OpenList[] siteCluster;
+
+    private Color[] siteColours;
 
     private Graphics g;
     private Graphics2D g2;
@@ -43,6 +46,11 @@ public class Renderer
         for( int i = 0; i < clusternodes.size(); i++ )
         {
             siteCluster[i] = new OpenList();
+        }
+        siteColours = new Color[clusternodes.size()];
+        for( int i = 0; i < clusternodes.size(); i++ )
+        {
+            siteColours[i] = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
         }
     }
 
@@ -63,6 +71,15 @@ public class Renderer
 
         drawNodes();
         drawEdges( showEdges );
+        drawTestEdge();
+    }
+
+    private void drawTestEdge()
+    {
+        for( TestEdge edge : t_edges )
+        {
+            edge.draw( g2, Color.BLACK );
+        }
     }
 
     private void drawVoronoiCluster()
@@ -74,7 +91,7 @@ public class Renderer
                 for (Site s : siteCluster[i]) {
                     PolygonSimple poly = s.getPolygon();
                     if (poly != null) {
-                        g2.setColor(Color.WHITE);
+                        g2.setColor(siteColours[i]);
                         g2.fill(poly);
                         g2.setColor(Color.GREEN);
                         g2.draw(poly);
@@ -99,6 +116,11 @@ public class Renderer
                 edge.draw( g2, Color.BLACK );
             }
         }
+    }
+
+    public void addTestEdge( ArrayList<TestEdge> t_edges )
+    {
+        this.t_edges = t_edges;
     }
 
     private void drawNodes()

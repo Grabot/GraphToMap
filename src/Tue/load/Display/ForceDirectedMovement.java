@@ -76,6 +76,13 @@ public class ForceDirectedMovement
             {
                 nodes.get(i).setPos( newPos );
             }
+            else
+            {
+                xMove = (xMove/5);
+                yMove = (yMove/5);
+                newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
+                nodes.get(i).setPos( newPos );
+            }
         }
     }
 
@@ -166,7 +173,7 @@ public class ForceDirectedMovement
     {
         for( Node n : nodes )
         {
-            double ks = 3;
+            double ks = 6;
             Site s = n.getSite();
 
             double distance = n.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));

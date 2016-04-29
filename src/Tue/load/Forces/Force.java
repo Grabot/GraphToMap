@@ -45,4 +45,9 @@ public class Force
         spring.ApplyForce( edge );
     }
 
+    public void ApplyEdgeForce( TestEdge edge )
+    {
+        spring.ApplyForce( edge );
+    }
+
 }

@@ -4,6 +4,7 @@ import Tue.load.Vector2;
 import Tue.objects.ClusterEdge;
 import Tue.objects.DelaunayEdge;
 import Tue.objects.Edge;
+import Tue.objects.TestEdge;
 
 /**
  * Created by s138362 on 24-3-2016.
@@ -64,7 +65,7 @@ public class SpringForce
 
     public void ApplyForce( Edge edge )
     {
-        double ks = 0.01;
+        double ks = 0.0;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
@@ -79,6 +80,21 @@ public class SpringForce
 
         //apply forces, the same force is applied towards opposite direction of the nodes
         edge.getDest().setForce( new Vector2( edge.getDest().getForce().x + force.x, edge.getDest().getForce().y + force.y) );
+        edge.getSource().setForce( new Vector2( edge.getSource().getForce().x - force.x, edge.getSource().getForce().y - force.y) );
+    }
+
+    public void ApplyForce( TestEdge edge)
+    {
+        double ks = 1;
+        posdif.x = edge.getSource().getX() - edge.getDest().getPos().x;
+        posdif.y = edge.getSource().getY() - edge.getDest().getPos().y;
+
+        double posLength = (Math.sqrt(((posdif.x*posdif.x) + (posdif.y*posdif.y))));
+
+        force.x = (posdif.x/posLength)*((ks * (posLength - edge.getWeight())));
+        force.y = (posdif.y/posLength)*((ks * (posLength - edge.getWeight())));
+
+        //apply forces, the same force is applied towards opposite direction of the nodes
         edge.getSource().setForce( new Vector2( edge.getSource().getForce().x - force.x, edge.getSource().getForce().y - force.y) );
     }
 
