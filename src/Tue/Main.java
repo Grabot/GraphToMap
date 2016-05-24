@@ -2,7 +2,9 @@ package Tue;
 
 import Tue.load.Display.Display;
 import Tue.load.Forces.*;
+import Tue.load.Geometry.ConvexHull;
 import Tue.load.PointPlacement;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.*;
 import Tue.parser.DotParser;
 import Tue.parser.DotScanner;
@@ -17,7 +19,7 @@ public class Main {
 
     public int width = 1200;
     public int height = 800;
-    public int delta = 40;
+    public int delta = 1;
 
     public ArrayList<Node> nodes = new ArrayList<Node>();
     public ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -31,12 +33,29 @@ public class Main {
     public double[][] clusterDistance;
     public double[][] pairD;
 
+    private PolygonSimple boundingPolygon;
+
     public static void main(String[] args)
     {
 
         Main main = new Main();
         main.execute( main );
 
+    }
+
+    private void ellipseBorder()
+    {
+        boundingPolygon = new PolygonSimple();
+
+        int numPoints = 20;
+        for (int j = 0; j < numPoints; j++)
+        {
+            double angle = 2.0 * Math.PI * (j * 1.0 / numPoints);
+            double rotate = 2.0 * Math.PI / numPoints / 2;
+            double y = Math.sin(angle + rotate) * (height/2) + (height/2);
+            double x = Math.cos(angle + rotate) * (width/2) + (width/2);
+            boundingPolygon.add(x, y);
+        }
     }
 
     private void execute(final Main main ) {
@@ -47,11 +66,12 @@ public class Main {
         nodes = parser.getNodes();
         edges = parser.getEdges();
 
+        ellipseBorder();
+
         //this will overrule the parser and make hand defined nodes, edges and clusters
         //handMadeGraph();
 
-
-        points = new PointPlacement(nodes, edges, forces);
+        points = new PointPlacement(boundingPolygon, nodes, edges, forces);
         points.PointPlacementCluster();
 
         clusterDistance = points.getClusterD();

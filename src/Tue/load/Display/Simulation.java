@@ -205,7 +205,7 @@ public class Simulation
         checkImage();
 
 
-        while( !clustererrors )
+        if( !clustererrors )
         {
             iterations++;
             //applying force and do movement
@@ -213,31 +213,68 @@ public class Simulation
             core.moveSitesBackCluster(clusters);
 
             //calculate the area's and apply them
-            core.adaptWeightsSimple();
-            core.voroDiagram();
-
-            render.addSites( core.getSites() );
             //distortionmetric();
             checkError();
         }
-
-        if( !clusterNodesPos )
+        else if( !clusterNodesPos )
         {
             clusterNodesPos = true;
             System.out.println("iterations: " + iterations );
+            positionClusterNodesFinal();
+            createTestEdges();
+
             //positionNodesRandom();
             //clusterVoronoiInit();
-            positionNodeTest2();
+            //positionNodeTest2();
         }
         else
         {
+            //positionNodeTest2();
             getTestEdgeForces( delta );
             //positionNodeTest();
             //clusterVoronoi( delta );
         }
+    }
 
+    private void positionClusterNodesFinal()
+    {
+        for( Cluster c : clusters )
+        {
+            PolygonSimple p = c.getSite().getPolygon();
+            c.setPos( new Vector2(p.getCentroid().getX(), p.getCentroid().getY()));
+        }
+    }
 
-        checkImage();
+    private void createTestEdges()
+    {
+        Cluster cl = clusters.get(3);
+        for( Node n1 : cl.getNodes()) {
+            double[] nodeToCluster = new double[clusterD.length];
+
+            for (Cluster c : clusters) {
+                TestEdge e = new TestEdge(n1, c, forces);
+                t_edges.add(e);
+                double total = 0;
+                int amount = 0;
+                for (Node n2 : c.getNodes()) {
+                    amount++;
+                    total = (total + pairD[n1.getIndex()][n2.getIndex()]);
+                }
+                if ((total / amount) == 0) {
+                    nodeToCluster[c.getNumber()] = 0.01;
+                } else {
+                    nodeToCluster[c.getNumber()] = (total / amount);
+                }
+                total = 0;
+                amount = 0;
+            }
+
+            for (TestEdge e : t_edges) {
+                Cluster c = e.getDest();
+                e.setWeight((nodeToCluster[c.getNumber()]*130));
+            }
+        }
+        render.setNormalNodes(nodes);
     }
 
     private void getTestEdgeForces( float delta )
@@ -253,59 +290,114 @@ public class Simulation
         }
         render.addTestEdge(t_edges);
 
-        double xMove = (nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getForce()).getX() * delta;
-        double yMove = (nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getForce()).getY() * delta;
+        for( Node n : clusters.get(3).getNodes()) {
+            double xMove = (n.getForce()).getX() * delta;
+            double yMove = (n.getForce()).getY() * delta;
 
-        nodes.get(clusters.get(3).getNodes().get(0).getIndex()).setPos( new Vector2(nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getPos().getX() + xMove, nodes.get(clusters.get(3).getNodes().get(0).getIndex()).getPos().y + yMove));
-    }
-
-    private void positionNodeTest2()
-    {
-        double xPos = rand.nextDouble()*1200;
-        double yPos = rand.nextDouble()*800;
-
-        Cluster cl = clusters.get(3);
-        PolygonSimple poly = cl.getSite().getPolygon();
-        double[] nodeToCluster = new double[clusterD.length];
-
-        for( Cluster c : clusters )
-        {
-            double total = 0;
-            int amount = 0;
-            for( Node n : c.getNodes() )
-            {
-                amount++;
-                total = (total + pairD[cl.getNodes().get(0).getIndex()][n.getIndex()]);
-            }
-            if((total/amount) == 0)
-            {
-                nodeToCluster[c.getNumber()] = 0.01;
-            }
-            else {
-                nodeToCluster[c.getNumber()] = (total / amount);
-            }
-            total = 0;
-            amount = 0;
+            n.setPos(new Vector2(n.getPos().getX() + xMove, n.getPos().y + yMove));
         }
-
-
-        while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
-        {
-            xPos = rand.nextDouble()*1200;
-            yPos = rand.nextDouble()*800;
-        }
-
-        nodes.get(cl.getNodes().get(0).getIndex()).setPos(new Vector2(xPos, yPos));
-
-        for( int i = 0; i < nodeToCluster.length; i++ ) {
-            TestEdge e = new TestEdge(nodes.get(cl.getNodes().get(0).getIndex()), clusters.get(i), forces);
-            t_edges.add(e);
-        }
-
-        render.setNormalNodes(nodes);
     }
 
     private double currentDistortion = 100000;
+    private void positionNodeTest2() {
+
+        Cluster cl = clusters.get(3);
+        PolygonSimple poly = cl.getSite().getPolygon();
+        for( Node n1 : cl.getNodes() ) {
+
+            double[] nodeToCluster = new double[clusterD.length];
+
+            for (Cluster c : clusters) {
+                double total = 0;
+                int amount = 0;
+                for (Node n2 : c.getNodes()) {
+                    amount++;
+                    total = (total + pairD[n1.getIndex()][n2.getIndex()]);
+                }
+                if ((total / amount) == 0) {
+                    nodeToCluster[c.getNumber()] = 0.01;
+                } else {
+                    nodeToCluster[c.getNumber()] = (total / amount);
+                }
+                total = 0;
+                amount = 0;
+            }
+
+            for (int i = 0; i < nodeToCluster.length; i++) {
+                System.out.println(nodeToCluster[i]);
+            }
+
+            double xPos = rand.nextDouble() * 1200;
+            double yPos = rand.nextDouble() * 800;
+            double distortionNow = 9999;
+            double xPosSet = 0;
+            double yPosSet = 0;
+            for (int i = 0; i < 1000; i++) {
+                distortionNow = getDistortionNode(xPos, yPos, nodeToCluster);
+                if (currentDistortion > distortionNow) {
+                    currentDistortion = distortionNow;
+                    xPosSet = xPos;
+                    yPosSet = yPos;
+                }
+                xPos = rand.nextDouble() * 1200;
+                yPos = rand.nextDouble() * 800;
+            }
+            n1.setPos(new Vector2(xPosSet, yPosSet));
+            currentDistortion = 100000;
+    }
+        render.setNormalNodes(nodes);
+    }
+
+    private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
+    {
+        //the maximum of the actual distance divided with the mapping distance
+        double contraction = 0;
+        //the maximum of the mapping distance divided with the actual distance
+        double expansion = 0;
+        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
+        double distortion;
+
+        double contractiontotal = 0;
+        double contractionlocal = 0;
+        double expansiontotal = 0;
+        double expansionlocal = 0;
+        int total = 0;
+
+        double[] mapping = new double[clusterD.length];
+
+        for (int i = 0; i < clusterD.length; i++) {
+            Vector2 node1 = new Vector2(xPos, yPos);
+            for (int j = 0; j < clusterD.length; j++)
+            {
+                Vector2 node2 = clusters.get(j).getPos();
+                //get the actual distances between all nodes to calculate the distorion metrics
+                mapping[j] = node1.distance(node2);
+            }
+        }
+
+        System.out.println("");
+        for( int i = 0; i < mapping.length; i++ )
+        {
+            System.out.println( mapping[i] );
+        }
+
+        for( int i = 0; i < mapping.length; i++ )
+        {
+            total++;
+            contractionlocal = (nodeToCluster[i] / mapping[i]);
+            expansionlocal = (mapping[i] / nodeToCluster[i]);
+
+            contractiontotal = (contractiontotal + contractionlocal);
+            expansiontotal = (expansiontotal + expansionlocal);
+        }
+
+        contraction = (contractiontotal/total);
+        expansion = (expansiontotal/total);
+        distortion = (contraction*expansion);
+
+        return distortion;
+    }
+
     private void positionNodeTest()
     {
         double xPos = rand.nextDouble()*1200;
@@ -467,15 +559,6 @@ public class Simulation
             System.out.println("all area's low error with lower than 0.011 error for all area's");
         }
         doneclusters = 0;
-    }
-
-    private void positionNodes()
-    {
-        points.positionNodes();
-
-        render.setNormalNodes(nodes);
-        render.setNormalEdges(edges);
-        clusterNodesPos = true;
     }
 
     private void positionNodesRandom()
