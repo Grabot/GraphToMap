@@ -33,6 +33,7 @@ public class Main {
     public double[][] clusterDistance;
     public double[][] pairD;
 
+    public double graphScaling;
     private PolygonSimple boundingPolygon;
 
     public static void main(String[] args)
@@ -80,6 +81,13 @@ public class Main {
         clusters = points.getClusters();
         clusterEdges = points.getClusterEdges();
 
+        graphScaling = points.getScaling();
+
+        for( Edge e : edges )
+        {
+            e.setWeight(e.getWeight()*(graphScaling/10));
+        }
+
         EventQueue.invokeLater(new Runnable()
         {
             @Override
@@ -109,31 +117,72 @@ public class Main {
 
     private void handMadeGraph()
     {
-//        Node node1 = new Node("node1", 0);
-//        node1.addLabel("node1");
-//        Node node2 = new Node("node2", 1);
-//        node2.addLabel("node2");
-//        Node node3 = new Node("node3", 2);
-//        node3.addLabel("node3");
-//
-//        node1.addWeight(10);
-//        node1.addCluster("1");
-//        node2.addWeight(10);
-//        node2.addCluster("2");
-//        node3.addWeight(10);
-//        node3.addCluster("3");
-//        nodes.clear();
-//        nodes.add(node1);
-//        nodes.add(node2);
-//        nodes.add(node3);
-//
-//        Edge edge1 = new Edge(nodes.get(0), nodes.get(1));
-//        Edge edge2 = new Edge(nodes.get(1), nodes.get(2));
-//        Edge edge3 = new Edge(nodes.get(2), nodes.get(0));
-//
-//        edges.clear();
-//        edges.add(edge1);
-//        edges.add(edge2);
-//        edges.add(edge3);
+        Node node1 = new Node(forces, "node1", 0);
+        node1.addLabel("node1");
+        Node node2 = new Node(forces, "node2", 1);
+        node2.addLabel("node2");
+        Node node3 = new Node(forces, "node3", 2);
+        node3.addLabel("node3");
+
+        Node node4 = new Node(forces, "node4", 3);
+        node1.addLabel("node4");
+        Node node5 = new Node(forces, "node5", 4);
+        node2.addLabel("node5");
+        Node node6 = new Node(forces, "node6", 5);
+        node3.addLabel("node6");
+
+        node1.addWeight(1);
+        node1.addCluster("1");
+        node2.addWeight(1);
+        node2.addCluster("2");
+        node3.addWeight(1);
+        node3.addCluster("3");
+        node4.addWeight(1);
+        node4.addCluster("1");
+        node5.addWeight(1);
+        node5.addCluster("2");
+        node6.addWeight(1);
+        node6.addCluster("3");
+
+        nodes.clear();
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+        nodes.add(node4);
+        nodes.add(node5);
+        nodes.add(node6);
+
+        Edge edge1 = new Edge(nodes.get(0), nodes.get(1), forces);
+        Edge edge2 = new Edge(nodes.get(1), nodes.get(2), forces);
+        Edge edge3 = new Edge(nodes.get(2), nodes.get(0), forces);
+
+        Edge edge4 = new Edge(nodes.get(3), nodes.get(4), forces);
+        Edge edge5 = new Edge(nodes.get(4), nodes.get(5), forces);
+        Edge edge6 = new Edge(nodes.get(5), nodes.get(3), forces);
+
+        Edge edge7 = new Edge(nodes.get(0), nodes.get(3), forces);
+        Edge edge8 = new Edge(nodes.get(1), nodes.get(4), forces);
+        Edge edge9 = new Edge(nodes.get(2), nodes.get(5), forces);
+
+        edge1.setWeight(2);
+        edge2.setWeight(2);
+        edge3.setWeight(2);
+        edge4.setWeight(2);
+        edge5.setWeight(2);
+        edge6.setWeight(2);
+        edge7.setWeight(2);
+        edge8.setWeight(2);
+        edge9.setWeight(2);
+
+        edges.clear();
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+        edges.add(edge5);
+        edges.add(edge6);
+        edges.add(edge7);
+        edges.add(edge8);
+        edges.add(edge9);
     }
 }

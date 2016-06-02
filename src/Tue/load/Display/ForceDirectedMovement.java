@@ -108,33 +108,34 @@ public class ForceDirectedMovement
     private void calculatePosEulerCluster()
     {
         calculateForcesCluster();
+
+        double boundingArea = boundingPolygon.getArea();
+        double siteError = 0;
+
         //calculate velocity and position for all nodes.
         for( int i = 0; i < clusters.size(); i++ )
         {
             double xMove = (clusters.get(i).getForce().x * delta);
             double yMove = (clusters.get(i).getForce().y * delta);
 
-            if( xMove > moveXMax )
+            double sitePercentage = clusters.get(i).getSite().getPercentage();
+            double siteArea = boundingArea*sitePercentage;
+            siteError = (clusters.get(i).getSite().getPolygon().getArea()/siteArea);
+            siteError = ((siteError-1)*2);
+            if( siteError < 0 )
             {
-                xMove = moveXMax;
+                siteError = (siteError*-1);
             }
-            if( yMove > moveYMax )
+            if( siteError > 1 )
             {
-                yMove = moveYMax;
+                //1 would be the complete movement it wants to do
+                siteError = 1;
             }
+
+            xMove = (xMove*siteError);
+            yMove = (yMove*siteError);
+
             clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + xMove), clusters.get(i).getPos().y + yMove));
-        }
-
-        moveXMax = (moveXMax-0.1);
-        moveYMax = (moveYMax-0.05);
-
-        if( moveXMax < 0 )
-        {
-            moveXMax = 0;
-        }
-        if( moveYMax < 0 )
-        {
-            moveYMax = 0;
         }
     }
 

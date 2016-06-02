@@ -45,11 +45,15 @@ public class Display extends JPanel implements ActionListener
     private double[][] clusterDistance;
     private double[][] pairD;
 
+    public double graphScaling = 0;
+
+    public double zoom = 1;
+
     public void create()
     {
         lastLoopTime = System.currentTimeMillis();
 
-        render = new Tue.load.Display.Renderer(clusters, clusterEdges);
+        render = new Renderer(this, clusters, clusterEdges);
         simulation = new Simulation(this, render, clusters, clusterEdges, width, height, forces, pairD, clusterDistance, points, nodes, edges );
 
         JFrame f = new JFrame("Graph To Map");
@@ -61,6 +65,26 @@ public class Display extends JPanel implements ActionListener
         f.setSize(width, height);
         f.setVisible(true);
 
+        f.addMouseWheelListener( new MouseWheelListener() {
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e)
+            {
+                if( e.getWheelRotation() == -1 )
+                {
+                    zoom = (zoom + 0.01);
+                }
+                else if( e.getWheelRotation() == 1 )
+                {
+                    zoom = (zoom - 0.01);
+                }
+                else
+                {
+
+                }
+            }
+
+        });
         f.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
                 if( e.getKeyCode() == KeyEvent.VK_E )
@@ -78,6 +102,13 @@ public class Display extends JPanel implements ActionListener
                 if( e.getKeyCode() == KeyEvent.VK_X)
                 {
                     showData = (!showData);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_Z )
+                {
+                    zoom = (zoom+0.01);
+                }
+                if( e.getKeyCode() == KeyEvent.VK_A ) {
+                    zoom = (zoom - 0.01);
                 }
                 if( e.getKeyCode() == KeyEvent.VK_V )
                 {
@@ -114,6 +145,7 @@ public class Display extends JPanel implements ActionListener
         this.pairD = main.pairD;
         this.clusterDistance = main.clusterDistance;
         this.points = main.points;
+        this.graphScaling = main.graphScaling;
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());

@@ -22,9 +22,8 @@ public class PointPlacement
     private Force forces;
 
     private double missingValue = 0;
-    private double radiusGlobal = 10;
+    private double radiusGlobal = 20;
     private double stepSize = 0.1;
-    private double scalingFactor = 0;
     private int width = 1200;
     private int height = 800;
 
@@ -56,9 +55,14 @@ public class PointPlacement
         }
     }
 
+    public double getScaling()
+    {
+        return graphScaling;
+    }
+
     public void PointPlacementCluster()
     {
-        double graphDistance = 0;
+        double graphDistance = 1;
 
         int clusterNumber = getClusterNumber(nodes, edges);
         Cluster[] Cnodes = new Cluster[(clusterNumber+1)];
@@ -77,12 +81,8 @@ public class PointPlacement
             }
         }
 
-        System.out.println("graphDistance: " + graphDistance );
-        System.out.println("width: " + width + " height: " + height );
-        System.out.println("screenDistance: " + Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2))));
-        System.out.println("scaling: " + (Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)))/graphDistance));
-
         graphScaling = (Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)))/graphDistance);
+        System.out.println("scaling: " + graphScaling );
 
         double[][] pos = defineClusterNodePosition( clusterD );
 
@@ -210,11 +210,16 @@ public class PointPlacement
         //the maximum of the mapping distance divided with the actual distance
         double expansion = 0;
         //distortion is the multiplication of the 2. The ideal would be a distortion of 1
-        double distortion;
+        double distortion = 1;
 
         double contractiontotal = 0;
         double expansiontotal = 0;
+        double contractionlocal;
+        double expansionlocal;
         int total = 0;
+        int totalContraction = 0;
+        int totalExpansion = 0;
+        double contraction_expansion = 0;
 
         for( double[][] nodePos : positions )
         {
@@ -237,32 +242,44 @@ public class PointPlacement
                     if( i != j )
                     {
                         total++;
-                        double contractionlocal = (graphScaling*clusterD[i][j] / mapping[i][j]);
-                        double expansionlocal = (mapping[i][j] / graphScaling*clusterD[i][j]);
+                        contractionlocal = (graphScaling*clusterD[i][j] / mapping[i][j]);
+                        expansionlocal = (mapping[i][j] / graphScaling*clusterD[i][j]);
 
-                        contractiontotal = (contractiontotal + contractionlocal);
-                        expansiontotal = (expansiontotal + expansionlocal);
+                        if( contractionlocal >= expansionlocal )
+                        {
+                            totalContraction++;
+                            contractiontotal = (contractiontotal + contractionlocal);
+                        }
+                        else
+                        {
+                            totalExpansion++;
+                            expansiontotal = (expansiontotal + expansionlocal);
+                        }
                     }
                 }
             }
 
-            contraction = (contractiontotal/total);
-            expansion = (expansiontotal/total);
-            if( contraction >= expansion )
-            {
-                System.out.println("test");
-                distortion = contraction;
-            }
-            else
-            {
-                distortion = expansion;
-            }
+            contraction_expansion = (contractiontotal + expansiontotal);
+            distortion = (contraction_expansion/total);
 
-            contraction = 0;
-            expansion = 0;
+//            contraction = (contractiontotal/total);
+//            expansion = (expansiontotal/total);
+//            if( contraction >= expansion )
+//            {
+//                distortion = contraction;
+//            }
+//            else
+//            {
+//                distortion = expansion;
+//            }
+//
+//            contraction = 0;
+//            expansion = 0;
             contractiontotal = 0;
             expansiontotal = 0;
             total = 0;
+            totalContraction = 0;
+            totalExpansion = 0;
 
             if( clusterP[0].getDistortion() > distortion )
             {

@@ -69,6 +69,8 @@ public class Simulation
     private boolean firstImage = true;
     private boolean secondImage = false;
 
+    private double graphScaling = 0;
+
     public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
         this.width = width;
@@ -83,6 +85,7 @@ public class Simulation
         this.nodes = nodes;
         this.edges = edges;
         this.points = points;
+        this.graphScaling = display.graphScaling;
         rand = new Random();
 
         neighbours = new boolean[clusters.size()][clusters.size()];
@@ -195,15 +198,20 @@ public class Simulation
         }
     }
 
-    public void update( float delta )
+    private void updateCore()
     {
-        //calculate the area's and apply them
-
         core.adaptWeightsSimple();
         core.voroDiagram();
         render.addSites( core.getSites() );
         checkImage();
+    }
 
+    public void update( float delta )
+    {
+        //calculate the area's and apply them
+
+
+        updateCore();
 
         if( !clustererrors )
         {
@@ -211,28 +219,29 @@ public class Simulation
             //applying force and do movement
             forceMove.ForceMoveCluster(delta);
             core.moveSitesBackCluster(clusters);
-
+            //updateCore();
             //calculate the area's and apply them
             //distortionmetric();
             checkError();
+
         }
         else if( !clusterNodesPos )
         {
             clusterNodesPos = true;
             System.out.println("iterations: " + iterations );
             positionClusterNodesFinal();
-            createTestEdges();
+            //createTestEdges();
 
-            //positionNodesRandom();
-            //clusterVoronoiInit();
+            positionNodesRandom();
+            clusterVoronoiInit();
             //positionNodeTest2();
         }
         else
         {
             //positionNodeTest2();
-            getTestEdgeForces( delta );
+            //getTestEdgeForces( delta );
             //positionNodeTest();
-            //clusterVoronoi( delta );
+            clusterVoronoi( delta );
         }
     }
 
@@ -398,99 +407,9 @@ public class Simulation
         return distortion;
     }
 
-    private void positionNodeTest()
-    {
-        double xPos = rand.nextDouble()*1200;
-        double yPos = rand.nextDouble()*800;
-
-        Cluster cl = clusters.get(3);
-        PolygonSimple poly = cl.getSite().getPolygon();
-        double[] nodeToCluster = new double[clusterD.length];
-
-        for( Cluster c : clusters )
-        {
-            double total = 0;
-            int amount = 0;
-            for( Node n : c.getNodes() )
-            {
-                amount++;
-                total = (total + pairD[cl.getNodes().get(0).getIndex()][n.getIndex()]);
-            }
-            if((total/amount) == 0)
-            {
-                nodeToCluster[c.getNumber()] = 0.01;
-            }
-            else {
-                nodeToCluster[c.getNumber()] = (total / amount);
-            }
-            total = 0;
-            amount = 0;
-        }
-
-
-        while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
-        {
-            xPos = rand.nextDouble()*1200;
-            yPos = rand.nextDouble()*800;
-        }
-
-        double[] mapping = new double[clusterD.length];
-
-        for (int i = 0; i < clusterD.length; i++) {
-            Vector2 node1 = new Vector2(xPos, yPos);
-            for (int j = 0; j < clusterD.length; j++)
-            {
-                Vector2 node2 = clusters.get(j).getPos();
-                //get the actual distances between all nodes to calculate the distorion metrics
-                mapping[j] = node1.distance(node2);
-            }
-        }
-
-        //the maximum of the actual distance divided with the mapping distance
-        double contraction = 0;
-        //the maximum of the mapping distance divided with the actual distance
-        double expansion = 0;
-        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
-        double distortion;
-
-        double contractiontotal = 0;
-        double expansiontotal = 0;
-        int total = 0;
-
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            total++;
-            double contractionlocal = (nodeToCluster[i] / mapping[i]);
-            double expansionlocal = (mapping[i] / nodeToCluster[i]);
-
-            contractiontotal = (contractiontotal + contractionlocal);
-            expansiontotal = (expansiontotal + expansionlocal);
-        }
-
-        contraction = (contractiontotal/total);
-        expansion = (expansiontotal/total);
-        distortion = (contraction*expansion);
-
-        contraction = 0;
-        expansion = 0;
-        contractiontotal = 0;
-        expansiontotal = 0;
-        total = 0;
-
-        if( distortion < currentDistortion ) {
-            nodes.get(cl.getNodes().get(0).getIndex()).setPos(new Vector2(xPos, yPos));
-            currentDistortion = distortion;
-            System.out.println("current: " + currentDistortion );
-            for( int i = 0; i < mapping.length; i++ ) {
-                System.out.println("to cluster: " + i + " mapping: " + mapping[i] + " actual: " + nodeToCluster[i]);
-            }
-        }
-
-        render.setNormalNodes(nodes);
-    }
-
     private void clusterVoronoi( float delta )
     {
+
         for( int i = 0; i < clusterD.length; i++ ) {
             //calculate the area's and apply them
             forceMove.ForceMoveNormal(delta);
@@ -518,6 +437,7 @@ public class Simulation
             for (Node n : clusters.get(i).getNodes()) {
                 Site site = new Site(n.getPos().getX(), n.getPos().getY());
                 site.setPercentage(n.getWeight());
+                site.setWeight(n.getWeight());
                 n.setSite(site);
                 sitesCluster[i].add(site);
             }
@@ -527,7 +447,7 @@ public class Simulation
             coreCluster[i].setClipPolygon(boundingCluster[i]);
             coreCluster[i].voroDiagram();
             coreCluster[i].setOldPoint();
-
+            coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
         }
 
         forceMove = new ForceDirectedMovement( nodes, edges );
@@ -556,7 +476,7 @@ public class Simulation
         {
             clustererrors = true;
             secondImage = true;
-            System.out.println("all area's low error with lower than 0.011 error for all area's");
+            System.out.println("all area's low error");
         }
         doneclusters = 0;
     }

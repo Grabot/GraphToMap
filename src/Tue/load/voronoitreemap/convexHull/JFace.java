@@ -124,8 +124,10 @@ public class JFace {
 	 */
 	public void link(JFace f0, JVertex v0, JVertex v1){
 		HEdge twin = f0.getEdge(v0,v1);
-		if(twin == null)
+		if(twin == null) {
+			//System.out.println("Twin of Edge is NULL. Cannot Connect Edges!");
 			throw new RuntimeException("Twin of Edge is NULL. Cannot Connect Edges!");
+		}
 		HEdge edge = getEdge(v0,v1);
 		twin.setTwin(edge);
 		edge.setTwin(twin);

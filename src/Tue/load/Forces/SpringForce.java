@@ -45,7 +45,7 @@ public class SpringForce
 
     public void ApplyForce( DelaunayEdge edge)
     {
-        double ks = 2;
+        double ks = 3;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
@@ -65,7 +65,7 @@ public class SpringForce
 
     public void ApplyForce( Edge edge )
     {
-        double ks = 0.0;
+        double ks = 0.05;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
@@ -75,8 +75,16 @@ public class SpringForce
         double posLength = (Math.sqrt(((posdif.x*posdif.x) + (posdif.y*posdif.y))));
         double dotProduct = ((posdif.x*veldif.x) + (posdif.y + veldif.y));
 
-        force.x = (posdif.x/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
-        force.y = (posdif.y/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
+        if( posLength != 0 )
+        {
+            force.x = (posdif.x/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
+            force.y = (posdif.y/posLength)*((ks * (posLength - edge.getWeight())) + (ks * ( dotProduct / posLength)));
+        }
+        else
+        {
+            force.x = 0;
+            force.y = 0;
+        }
 
         //apply forces, the same force is applied towards opposite direction of the nodes
         edge.getDest().setForce( new Vector2( edge.getDest().getForce().x + force.x, edge.getDest().getForce().y + force.y) );

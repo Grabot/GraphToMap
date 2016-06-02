@@ -10,7 +10,7 @@ import java.awt.geom.Line2D;
  */
 public class Edge
 {
-    private int weight = 1;
+    private double weight = 1;
     Node source;
     Node dest;
     Force forces;
@@ -22,7 +22,7 @@ public class Edge
         this.forces = forces;
     }
 
-    public void setWeight()
+    public void setWeight( double weight )
     {
         this.weight = weight;
     }
@@ -37,7 +37,7 @@ public class Edge
         return dest;
     }
 
-    public int getWeight()
+    public double getWeight()
     {
         return weight;
     }

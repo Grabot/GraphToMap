@@ -35,8 +35,12 @@ public class Renderer
     private PolygonSimple newBorder = null;
     private Random rand;
 
-    public Renderer(ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
+    private double zoom = 1;
+    private Display display;
+
+    public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
     {
+        this.display = display;
         rand = new Random();
         this.clusternodes = clusternodes;
         this.clusteredges = clusteredges;
@@ -56,9 +60,15 @@ public class Renderer
 
     public void draw( Graphics g, boolean showEdges, boolean showDelaunay, boolean showSites, boolean showData )
     {
+        this.zoom = display.zoom;
         this.g = g;
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.translate(1200/2, 800/2);
+        g2.scale(zoom, zoom);
+        g2.translate(-1200/2, -800/2);
+//        zoom = (zoom - 0.01);
 
         drawVoronoiArea();
         drawBounding();
@@ -93,7 +103,7 @@ public class Renderer
                     if (poly != null) {
                         g2.setColor(siteColours[i]);
                         g2.fill(poly);
-                        g2.setColor(Color.GREEN);
+                        g2.setColor(Color.BLACK);
                         g2.draw(poly);
                     }
                 }
@@ -126,7 +136,7 @@ public class Renderer
     private void drawNodes()
     {
         for (Node node : nodes) {
-            node.draw(g2, 10, node.getColor());
+            node.draw(g2, 10, Color.GRAY);
         }
     }
 
