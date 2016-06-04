@@ -38,6 +38,9 @@ public class Renderer
     private double zoom = 1;
     private Display display;
 
+    private double movementX = 0;
+    private double movementY = 0;
+
     public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
     {
         this.display = display;
@@ -58,17 +61,28 @@ public class Renderer
         }
     }
 
+    private void checkMovement()
+    {
+        //check zooming
+        g2.translate(display.getWidth()/2, display.getHeight()/2);
+        g2.scale(zoom, zoom);
+        g2.translate(-display.getWidth()/2, -display.getHeight()/2);
+
+
+        //check translation
+        g2.translate(movementX, movementY);
+    }
+
     public void draw( Graphics g, boolean showEdges, boolean showDelaunay, boolean showSites, boolean showData )
     {
         this.zoom = display.zoom;
+        this.movementX = display.movementX;
+        this.movementY = display.movementY;
         this.g = g;
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(1200/2, 800/2);
-        g2.scale(zoom, zoom);
-        g2.translate(-1200/2, -800/2);
-//        zoom = (zoom - 0.01);
+        checkMovement();
 
         drawVoronoiArea();
         drawBounding();

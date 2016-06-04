@@ -8,6 +8,7 @@ import Tue.objects.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -35,7 +36,7 @@ public class Display extends JPanel implements ActionListener
     private boolean movement = true;
     private boolean showData = true;
 
-    private Tue.load.Display.Renderer render;
+    private Renderer render;
     private Simulation simulation;
 
     private Force forces;
@@ -48,6 +49,14 @@ public class Display extends JPanel implements ActionListener
     public double graphScaling = 0;
 
     public double zoom = 1;
+    public double movementX = 0;
+    public double movementY = 0;
+
+    private double clickPointX = 0;
+    private double clickPointY = 0;
+
+    private double currentX = 0;
+    private double currentY = 0;
 
     public void create()
     {
@@ -149,6 +158,7 @@ public class Display extends JPanel implements ActionListener
 
         this.setOpaque(false);
         this.addMouseListener(new MouseHandler());
+        this.addMouseMotionListener( new MouseHandler());
     }
 
     @Override
@@ -173,12 +183,29 @@ public class Display extends JPanel implements ActionListener
         this.repaint();
     }
 
-    private class MouseHandler extends MouseAdapter {
+    private class MouseHandler extends MouseInputAdapter
+    {
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            super.mousePressed(e);
+        public void mousePressed(MouseEvent e)
+        {
+            clickPointX = e.getX();
+            clickPointY = e.getY();
         }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            currentX = movementX;
+            currentY = movementY;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e)
+        {
+            movementX = -((clickPointX - e.getX())-currentX);
+            movementY = -((clickPointY - e.getY())-currentY);
+        }
+
     }
 
 
