@@ -204,22 +204,12 @@ public class PointPlacement
 
     private void getDistortionCluster( double[][] clusterD )
     {
-
-        //the maximum of the actual distance divided with the mapping distance
-        double contraction = 0;
-        //the maximum of the mapping distance divided with the actual distance
-        double expansion = 0;
         //distortion is the multiplication of the 2. The ideal would be a distortion of 1
-        double distortion = 1;
+        double distortion = 0;
 
-        double contractiontotal = 0;
-        double expansiontotal = 0;
         double contractionlocal;
         double expansionlocal;
         int total = 0;
-        int totalContraction = 0;
-        int totalExpansion = 0;
-        double contraction_expansion = 0;
 
         for( double[][] nodePos : positions )
         {
@@ -247,45 +237,28 @@ public class PointPlacement
 
                         if( contractionlocal >= expansionlocal )
                         {
-                            totalContraction++;
-                            contractiontotal = (contractiontotal + contractionlocal);
+                            distortion = (distortion + contractionlocal);
                         }
                         else
                         {
-                            totalExpansion++;
-                            expansiontotal = (expansiontotal + expansionlocal);
+                            distortion = (distortion + expansionlocal);
                         }
                     }
                 }
             }
 
-            contraction_expansion = (contractiontotal + expansiontotal);
-            distortion = (contraction_expansion/total);
+            distortion = (distortion/total);
 
-//            contraction = (contractiontotal/total);
-//            expansion = (expansiontotal/total);
-//            if( contraction >= expansion )
-//            {
-//                distortion = contraction;
-//            }
-//            else
-//            {
-//                distortion = expansion;
-//            }
-//
-//            contraction = 0;
-//            expansion = 0;
-            contractiontotal = 0;
-            expansiontotal = 0;
-            total = 0;
-            totalContraction = 0;
-            totalExpansion = 0;
 
             if( clusterP[0].getDistortion() > distortion )
             {
                 Positioning pos = new Positioning( nodePos, distortion );
                 clusterP[0] = pos;
             }
+
+            total = 0;
+            distortion = 0;
+
             sortCluster();
         }
 

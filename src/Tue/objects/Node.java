@@ -7,6 +7,7 @@ import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Created by s138362 on 15-3-2016.
@@ -130,6 +131,20 @@ public class Node
         g2.setColor(color);
         Ellipse2D.Double shape2 = new Ellipse2D.Double(this.getX()-(radius/2), this.getY()-(radius/2), radius, radius);
         g2.fill(shape2);
+    }
+
+    public void draw2( Graphics2D g2, Color color )
+    {
+        Font defaultFont = new Font("Arial", Font.BOLD, 20);
+        g2.setFont(defaultFont);
+
+        g2.setColor(color);
+        String nodeName = ("" + this.getName());
+        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        int textHeight = 20;
+        g2.drawString(nodeName, (float)(this.getSite().getPolygon().getCentroid().getX()-(textWidth/2)), (float)(this.getSite().getPolygon().getCentroid().getY()+(textHeight/2)) );
+        Rectangle2D.Double shapeRect = new Rectangle2D.Double((float)(this.getSite().getPolygon().getCentroid().getX()-(textWidth/2)), (float)((this.getSite().getPolygon().getCentroid().getY()+(textHeight/2))-textHeight), textWidth, textHeight);
+        g2.draw(shapeRect);
     }
 
     public void setSite( Site s )

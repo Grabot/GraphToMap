@@ -174,15 +174,19 @@ public class ForceDirectedMovement
     {
         for( Node n : nodes )
         {
-            double ks = 6;
+            double ks = 3;
             Site s = n.getSite();
 
             double distance = n.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
             double distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
             double distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
 
-            double forceX = (-((distanceX/distance)*((ks * distance))));
-            double forceY = (-((distanceY/distance)*((ks * distance))));
+            double forceX = 0;
+            double forceY = 0;
+            if( distance != 0 ) {
+                forceX = (-((distanceX / distance) * ((ks * distance))));
+                forceY = (-((distanceY / distance) * ((ks * distance))));
+            }
 
             n.setForce( new Vector2( n.getForce().getX() + (forceX), n.getForce().getY() + (forceY)));
         }

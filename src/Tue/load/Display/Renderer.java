@@ -150,7 +150,7 @@ public class Renderer
     private void drawNodes()
     {
         for (Node node : nodes) {
-            node.draw(g2, 10, Color.GRAY);
+            node.draw2(g2, Color.BLACK);
         }
     }
 
