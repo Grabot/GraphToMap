@@ -96,6 +96,46 @@ public class PointPlacement
             clusters.add(Cnodes[i]);
         }
 
+        int polygonPoints = boundingPolygon.getNumPoints();
+        double[] boundingXPoints = boundingPolygon.getXPoints();
+        double[] boundingYPoints = boundingPolygon.getYPoints();
+        //test to see if it fits in the bounding polygon
+        while( true )
+        {
+            boolean fit = true;
+            for( Cluster c : clusters ) {
+                if (!pnpoly(polygonPoints, boundingXPoints, boundingYPoints, c.getPos().getX(), c.getPos().getY())) {
+                    fit = false;
+                }
+            }
+
+            if( fit )
+            {
+                break;
+            }
+
+            double clusterX = 0;
+            double clusterY = 0;
+            //if it doesn't fit, scale it down and try again
+            for( Cluster c : clusters )
+            {
+                clusterX = c.getPos().getX();
+                clusterY = c.getPos().getY();
+
+                clusterX = (clusterX - (width/2));
+                clusterY = (clusterY - (height/2));
+
+                clusterX = (clusterX * 0.99);
+                clusterY = (clusterY * 0.99);
+
+                clusterX = (clusterX + (width/2));
+                clusterY = (clusterY + (height/2));
+
+                c.setPos( new Vector2( clusterX, clusterY ));
+            }
+        }
+
+
         getClusterNodes(nodes);
         getClusterWeights(nodes);
 
@@ -232,8 +272,8 @@ public class PointPlacement
                     if( i != j )
                     {
                         total++;
-                        contractionlocal = (graphScaling*clusterD[i][j] / mapping[i][j]);
-                        expansionlocal = (mapping[i][j] / graphScaling*clusterD[i][j]);
+                        contractionlocal = ((graphScaling*clusterD[i][j]) / mapping[i][j]);
+                        expansionlocal = (mapping[i][j] / (graphScaling*clusterD[i][j]));
 
                         if( contractionlocal >= expansionlocal )
                         {

@@ -46,17 +46,16 @@ public class ForceDirectedMovement
     public void ForceMoveNormal( float delta )
     {
         this.delta = delta;
-        calculatePosEulerNormal();
+        if( moveXMax != 0 || moveYMax != 0 ) {
+            calculatePosEulerNormal();
+        }
     }
 
     public void ForceMoveCluster( float delta )
     {
         this.delta = delta;
 
-        if( moveXMax != 0|| moveYMax != 0 )
-        {
-            calculatePosEulerCluster();
-        }
+        calculatePosEulerCluster();
         //calculatePosMidPoint();
     }
 
@@ -84,6 +83,19 @@ public class ForceDirectedMovement
                 nodes.get(i).setPos( newPos );
             }
         }
+
+        moveXMax = (moveXMax-0.06);
+        moveYMax = (moveYMax-0.03);
+
+        if( moveXMax < 0 )
+        {
+            moveXMax = 0;
+        }
+        if( moveYMax < 0 )
+        {
+            moveYMax = 0;
+        }
+        System.out.println("movexmax: " + moveXMax );
     }
 
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
@@ -196,7 +208,7 @@ public class ForceDirectedMovement
     {
         for( Cluster c : clusters )
         {
-            double ks = 10;
+            double ks = 15;
             Site s = c.getSite();
 
             double distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));

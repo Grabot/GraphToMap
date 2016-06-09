@@ -210,22 +210,20 @@ public class Simulation
     {
         //calculate the area's and apply them
 
-
         updateCore();
-
-        if( !clustererrors )
+        while( !clustererrors )
         {
             iterations++;
             //applying force and do movement
             forceMove.ForceMoveCluster(delta);
             core.moveSitesBackCluster(clusters);
-            //updateCore();
+            updateCore();
             //calculate the area's and apply them
             //distortionmetric();
             checkError();
-
         }
-        else if( !clusterNodesPos )
+        updateCore();
+        if( !clusterNodesPos )
         {
             clusterNodesPos = true;
             System.out.println("iterations: " + iterations );
@@ -451,6 +449,7 @@ public class Simulation
         }
 
         forceMove = new ForceDirectedMovement( nodes, edges );
+
     }
 
     private void checkError()

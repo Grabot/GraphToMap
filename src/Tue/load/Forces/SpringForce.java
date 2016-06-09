@@ -45,7 +45,7 @@ public class SpringForce
 
     public void ApplyForce( DelaunayEdge edge)
     {
-        double ks = 3;
+        double ks = 4;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
@@ -65,7 +65,7 @@ public class SpringForce
 
     public void ApplyForce( Edge edge )
     {
-        double ks = 0.02;
+        double ks = 0.005;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 

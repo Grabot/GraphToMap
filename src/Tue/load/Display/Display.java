@@ -49,6 +49,7 @@ public class Display extends JPanel implements ActionListener
     public double graphScaling = 0;
 
     public double zoom = 1;
+    public double zoominverse = 1;
     public double movementX = 0;
     public double movementY = 0;
 
@@ -82,10 +83,12 @@ public class Display extends JPanel implements ActionListener
                 if( e.getWheelRotation() == -1 )
                 {
                     zoom = (zoom + 0.01);
+                    zoominverse = (zoominverse - 0.004);
                 }
                 else if( e.getWheelRotation() == 1 )
                 {
                     zoom = (zoom - 0.01);
+                    zoominverse = (zoominverse + 0.004);
                 }
                 else
                 {
@@ -115,9 +118,11 @@ public class Display extends JPanel implements ActionListener
                 if( e.getKeyCode() == KeyEvent.VK_Z )
                 {
                     zoom = (zoom+0.01);
+                    zoominverse = (zoominverse - 0.004);
                 }
                 if( e.getKeyCode() == KeyEvent.VK_A ) {
                     zoom = (zoom - 0.01);
+                    zoominverse = (zoominverse + 0.004);
                 }
                 if( e.getKeyCode() == KeyEvent.VK_V )
                 {

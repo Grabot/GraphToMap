@@ -3,6 +3,7 @@ package Tue.objects;
 
 import Tue.load.Forces.Force;
 import Tue.load.Vector2;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.load.voronoitreemap.j2d.Site;
 
 import java.awt.*;
@@ -31,6 +32,12 @@ public class Node
 
     private double weight = 1;
 
+    private int textHeight = 0;
+
+    private PolygonSimple rect;
+
+    private int initialTextSize = 20;
+
     public Node(Force forces, String name, int index)
     {
         pos = new Vector2(0, 0);
@@ -39,6 +46,40 @@ public class Node
         this.forces = forces;
         this.name = name;
         this.index = index;
+
+        rect = new PolygonSimple();
+    }
+
+    public PolygonSimple setRect(Graphics2D g2, double zoominverse)
+    {
+        Font defaultFont = new Font("Arial", Font.BOLD, (int)(initialTextSize*zoominverse));
+        g2.setFont(defaultFont);
+
+        String nodeName = ("" + this.getName());
+        textHeight = (int)(initialTextSize*zoominverse);
+        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        PolygonSimple nodePolygon = this.getSite().getPolygon();
+        float centroidX = (float)nodePolygon.getCentroid().getX();
+        float centroidY = (float)nodePolygon.getCentroid().getY();
+
+        PolygonSimple rect = new PolygonSimple();
+        rect.add((centroidX-(textWidth/2)), (centroidY+(textHeight/2)));
+        rect.add((centroidX-(textWidth/2)), (centroidY-(textHeight/2)));
+        rect.add((centroidX+(textWidth/2)), (centroidY-(textHeight/2)));
+        rect.add((centroidX+(textWidth/2)), (centroidY+(textHeight/2)));
+
+        return rect;
+    }
+
+    public void drawText( Graphics2D g2 )
+    {
+        g2.setColor(Color.BLACK);
+        String nodeName = ("" + this.getName());
+        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        PolygonSimple nodePolygon = this.getSite().getPolygon();
+        float centroidX = (float)nodePolygon.getCentroid().getX();
+        float centroidY = (float)nodePolygon.getCentroid().getY();
+        g2.drawString(nodeName, (centroidX-(textWidth/2)), (centroidY+(textHeight/2)) );
     }
 
     public void setPos( Vector2 pos )
@@ -124,27 +165,6 @@ public class Node
     public Color getColor()
     {
         return color;
-    }
-
-    public void draw(Graphics2D g2, double radius, Color color )
-    {
-        g2.setColor(color);
-        Ellipse2D.Double shape2 = new Ellipse2D.Double(this.getX()-(radius/2), this.getY()-(radius/2), radius, radius);
-        g2.fill(shape2);
-    }
-
-    public void draw2( Graphics2D g2, Color color )
-    {
-        Font defaultFont = new Font("Arial", Font.BOLD, 20);
-        g2.setFont(defaultFont);
-
-        g2.setColor(color);
-        String nodeName = ("" + this.getName());
-        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
-        int textHeight = 20;
-        g2.drawString(nodeName, (float)(this.getSite().getPolygon().getCentroid().getX()-(textWidth/2)), (float)(this.getSite().getPolygon().getCentroid().getY()+(textHeight/2)) );
-        Rectangle2D.Double shapeRect = new Rectangle2D.Double((float)(this.getSite().getPolygon().getCentroid().getX()-(textWidth/2)), (float)((this.getSite().getPolygon().getCentroid().getY()+(textHeight/2))-textHeight), textWidth, textHeight);
-        g2.draw(shapeRect);
     }
 
     public void setSite( Site s )

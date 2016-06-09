@@ -1,5 +1,7 @@
 package Tue.load.Display;
 
+import Tue.load.LabelObject;
+import Tue.load.Vector2;
 import Tue.load.voronoitreemap.datastructure.OpenList;
 import Tue.load.voronoitreemap.debuge.Colors;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
@@ -20,6 +22,7 @@ public class Renderer
     private ArrayList<Cluster> clusternodes = new ArrayList<Cluster>();
     private ArrayList<ClusterEdge> clusteredges = new ArrayList<ClusterEdge>();
     private ArrayList<PolygonSimple> polys = new ArrayList<PolygonSimple>();
+    private ArrayList<PolygonSimple> nodeLabelRects = new ArrayList<PolygonSimple>();
     private ArrayList<DelaunayEdge> d_edges =  new ArrayList<DelaunayEdge>();
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -35,11 +38,9 @@ public class Renderer
     private PolygonSimple newBorder = null;
     private Random rand;
 
-    private double zoom = 1;
     private Display display;
-
-    private double movementX = 0;
-    private double movementY = 0;
+    private LabelObject[] labels;
+    private boolean labelfill = false;
 
     public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
     {
@@ -59,15 +60,19 @@ public class Renderer
         {
             siteColours[i] = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
         }
+
     }
 
     private void checkMovement()
     {
+        double zoom = display.zoom;
+        double movementX = display.movementX;
+        double movementY = display.movementY;
+
         //check zooming
         g2.translate(display.getWidth()/2, display.getHeight()/2);
         g2.scale(zoom, zoom);
         g2.translate(-display.getWidth()/2, -display.getHeight()/2);
-
 
         //check translation
         g2.translate(movementX, movementY);
@@ -75,9 +80,6 @@ public class Renderer
 
     public void draw( Graphics g, boolean showEdges, boolean showDelaunay, boolean showSites, boolean showData )
     {
-        this.zoom = display.zoom;
-        this.movementX = display.movementX;
-        this.movementY = display.movementY;
         this.g = g;
         g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -93,7 +95,7 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        drawNodes();
+        getNodeRects();
         drawEdges( showEdges );
         drawTestEdge();
     }
@@ -117,16 +119,9 @@ public class Renderer
                     if (poly != null) {
                         g2.setColor(siteColours[i]);
                         g2.fill(poly);
-                        g2.setColor(Color.BLACK);
+                        g2.setColor( new Color( 0, 0, 0, 120) );
                         g2.draw(poly);
                     }
-                }
-
-                g2.setColor(Color.GRAY);
-                for (Site site : siteCluster[i]) {
-                    double radius = 10;
-                    Ellipse2D.Double shape = new Ellipse2D.Double(site.getPoint().getX() - (radius / 2), site.getPoint().getY() - (radius / 2), radius, radius);
-                    g2.fill(shape);
                 }
             }
         }
@@ -147,19 +142,81 @@ public class Renderer
         this.t_edges = t_edges;
     }
 
-    private void drawNodes()
+    private void getNodeRects()
     {
-        for (Node node : nodes) {
-            node.draw2(g2, Color.BLACK);
+        if( labelfill ) {
+            for( int i = 0; i < labels.length; i++ )
+            {
+                PolygonSimple rect = labels[i].getNode().setRect(g2, display.zoominverse);
+                labels[i].setRect(rect);
+            }
+
+            for( int i = (labels.length-1); i > 0; i-- )
+            {
+                PolygonSimple rect = labels[i].getRect();
+                //if no rectangles overlap this one you can draw it
+                //if a rectangle does overlap it, it means it's a better one, so don't draw this one
+                if( !checkOverlapRects( rect ) )
+                {
+                    g2.setColor(new Color(0, 0, 0));
+                    //we can draw the rectangle and the text (or just the text)
+                    //g2.draw(rect);
+                    labels[i].getNode().drawText(g2);
+                    //these are saved for future checks for overlapping
+                    nodeLabelRects.add(rect);
+                }
+            }
+            //we drew all the labels, so clear the list for the next iteration
+            nodeLabelRects.clear();
         }
+
     }
 
-    private void drawBoundary()
+    private boolean checkOverlapRects( PolygonSimple rect )
     {
-        if( newBorder != null ) {
-            g2.setColor(Color.RED);
-            g2.draw(newBorder);
+        for( PolygonSimple p : nodeLabelRects )
+        {
+            if( checkOverLap( rect, p ))
+            {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private boolean checkOverLap( PolygonSimple rectSource, PolygonSimple rectCheck )
+    {
+        for( int i = 0; i < 4; i++ ) {
+            if (pnpoly(4, rectSource.getXPoints(), rectSource.getYPoints(), rectCheck.getXPoints()[i], rectCheck.getYPoints()[i])) {
+                return true;
+            }
+        }
+
+        for( int i = 0; i < 4; i++ ) {
+            if (pnpoly(4, rectCheck.getXPoints(), rectCheck.getYPoints(), rectSource.getXPoints()[i], rectSource.getYPoints()[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
     }
 
     private void drawDelaunay( boolean showDelaunay )
@@ -174,6 +231,33 @@ public class Renderer
     public void setNormalNodes( ArrayList<Node> nodes )
     {
         this.nodes = nodes;
+
+        labels = new LabelObject[nodes.size()];
+        for( int i = 0; i < nodes.size(); i++ )
+        {
+            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
+        }
+        sortLabels();
+        labelfill = true;
+    }
+
+    private void sortLabels()
+    {
+        int n = labels.length;
+        LabelObject temp = null;
+
+        for(int i=0; i < n; i++){
+            for(int j=1; j < (n-i); j++){
+
+                if(labels[j-1].getNodeValue() > labels[j].getNodeValue()){
+                    //swap the elements!
+                    temp = labels[j-1];
+                    labels[j-1] = labels[j];
+                    labels[j] = temp;
+                }
+
+            }
+        }
     }
 
     public void setNormalEdges( ArrayList<Edge> edges )
@@ -211,10 +295,6 @@ public class Renderer
     public void addBounding( PolygonSimple boundingPolygon )
     {
         this.boundingPolygon = boundingPolygon;
-    }
-    public void addBorderLines( PolygonSimple newBorder )
-    {
-        this.newBorder = newBorder;
     }
 
     public void addSites( OpenList sites )
