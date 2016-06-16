@@ -82,6 +82,14 @@ public class Node
         g2.drawString(nodeName, (centroidX-(textWidth/2)), (centroidY+(textHeight/2)) );
     }
 
+    public void drawNode( Graphics2D g2 )
+    {
+        Color c1 = new Color(27, 0, 255, 200 );
+        g2.setColor(c1);
+        Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(10/2), this.getPos().y-(10/2), 10, 10);
+        g2.fill(shape);
+    }
+
     public void setPos( Vector2 pos )
     {
         this.pos = pos;

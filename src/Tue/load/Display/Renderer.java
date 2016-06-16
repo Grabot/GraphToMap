@@ -42,6 +42,8 @@ public class Renderer
     private LabelObject[] labels;
     private boolean labelfill = false;
 
+    private double[] nodeToCluster;
+
     public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges)
     {
         this.display = display;
@@ -95,9 +97,11 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        getNodeRects();
+        drawLabels();
         drawEdges( showEdges );
         drawTestEdge();
+        drawNodes();
+        drawRadiusTest();
     }
 
     private void drawTestEdge()
@@ -142,7 +146,7 @@ public class Renderer
         this.t_edges = t_edges;
     }
 
-    private void getNodeRects()
+    private void drawLabels()
     {
         if( labelfill ) {
             for( int i = 0; i < labels.length; i++ )
@@ -169,7 +173,14 @@ public class Renderer
             //we drew all the labels, so clear the list for the next iteration
             nodeLabelRects.clear();
         }
+    }
 
+    private void drawNodes()
+    {
+        for( Node n : nodes )
+        {
+            n.drawNode( g2 );
+        }
     }
 
     private boolean checkOverlapRects( PolygonSimple rect )
@@ -232,13 +243,13 @@ public class Renderer
     {
         this.nodes = nodes;
 
-        labels = new LabelObject[nodes.size()];
-        for( int i = 0; i < nodes.size(); i++ )
-        {
-            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
-        }
-        sortLabels();
-        labelfill = true;
+//        labels = new LabelObject[nodes.size()];
+//        for( int i = 0; i < nodes.size(); i++ )
+//        {
+//            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
+//        }
+//        sortLabels();
+//        labelfill = true;
     }
 
     private void sortLabels()
@@ -349,6 +360,26 @@ public class Renderer
                 g2.draw(poly);
                 negerror = 0;
                 error = 0;
+            }
+        }
+    }
+
+    public void addNodToClusterTest( double[] nodeToCluster )
+    {
+        this.nodeToCluster = nodeToCluster;
+    }
+
+    private void drawRadiusTest()
+    {
+        if( nodeToCluster != null ) {
+            for (Cluster c : clusternodes) {
+                Color color = new Color(0, 0, 0);
+                g2.setColor(color);
+                //I think the draw shape commands uses diameter instead of radius, cuase multiplying by 2 works well.
+                double radius = (nodeToCluster[c.getNumber()]*2);
+
+                Ellipse2D.Double shape = new Ellipse2D.Double(c.getPos().getX() - (radius / 2), c.getPos().getY() - (radius / 2), radius, radius);
+                g2.draw(shape);
             }
         }
     }

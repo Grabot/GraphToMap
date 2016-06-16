@@ -230,16 +230,16 @@ public class Simulation
             positionClusterNodesFinal();
             //createTestEdges();
 
-            positionNodesRandom();
-            clusterVoronoiInit();
-            //positionNodeTest2();
+            //positionNodesRandom();
+            //clusterVoronoiInit();
+            positionNodeTest2();
         }
         else
         {
             //positionNodeTest2();
             //getTestEdgeForces( delta );
             //positionNodeTest();
-            clusterVoronoi( delta );
+            //clusterVoronoi( delta );
         }
     }
 
@@ -305,54 +305,86 @@ public class Simulation
         }
     }
 
-    private double currentDistortion = 100000;
     private void positionNodeTest2() {
 
         Cluster cl = clusters.get(3);
+        Node n1 = cl.getNodes().get(0);
         PolygonSimple poly = cl.getSite().getPolygon();
-        for( Node n1 : cl.getNodes() ) {
+        double[] nodeToCluster = new double[clusterD.length];
 
-            double[] nodeToCluster = new double[clusterD.length];
-
-            for (Cluster c : clusters) {
-                double total = 0;
-                int amount = 0;
-                for (Node n2 : c.getNodes()) {
-                    amount++;
-                    total = (total + pairD[n1.getIndex()][n2.getIndex()]);
-                }
-                if ((total / amount) == 0) {
-                    nodeToCluster[c.getNumber()] = 0.01;
-                } else {
-                    nodeToCluster[c.getNumber()] = (total / amount);
-                }
-                total = 0;
-                amount = 0;
+        for (Cluster c : clusters) {
+            double total = 0;
+            int amount = 0;
+            for (Node n2 : c.getNodes()) {
+                amount++;
+                total = (total + pairD[n1.getIndex()][n2.getIndex()]);
             }
-
-            for (int i = 0; i < nodeToCluster.length; i++) {
-                System.out.println(nodeToCluster[i]);
+            if ((total / amount) == 0) {
+                nodeToCluster[c.getNumber()] = 0.01;
+            } else {
+                nodeToCluster[c.getNumber()] = (total / amount);
             }
+            total = 0;
+            amount = 0;
+        }
 
-            double xPos = rand.nextDouble() * 1200;
-            double yPos = rand.nextDouble() * 800;
-            double distortionNow = 9999;
-            double xPosSet = 0;
-            double yPosSet = 0;
-            for (int i = 0; i < 1000; i++) {
-                distortionNow = getDistortionNode(xPos, yPos, nodeToCluster);
-                if (currentDistortion > distortionNow) {
-                    currentDistortion = distortionNow;
-                    xPosSet = xPos;
-                    yPosSet = yPos;
-                }
-                xPos = rand.nextDouble() * 1200;
-                yPos = rand.nextDouble() * 800;
-            }
-            n1.setPos(new Vector2(xPosSet, yPosSet));
-            currentDistortion = 100000;
-    }
+        for (int i = 0; i < nodeToCluster.length; i++) {
+            System.out.println(nodeToCluster[i]);
+        }
+
+        double xPos = rand.nextDouble() * 1200;
+        double yPos = rand.nextDouble() * 800;
+
+        n1.setPos(new Vector2(xPos, yPos));
         render.setNormalNodes(nodes);
+
+        beaconBasedPositioning( n1, nodeToCluster );
+
+        clusterNodesPos = true;
+    }
+
+    private void beaconBasedPositioning(Node n, double[] nodeToCluster )
+    {
+        double[] distances = new double[nodeToCluster.length];
+        double lambda = 0.1;
+
+        for( int i = 0; i < 10000; i++ ) {
+            for (int j = 0; j < nodeToCluster.length; j++) {
+                distances[j] = nodeToCluster[j] * lambda;
+            }
+            lambda = (lambda + 0.1);
+            if( circleIntersectionCheck(distances) )
+            {
+                System.out.println("test");
+                break;
+            }
+        }
+        render.addNodToClusterTest(distances);
+    }
+
+    private boolean circleIntersectionCheck( double[] nodeToClusters )
+    {
+        boolean intersects = true;
+
+        double radiusR1 = 0;
+        double radiusR2 = 0;
+        double distance = 0;
+
+        for( Cluster c1 : clusters ) {
+            for( Cluster c2 : clusters )
+            {
+                radiusR1 = nodeToClusters[c1.getNumber()];
+                radiusR2 = nodeToClusters[c2.getNumber()];
+                distance = c1.getPos().distance(c2.getPos());
+
+                if( distance > (radiusR1+radiusR2))
+                {
+                    intersects = false;
+                }
+            }
+        }
+
+        return intersects;
     }
 
     private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
