@@ -11,8 +11,10 @@ import Tue.objects.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 /**
  * Created by s138362 on 27-3-2016.
@@ -57,12 +59,49 @@ public class Renderer
         {
             siteCluster[i] = new OpenList();
         }
+        Color[] brewer = new Color[12];
+        brewer[0] = new Color(166,206,227);
+        brewer[1] = new Color(31,120,180);
+        brewer[2] = new Color(178,223,138);
+        brewer[3] = new Color(51,160,44);
+        brewer[4] = new Color(251,154,153);
+        brewer[5] = new Color(227,26,28);
+        brewer[6] = new Color(253,191,111);
+        brewer[7] = new Color(255,127,0);
+        brewer[8] = new Color(202,178,214);
+        brewer[9] = new Color(106,61,154);
+        brewer[10] = new Color(255,255,153);
+        brewer[11] = new Color(177,89,40);
         siteColours = new Color[clusternodes.size()];
         for( int i = 0; i < clusternodes.size(); i++ )
         {
-            siteColours[i] = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+            if( i > 11 ) {
+                siteColours[i] = new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+            }
+            else
+            {
+                siteColours[i] = brewer[i];
+            }
         }
 
+    }
+
+    private String readFile(String filename) throws IOException {
+        String content = null;
+        File file = new File(filename); //for ex foo.txt
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+            char[] chars = new char[(int) file.length()];
+            reader.read(chars);
+            content = new String(chars);
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(reader !=null){reader.close();}
+        }
+        return content;
     }
 
     private void checkMovement()
@@ -97,9 +136,9 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        //drawLabels();
+        drawLabels();
         drawEdges( showEdges );
-        drawNodes();
+        //drawNodes();
         //drawCircleTest();
         //drawRadiusTest();
         //drawSpecialPoint();
@@ -129,7 +168,7 @@ public class Renderer
         if( showEdges ) {
             for( Edge edge : edges )
             {
-                edge.draw( g2, Color.BLACK );
+                edge.draw( g2, new Color( 0, 0, 0, 140) );
             }
         }
     }
@@ -153,7 +192,7 @@ public class Renderer
                 PolygonSimple rect = labels[i].getRect();
                 //if no rectangles overlap this one you can draw it
                 //if a rectangle does overlap it, it means it's a better one, so don't draw this one
-                if( !checkOverlapRects( rect ) )
+                if( !checkOverlapRects( rect ) || (display.zoom > 2))
                 {
                     g2.setColor(new Color(0, 0, 0));
                     //we can draw the rectangle and the text (or just the text)

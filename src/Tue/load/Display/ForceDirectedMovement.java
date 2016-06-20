@@ -28,6 +28,8 @@ public class ForceDirectedMovement
     private double moveXMax = 100;
     private double moveYMax = 50;
 
+    private boolean movementDone = false;
+
     public ForceDirectedMovement(PolygonSimple boundingPolygon, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, ArrayList<DelaunayEdge> d_edges)
     {
         this.clusters = clusters;
@@ -43,11 +45,14 @@ public class ForceDirectedMovement
         this.edges = edges;
     }
 
-    public void ForceMoveNormal( float delta )
-    {
+    public void ForceMoveNormal( float delta ) {
         this.delta = delta;
-        if( moveXMax != 0 || moveYMax != 0 ) {
+        if (moveXMax != 0 || moveYMax != 0) {
             calculatePosEulerNormal();
+        }
+        else
+        {
+            movementDone = true;
         }
     }
 
@@ -102,6 +107,11 @@ public class ForceDirectedMovement
         {
             moveYMax = 0;
         }
+    }
+
+    public boolean getMovement()
+    {
+        return movementDone;
     }
 
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html

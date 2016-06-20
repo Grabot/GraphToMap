@@ -31,7 +31,7 @@ public class Display extends JPanel implements ActionListener
     float delta;
 
     private boolean showEdges = false;
-    private boolean showDelaunay = true;
+    private boolean showDelaunay = false;
     private boolean showSites = false;
     private boolean movement = true;
     private boolean showData = true;

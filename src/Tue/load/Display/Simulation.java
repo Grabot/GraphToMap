@@ -71,6 +71,8 @@ public class Simulation
 
     private double graphScaling = 0;
 
+    private boolean normalNodePos = false;
+
     public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
         this.width = width;
@@ -234,12 +236,12 @@ public class Simulation
             positionNodeTest3();
             clusterVoronoiInit();
         }
-        else
+
+        while( !normalNodePos )
         {
-            //positionNodeTest2();
-            //getTestEdgeForces( delta );
-            //positionNodeTest();
             clusterVoronoi( delta );
+            updateCore();
+            checkErrorNormal();
         }
     }
 
@@ -331,6 +333,8 @@ public class Simulation
                 beaconBasedPositioning2(nodeToCluster);
                 Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
                 nodes.get(n.getIndex()).setPos(foundPosition);
+                circleIntersections.clear();
+                System.out.println("found position node: " + n.getIndex() );
             }
             scaleToCluster(cl);
         }
@@ -364,13 +368,13 @@ public class Simulation
     private void beaconBasedPositioning2( double[] nodeToCluster )
     {
         double[] distances = new double[nodeToCluster.length];
-        double lambda = 0.1;
+        double lambda = 1;
 
-        for( int i = 0; i < 10000; i++ ) {
+        for( int i = 0; i < 100000; i++ ) {
             for (int j = 0; j < nodeToCluster.length; j++) {
                 distances[j] = nodeToCluster[j] * lambda;
             }
-            lambda = (lambda + 0.1);
+            lambda = (lambda + 1);
             if( circleIntersectionCheck2(distances) )
             {
                 break;
@@ -378,19 +382,15 @@ public class Simulation
         }
     }
 
+    private ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
     private boolean circleIntersectionCheck2( double[] nodeToClusters )
     {
-        ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
         boolean intersects = true;
 
         double radiusR1 = 0;
         double radiusR2 = 0;
         double distance = 0;
 
-        double closest = 999;
-
-        Vector2 P3 = new Vector2(0, 0);
-        Vector2 P3Prime = new Vector2(0, 0);
         for( Cluster c1 : clusters ) {
             for( Cluster c2 : clusters )
             {
@@ -436,24 +436,21 @@ public class Simulation
                         double x3Prime = P2.getX()-rx;
                         double y3Prime = P2.getY()-ry;
 
-                        P3 = new Vector2(x3, y3);
-                        P3Prime = new Vector2(x3Prime, y3Prime);
-
-                        circleIntersections.add(P3);
-                        circleIntersections.add(P3Prime);
+                        circleIntersections.add(new Vector2(x3, y3));
+                        circleIntersections.add(new Vector2(x3Prime, y3Prime));
                     }
                 }
             }
         }
 
-        intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
+        intersects = checkPointsIntersection( nodeToClusters );
 
         render.addNodeToClusterTest(nodeToClusters);
         render.addCircleTest(circleIntersections);
         return intersects;
     }
 
-    private boolean checkPointsIntersection( double[] nodeToClusters, ArrayList<Vector2> circleIntersections )
+    private boolean checkPointsIntersection( double[] nodeToClusters )
     {
         if( circleIntersections.size() > 0 )
         {
@@ -662,7 +659,9 @@ public class Simulation
 
         for( int i = 0; i < clusterD.length; i++ ) {
             //calculate the area's and apply them
-            forceMove.ForceMoveNormal(delta);
+            if( !forceMove.getMovement() ) {
+                forceMove.ForceMoveNormal(delta);
+            }
             coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
 
             //calculate the area's and apply them
@@ -730,6 +729,41 @@ public class Simulation
             System.out.println("all area's low error");
         }
         doneclusters = 0;
+    }
+
+
+    private void checkErrorNormal()
+    {
+        double areaHave = 1;
+        double areaWant = 1;
+        double error = 1;
+        int doneNodes = 0;
+        for( Cluster c : clusters )
+        {
+            for( Node n : c.getNodes() ) {
+                Site s = n.getSite();
+                PolygonSimple p = s.getPolygon();
+                if( p == null )
+                {
+                    error = 100;
+                }
+                else {
+                    areaHave = p.getArea();
+                    areaWant = c.getSite().getPolygon().getArea() * s.getPercentage();
+                    error = Math.abs(areaWant - areaHave) / (areaWant);
+                }
+                if (error < 0.02) {
+                    doneNodes++;
+                }
+            }
+        }
+
+        if( doneNodes == nodes.size() )
+        {
+            normalNodePos = true;
+            System.out.println("all normal node area's low error");
+        }
+        doneNodes = 0;
     }
 
     private void positionNodesRandom()

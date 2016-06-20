@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mdsj" level="project" />
+    <orderEntry type="library" name="json-20160212" level="project" />
   </component>
 </module>
