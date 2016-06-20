@@ -59,8 +59,17 @@ public class Node
         textHeight = (int)(initialTextSize*zoominverse);
         int textWidth = g2.getFontMetrics().stringWidth(nodeName);
         PolygonSimple nodePolygon = this.getSite().getPolygon();
-        float centroidX = (float)nodePolygon.getCentroid().getX();
-        float centroidY = (float)nodePolygon.getCentroid().getY();
+        float centroidX = 0;
+        float centroidY = 0;
+        if( nodePolygon == null )
+        {
+            centroidX = (float)this.getX();
+            centroidY = (float)this.getY();
+        }
+        else {
+            centroidX = (float) nodePolygon.getCentroid().getX();
+            centroidY = (float) nodePolygon.getCentroid().getY();
+        }
 
         PolygonSimple rect = new PolygonSimple();
         rect.add((centroidX-(textWidth/2)), (centroidY+(textHeight/2)));
@@ -77,8 +86,17 @@ public class Node
         String nodeName = ("" + this.getName());
         int textWidth = g2.getFontMetrics().stringWidth(nodeName);
         PolygonSimple nodePolygon = this.getSite().getPolygon();
-        float centroidX = (float)nodePolygon.getCentroid().getX();
-        float centroidY = (float)nodePolygon.getCentroid().getY();
+        float centroidX = 0;
+        float centroidY = 0;
+        if( nodePolygon == null )
+        {
+            centroidX = (float)this.getX();
+            centroidY = (float)this.getY();
+        }
+        else {
+            centroidX = (float) nodePolygon.getCentroid().getX();
+            centroidY = (float) nodePolygon.getCentroid().getY();
+        }
         g2.drawString(nodeName, (centroidX-(textWidth/2)), (centroidY+(textHeight/2)) );
     }
 

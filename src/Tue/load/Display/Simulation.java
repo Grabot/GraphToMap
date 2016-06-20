@@ -335,7 +335,30 @@ public class Simulation
             scaleToCluster(cl);
         }
 
+        finalPositioningCheck();
+
         render.setNormalNodes(nodes);
+        render.setNormalEdges(edges);
+    }
+
+    private void finalPositioningCheck()
+    {
+        //it checks wheter 2 points are placed on top of each other, this messes up the voronoi creation.
+        for( Node n1 : nodes )
+        {
+            for( Node n2 : nodes )
+            {
+                if( n1.getIndex() != n2.getIndex() )
+                {
+                    if( n1.getPos().equals(n2.getPos()))
+                    {
+                        //if this is the case, just move one a bit to the side.
+                        n1.setPos(new Vector2((n1.getPos().getX()-0.1), (n1.getPos().getY()-0.1)));
+                        n2.setPos(new Vector2((n2.getPos().getX()+0.1), (n2.getPos().getY()+0.1)));
+                    }
+                }
+            }
+        }
     }
 
     private void beaconBasedPositioning2( double[] nodeToCluster )

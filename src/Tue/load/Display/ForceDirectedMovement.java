@@ -91,8 +91,8 @@ public class ForceDirectedMovement
             }
         }
 
-        moveXMax = (moveXMax-0.06);
-        moveYMax = (moveYMax-0.03);
+        moveXMax = (moveXMax-0.01);
+        moveYMax = (moveYMax-0.005);
 
         if( moveXMax < 0 )
         {
@@ -102,7 +102,6 @@ public class ForceDirectedMovement
         {
             moveYMax = 0;
         }
-        System.out.println("movexmax: " + moveXMax );
     }
 
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html

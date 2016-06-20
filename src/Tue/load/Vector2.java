@@ -103,5 +103,16 @@ public class Vector2 implements Comparable<Vector2>
         return new Vector2(x_n, y_n).getPolarAngle();
     }
 
+    public boolean equals( Vector2 check )
+    {
+        if((this.getX() == check.getX()) && ( this.getY() == check.getY() ))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 }

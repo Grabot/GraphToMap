@@ -99,19 +99,10 @@ public class Renderer
 
         //drawLabels();
         drawEdges( showEdges );
-        drawTestEdge();
         drawNodes();
         //drawCircleTest();
         //drawRadiusTest();
         //drawSpecialPoint();
-    }
-
-    private void drawTestEdge()
-    {
-        for( TestEdge edge : t_edges )
-        {
-            edge.draw( g2, Color.BLACK );
-        }
     }
 
     private void drawVoronoiCluster()
@@ -245,13 +236,13 @@ public class Renderer
     {
         this.nodes = nodes;
 
-//        labels = new LabelObject[nodes.size()];
-//        for( int i = 0; i < nodes.size(); i++ )
-//        {
-//            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
-//        }
-//        sortLabels();
-//        labelfill = true;
+        labels = new LabelObject[nodes.size()];
+        for( int i = 0; i < nodes.size(); i++ )
+        {
+            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
+        }
+        sortLabels();
+        labelfill = true;
     }
 
     private void sortLabels()
