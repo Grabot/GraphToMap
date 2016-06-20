@@ -179,7 +179,7 @@ public class Renderer
     {
         for( Node n : nodes )
         {
-            n.drawNode( g2 );
+            //n.drawNode( g2 );
         }
     }
 
@@ -243,13 +243,13 @@ public class Renderer
     {
         this.nodes = nodes;
 
-//        labels = new LabelObject[nodes.size()];
-//        for( int i = 0; i < nodes.size(); i++ )
-//        {
-//            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
-//        }
-//        sortLabels();
-//        labelfill = true;
+        labels = new LabelObject[nodes.size()];
+        for( int i = 0; i < nodes.size(); i++ )
+        {
+            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
+        }
+        sortLabels();
+        labelfill = true;
     }
 
     private void sortLabels()
@@ -383,4 +383,5 @@ public class Renderer
             }
         }
     }
+
 }

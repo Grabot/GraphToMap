@@ -86,7 +86,7 @@ public class Node
     {
         Color c1 = new Color(27, 0, 255, 200 );
         g2.setColor(c1);
-        Ellipse2D.Double shape = new Ellipse2D.Double(this.getPos().x-(10/2), this.getPos().y-(10/2), 10, 10);
+        Ellipse2D.Double shape = new Ellipse2D.Double(pos.x-(10/2), pos.y-(10/2), 10, 10);
         g2.fill(shape);
     }
 

@@ -222,7 +222,7 @@ public class Simulation
             //distortionmetric();
             checkError();
         }
-        updateCore();
+
         if( !clusterNodesPos )
         {
             clusterNodesPos = true;
@@ -230,16 +230,16 @@ public class Simulation
             positionClusterNodesFinal();
             //createTestEdges();
 
-            //positionNodesRandom();
-            //clusterVoronoiInit();
-            positionNodeTest2();
+            positionNodesRandom();
+            //positionNodeTest2();
+            clusterVoronoiInit();
         }
         else
         {
             //positionNodeTest2();
             //getTestEdgeForces( delta );
             //positionNodeTest();
-            //clusterVoronoi( delta );
+            clusterVoronoi( delta );
         }
     }
 
@@ -305,45 +305,68 @@ public class Simulation
         }
     }
 
+    private Vector2 nodePosition = new Vector2(0, 0);
     private void positionNodeTest2() {
 
-        Cluster cl = clusters.get(3);
-        Node n1 = cl.getNodes().get(0);
-        PolygonSimple poly = cl.getSite().getPolygon();
-        double[] nodeToCluster = new double[clusterD.length];
+        for( Cluster cl : clusters ) {
+            PolygonSimple poly = cl.getSite().getPolygon();
+            for (Node n : cl.getNodes()) {
+                double[] nodeToCluster = new double[clusterD.length];
 
-        for (Cluster c : clusters) {
-            double total = 0;
-            int amount = 0;
-            for (Node n2 : c.getNodes()) {
-                amount++;
-                total = (total + pairD[n1.getIndex()][n2.getIndex()]);
+                for (Cluster c : clusters) {
+                    double total = 0;
+                    int amount = 0;
+                    for (Node n2 : c.getNodes()) {
+                        amount++;
+                        total = (total + pairD[n.getIndex()][n2.getIndex()]);
+                    }
+                    if ((total / amount) == 0) {
+                        nodeToCluster[c.getNumber()] = 0.01;
+                    } else {
+                        nodeToCluster[c.getNumber()] = (total / amount);
+                    }
+                    total = 0;
+                    amount = 0;
+                }
+
+                beaconBasedPositioning(nodeToCluster);
+                Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
+                nodes.get(n.getIndex()).setPos(foundPosition);
             }
-            if ((total / amount) == 0) {
-                nodeToCluster[c.getNumber()] = 0.01;
-            } else {
-                nodeToCluster[c.getNumber()] = (total / amount);
-            }
-            total = 0;
-            amount = 0;
+            scaleToCluster( cl );
         }
-
-        for (int i = 0; i < nodeToCluster.length; i++) {
-            System.out.println(nodeToCluster[i]);
-        }
-
-        double xPos = rand.nextDouble() * 1200;
-        double yPos = rand.nextDouble() * 800;
-
-        n1.setPos(new Vector2(xPos, yPos));
         render.setNormalNodes(nodes);
-
-        beaconBasedPositioning( n1, nodeToCluster );
-
-        clusterNodesPos = true;
     }
 
-    private void beaconBasedPositioning(Node n, double[] nodeToCluster )
+    private void scaleToCluster( Cluster cl)
+    {
+        //check if all the points are inside the cluster
+        boolean inside = false;
+        PolygonSimple p = cl.getSite().getPolygon();
+        while( !inside ) {
+            //we assume that all the nodes are inside, if that is the case we leave the loop
+            inside = true;
+            //check all the nodes of the cluster if they are inside the cluster.
+            for (Node n : cl.getNodes()) {
+                if (!pnpoly(p.getNumPoints(), p.getXPoints(), p.getYPoints(), n.getPos().getX(), n.getPos().getY())) {
+                    //first mark it that it's not inside
+                    inside = false;
+                    //if a point is not inside, shrink the points till they do, this can be done for each node
+                    Vector2 center = new Vector2(p.getCentroid().getX(), p.getCentroid().getY());
+                    for (Node nMove : cl.getNodes()) {
+                        //first translate it to the center, so the center of the cluster should be (0, 0)
+                        n.setPos(new Vector2(n.getPos().getX() - center.getX(), n.getPos().getY() - center.getY()));
+                        //scale it down
+                        n.setPos(new Vector2(n.getPos().getX() * 0.99, n.getPos().getY() * 0.99));
+                        //translate it back
+                        n.setPos(new Vector2(n.getPos().getX() + center.getX(), n.getPos().getY() + center.getY()));
+                    }
+                }
+            }
+        }
+    }
+
+    private void beaconBasedPositioning(double[] nodeToCluster )
     {
         double[] distances = new double[nodeToCluster.length];
         double lambda = 0.1;
@@ -355,11 +378,9 @@ public class Simulation
             lambda = (lambda + 0.1);
             if( circleIntersectionCheck(distances) )
             {
-                System.out.println("test");
                 break;
             }
         }
-        render.addNodToClusterTest(distances);
     }
 
     private boolean circleIntersectionCheck( double[] nodeToClusters )
@@ -370,16 +391,35 @@ public class Simulation
         double radiusR2 = 0;
         double distance = 0;
 
+        double closest = 999;
         for( Cluster c1 : clusters ) {
             for( Cluster c2 : clusters )
             {
-                radiusR1 = nodeToClusters[c1.getNumber()];
-                radiusR2 = nodeToClusters[c2.getNumber()];
-                distance = c1.getPos().distance(c2.getPos());
-
-                if( distance > (radiusR1+radiusR2))
+                if( c1.getNumber() != c2.getNumber() )
                 {
-                    intersects = false;
+                    radiusR1 = nodeToClusters[c1.getNumber()];
+                    radiusR2 = nodeToClusters[c2.getNumber()];
+                    distance = c1.getPos().distance(c2.getPos());
+
+                    if (distance > (radiusR1 + radiusR2))
+                    {
+                        intersects = false;
+                    }
+                    else
+                    {
+                        double testDistance = (radiusR1+radiusR2) - distance;
+                        if( testDistance < closest )
+                        {
+                            closest = testDistance;
+
+                            double blend = (radiusR1/distance);
+                            double newX = c1.getPos().getX() + blend * (c2.getPos().getX() - c1.getPos().getX());
+                            double newY = c1.getPos().getY() + blend * (c2.getPos().getY() - c1.getPos().getY());
+
+                            nodePosition.x = newX;
+                            nodePosition.y = newY;
+                        }
+                    }
                 }
             }
         }
