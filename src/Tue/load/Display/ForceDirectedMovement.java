@@ -71,7 +71,14 @@ public class ForceDirectedMovement
             Vector2 newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
 
             PolygonSimple poly = nodes.get(i).getSite().getPolygon();
-            if( pnpoly( poly.length, poly.getXPoints(), poly.getYPoints(), newPos.getX(), newPos.getY() ))
+            if( poly == null )
+            {
+                xMove = 0;
+                yMove = 0;
+                newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
+                nodes.get(i).setPos( newPos );
+            }
+            else if( pnpoly( poly.length, poly.getXPoints(), poly.getYPoints(), newPos.getX(), newPos.getY() ))
             {
                 nodes.get(i).setPos( newPos );
             }
@@ -189,9 +196,21 @@ public class ForceDirectedMovement
             double ks = 3;
             Site s = n.getSite();
 
-            double distance = n.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
-            double distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
-            double distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
+            PolygonSimple poly = s.getPolygon();
+            double distance = 0;
+            double distanceX = 0;
+            double distanceY = 0;
+            if( poly == null )
+            {
+                distance = 0;
+                distanceX = 0;
+                distanceY = 0;
+            }
+            else {
+                distance = n.getPos().distance(new Vector2(poly.getCentroid().getX(), poly.getCentroid().getY()));
+                distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
+                distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
+            }
 
             double forceX = 0;
             double forceY = 0;

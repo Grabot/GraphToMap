@@ -97,12 +97,13 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        drawLabels();
+        //drawLabels();
         drawEdges( showEdges );
         drawTestEdge();
         drawNodes();
-        drawCircleTest();
-        drawRadiusTest();
+        //drawCircleTest();
+        //drawRadiusTest();
+        //drawSpecialPoint();
     }
 
     private void drawTestEdge()
@@ -180,7 +181,7 @@ public class Renderer
     {
         for( Node n : nodes )
         {
-            //n.drawNode( g2 );
+            n.drawNode( g2 );
         }
     }
 
@@ -244,13 +245,13 @@ public class Renderer
     {
         this.nodes = nodes;
 
-        labels = new LabelObject[nodes.size()];
-        for( int i = 0; i < nodes.size(); i++ )
-        {
-            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
-        }
-        sortLabels();
-        labelfill = true;
+//        labels = new LabelObject[nodes.size()];
+//        for( int i = 0; i < nodes.size(); i++ )
+//        {
+//            labels[i] = new LabelObject(nodes.get(i), null, nodes.get(i).getWeight() );
+//        }
+//        sortLabels();
+//        labelfill = true;
     }
 
     private void sortLabels()
@@ -394,12 +395,27 @@ public class Renderer
             Ellipse2D.Double shape = new Ellipse2D.Double(v.getX() - (radius / 2), v.getY() - (radius / 2), radius, radius);
             g2.fill(shape);
         }
-}
+    }
 
     private ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
 
     public void addCircleTest( ArrayList<Vector2> circleIntersections )
     {
         this.circleIntersections = circleIntersections;
+    }
+
+    private Vector2 point = new Vector2(0, 0);
+    public void addSpecialPoint( Vector2 point )
+    {
+        this.point = point;
+    }
+
+    private void drawSpecialPoint()
+    {
+        g2.setColor( new Color(247, 0, 9));
+
+        double radius = 10;
+        Ellipse2D.Double shape = new Ellipse2D.Double(point.getX() - (radius / 2), point.getY() - (radius / 2), radius, radius);
+        g2.fill(shape);
     }
 }

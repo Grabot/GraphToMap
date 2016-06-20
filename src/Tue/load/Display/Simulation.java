@@ -232,14 +232,14 @@ public class Simulation
 
             //positionNodesRandom();
             positionNodeTest3();
-            //clusterVoronoiInit();
+            clusterVoronoiInit();
         }
         else
         {
             //positionNodeTest2();
             //getTestEdgeForces( delta );
             //positionNodeTest();
-            //clusterVoronoi( delta );
+            clusterVoronoi( delta );
         }
     }
 
@@ -305,34 +305,37 @@ public class Simulation
         }
     }
 
-    private void positionNodeTest3()
-    {
+    private void positionNodeTest3() {
         //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
-        Cluster cl = clusters.get(2);
-        Node n1 = cl.getNodes().get(0);
-        PolygonSimple poly = cl.getSite().getPolygon();
-        for (Node n : cl.getNodes()) {
-            double[] nodeToCluster = new double[clusterD.length];
+        for( Cluster cl : clusters )
+        {
+            for (Node n : cl.getNodes()) {
+                double[] nodeToCluster = new double[clusterD.length];
 
-            for (Cluster c : clusters) {
-                double total = 0;
-                int amount = 0;
-                for (Node n2 : c.getNodes()) {
-                    amount++;
-                    total = (total + pairD[n.getIndex()][n2.getIndex()]);
+                for (Cluster c : clusters) {
+                    double total = 0;
+                    int amount = 0;
+                    for (Node n2 : c.getNodes()) {
+                        amount++;
+                        total = (total + pairD[n.getIndex()][n2.getIndex()]);
+                    }
+                    if ((total / amount) == 0) {
+                        nodeToCluster[c.getNumber()] = 0.01;
+                    } else {
+                        nodeToCluster[c.getNumber()] = (total / amount);
+                    }
+                    total = 0;
+                    amount = 0;
                 }
-                if ((total / amount) == 0) {
-                    nodeToCluster[c.getNumber()] = 0.01;
-                } else {
-                    nodeToCluster[c.getNumber()] = (total / amount);
-                }
-                total = 0;
-                amount = 0;
+
+                beaconBasedPositioning2(nodeToCluster);
+                Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
+                nodes.get(n.getIndex()).setPos(foundPosition);
             }
-
-            beaconBasedPositioning2(nodeToCluster);
-
+            scaleToCluster(cl);
         }
+
+        render.setNormalNodes(nodes);
     }
 
     private void beaconBasedPositioning2( double[] nodeToCluster )
@@ -420,7 +423,6 @@ public class Simulation
             }
         }
 
-        System.out.println("size: " + circleIntersections.size() );
         intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
 
         render.addNodeToClusterTest(nodeToClusters);
@@ -430,29 +432,33 @@ public class Simulation
 
     private boolean checkPointsIntersection( double[] nodeToClusters, ArrayList<Vector2> circleIntersections )
     {
-        boolean intersects = false;
         if( circleIntersections.size() > 0 )
         {
             for( Vector2 point : circleIntersections )
             {
-                intersects = true;
-                for( Cluster c1 : clusters )
-                {
-                    double radiusToPoint = point.distance(c1.getPos());
+                if( !(Double.isNaN(point.getX()) && Double.isNaN(point.getY())) ) {
+                    boolean intersects = true;
+                    for (Cluster c : clusters) {
+                        double radiusToPoint = point.distance(c.getPos());
+                        double radiusCluster = nodeToClusters[c.getNumber()];
 
-                    if( !(nodeToClusters[c1.getNumber()] > radiusToPoint) )
-                    {
-                        //the point is not within the circle
-                        intersects = false;
+                        if (radiusCluster < radiusToPoint) {
+                            intersects = false;
+                        }
+                    }
+                    if (intersects) {
+                        //there is a point which is in all the circle radii.
+                        nodePosition = point;
+                        return true;
                     }
                 }
             }
         }
         else
         {
-            intersects = false;
+            return false;
         }
-        return intersects;
+        return false;
     }
 
     private Vector2 nodePosition = new Vector2(0, 0);
@@ -488,7 +494,7 @@ public class Simulation
         render.setNormalNodes(nodes);
     }
 
-    private void scaleToCluster( Cluster cl)
+    private void scaleToCluster( Cluster cl )
     {
         //check if all the points are inside the cluster
         boolean inside = false;
