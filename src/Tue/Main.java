@@ -70,7 +70,7 @@ public class Main {
         ellipseBorder();
 
         //this will overrule the parser and make hand defined nodes, edges and clusters
-        //handMadeGraph();
+        handMadeGraph();
 
         points = new PointPlacement(boundingPolygon, nodes, edges, forces);
         points.PointPlacementCluster();

@@ -101,6 +101,7 @@ public class Renderer
         drawEdges( showEdges );
         drawTestEdge();
         drawNodes();
+        drawCircleTest();
         drawRadiusTest();
     }
 
@@ -364,7 +365,7 @@ public class Renderer
         }
     }
 
-    public void addNodToClusterTest( double[] nodeToCluster )
+    public void addNodeToClusterTest( double[] nodeToCluster )
     {
         this.nodeToCluster = nodeToCluster;
     }
@@ -384,4 +385,21 @@ public class Renderer
         }
     }
 
+    private void drawCircleTest()
+    {
+        g2.setColor( new Color(247, 0, 202));
+
+        for( Vector2 v : circleIntersections ) {
+            double radius = 10;
+            Ellipse2D.Double shape = new Ellipse2D.Double(v.getX() - (radius / 2), v.getY() - (radius / 2), radius, radius);
+            g2.fill(shape);
+        }
+}
+
+    private ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
+
+    public void addCircleTest( ArrayList<Vector2> circleIntersections )
+    {
+        this.circleIntersections = circleIntersections;
+    }
 }

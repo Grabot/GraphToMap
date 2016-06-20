@@ -230,16 +230,16 @@ public class Simulation
             positionClusterNodesFinal();
             //createTestEdges();
 
-            positionNodesRandom();
-            //positionNodeTest2();
-            clusterVoronoiInit();
+            //positionNodesRandom();
+            positionNodeTest3();
+            //clusterVoronoiInit();
         }
         else
         {
             //positionNodeTest2();
             //getTestEdgeForces( delta );
             //positionNodeTest();
-            clusterVoronoi( delta );
+            //clusterVoronoi( delta );
         }
     }
 
@@ -305,6 +305,156 @@ public class Simulation
         }
     }
 
+    private void positionNodeTest3()
+    {
+        //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
+        Cluster cl = clusters.get(2);
+        Node n1 = cl.getNodes().get(0);
+        PolygonSimple poly = cl.getSite().getPolygon();
+        for (Node n : cl.getNodes()) {
+            double[] nodeToCluster = new double[clusterD.length];
+
+            for (Cluster c : clusters) {
+                double total = 0;
+                int amount = 0;
+                for (Node n2 : c.getNodes()) {
+                    amount++;
+                    total = (total + pairD[n.getIndex()][n2.getIndex()]);
+                }
+                if ((total / amount) == 0) {
+                    nodeToCluster[c.getNumber()] = 0.01;
+                } else {
+                    nodeToCluster[c.getNumber()] = (total / amount);
+                }
+                total = 0;
+                amount = 0;
+            }
+
+            beaconBasedPositioning2(nodeToCluster);
+
+        }
+    }
+
+    private void beaconBasedPositioning2( double[] nodeToCluster )
+    {
+        double[] distances = new double[nodeToCluster.length];
+        double lambda = 0.1;
+
+        for( int i = 0; i < 10000; i++ ) {
+            for (int j = 0; j < nodeToCluster.length; j++) {
+                distances[j] = nodeToCluster[j] * lambda;
+            }
+            lambda = (lambda + 0.1);
+            if( circleIntersectionCheck2(distances) )
+            {
+                break;
+            }
+        }
+    }
+
+    private boolean circleIntersectionCheck2( double[] nodeToClusters )
+    {
+        ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
+        boolean intersects = true;
+
+        double radiusR1 = 0;
+        double radiusR2 = 0;
+        double distance = 0;
+
+        double closest = 999;
+
+        Vector2 P3 = new Vector2(0, 0);
+        Vector2 P3Prime = new Vector2(0, 0);
+        for( Cluster c1 : clusters ) {
+            for( Cluster c2 : clusters )
+            {
+                if(c1.getNumber() != c2.getNumber())
+                {
+                    radiusR1 = nodeToClusters[c1.getNumber()];
+                    radiusR2 = nodeToClusters[c2.getNumber()];
+                    distance = c1.getPos().distance(c2.getPos());
+
+                    if (distance > (radiusR1 + radiusR2))
+                    {
+                        //they are separate and don't intersect
+                    }
+                    else if( distance < (radiusR1 - radiusR2 ))
+                    {
+                        //one circle is contained within the other.
+                    }
+                    else
+                    {
+                        //find intersection points of the 2 overlapping circles.
+                        //http://paulbourke.net/geometry/circlesphere/
+                        //we can find the intersection based on the triangle between c1, newPos and the intersection.
+                        //there should be 2 points, so 2 solutions for x, y
+                        double dx = c2.getPos().getX()-c1.getPos().getX();
+                        double dy = c2.getPos().getY()-c1.getPos().getY();
+
+                        double a = (((radiusR1*radiusR1)-(radiusR2*radiusR2) + (distance*distance))/(2*distance));
+
+                        double newX = c1.getPos().getX() + (dx*(a/distance));
+                        double newY = c1.getPos().getY() + (dy*(a/distance));
+
+                        Vector2 P2 = new Vector2( newX, newY );
+
+                        //determine the distance from point P2 to the 2 intersection points.
+                        double h = Math.sqrt(((radiusR1*radiusR1) - (a*a)));
+
+                        double rx = (-dy * (h/distance));
+                        double ry = (dx * (h/distance));
+
+                        double x3 = P2.getX()+rx;
+                        double y3 = P2.getY()+ry;
+
+                        double x3Prime = P2.getX()-rx;
+                        double y3Prime = P2.getY()-ry;
+
+                        P3 = new Vector2(x3, y3);
+                        P3Prime = new Vector2(x3Prime, y3Prime);
+
+                        circleIntersections.add(P3);
+                        circleIntersections.add(P3Prime);
+                    }
+                }
+            }
+        }
+
+        System.out.println("size: " + circleIntersections.size() );
+        intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
+
+        render.addNodeToClusterTest(nodeToClusters);
+        render.addCircleTest(circleIntersections);
+        return intersects;
+    }
+
+    private boolean checkPointsIntersection( double[] nodeToClusters, ArrayList<Vector2> circleIntersections )
+    {
+        boolean intersects = false;
+        if( circleIntersections.size() > 0 )
+        {
+            for( Vector2 point : circleIntersections )
+            {
+                intersects = true;
+                for( Cluster c1 : clusters )
+                {
+                    double radiusToPoint = point.distance(c1.getPos());
+
+                    if( !(nodeToClusters[c1.getNumber()] > radiusToPoint) )
+                    {
+                        //the point is not within the circle
+                        intersects = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            intersects = false;
+        }
+        return intersects;
+    }
+
     private Vector2 nodePosition = new Vector2(0, 0);
     private void positionNodeTest2() {
 
@@ -365,6 +515,7 @@ public class Simulation
             }
         }
     }
+
 
     private void beaconBasedPositioning(double[] nodeToCluster )
     {
