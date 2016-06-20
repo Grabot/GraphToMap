@@ -148,20 +148,27 @@ public class ForceDirectedMovement
 
             double sitePercentage = clusters.get(i).getSite().getPercentage();
             double siteArea = boundingArea*sitePercentage;
-            siteError = (clusters.get(i).getSite().getPolygon().getArea()/siteArea);
-            siteError = ((siteError-1)*2);
-            if( siteError < 0 )
+
+            PolygonSimple poly = clusters.get(i).getSite().getPolygon();
+            if( poly == null )
             {
-                siteError = (siteError*-1);
+                xMove = 0;
+                yMove = 0;
             }
-            if( siteError > 1 )
-            {
-                //1 would be the complete movement it wants to do
-                siteError = 1;
+            else {
+                siteError = (poly.getArea() / siteArea);
+                siteError = ((siteError - 1) * 2);
+                if (siteError < 0) {
+                    siteError = (siteError * -1);
+                }
+                if (siteError > 1) {
+                    //1 would be the complete movement it wants to do
+                    siteError = 1;
+                }
+                xMove = (xMove*siteError);
+                yMove = (yMove*siteError);
             }
 
-            xMove = (xMove*siteError);
-            yMove = (yMove*siteError);
 
             clusters.get(i).setPos( new Vector2((clusters.get(i).getPos().x + xMove), clusters.get(i).getPos().y + yMove));
         }
@@ -239,9 +246,21 @@ public class ForceDirectedMovement
             double ks = 15;
             Site s = c.getSite();
 
-            double distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
-            double distanceX = c.getPos().getX() - s.getPolygon().getCentroid().getX();
-            double distanceY = c.getPos().getY() - s.getPolygon().getCentroid().getY();
+            PolygonSimple poly = s.getPolygon();
+            double distance = 0;
+            double distanceX = 0;
+            double distanceY = 0;
+            if( poly == null )
+            {
+                distance = 0;
+                distanceX = 0;
+                distanceY = 0;
+            }
+            else {
+                distance = c.getPos().distance(new Vector2(s.getPolygon().getCentroid().getX(), s.getPolygon().getCentroid().getY()));
+                distanceX = c.getPos().getX() - s.getPolygon().getCentroid().getX();
+                distanceY = c.getPos().getY() - s.getPolygon().getCentroid().getY();
+            }
 
             double forceX = (-((distanceX/distance)*((ks * distance))));
             double forceY = (-((distanceY/distance)*((ks * distance))));

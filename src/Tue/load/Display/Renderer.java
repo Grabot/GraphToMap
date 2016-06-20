@@ -187,7 +187,7 @@ public class Renderer
                 labels[i].setRect(rect);
             }
 
-            for( int i = (labels.length-1); i > 0; i-- )
+            for( int i = (labels.length-1); i > -1; i-- )
             {
                 PolygonSimple rect = labels[i].getRect();
                 //if no rectangles overlap this one you can draw it

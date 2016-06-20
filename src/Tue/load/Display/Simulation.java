@@ -245,6 +245,40 @@ public class Simulation
         }
     }
 
+    public void updateIterative( float delta )
+    {
+        //calculate the area's and apply them
+
+        if( !clustererrors )
+        {
+            iterations++;
+            //applying force and do movement
+            forceMove.ForceMoveCluster(delta);
+            core.moveSitesBackCluster(clusters);
+            updateCore();
+            //calculate the area's and apply them
+            //distortionmetric();
+            checkError();
+        }
+        else if( !clusterNodesPos )
+        {
+            clusterNodesPos = true;
+            System.out.println("iterations: " + iterations );
+            positionClusterNodesFinal();
+            //createTestEdges();
+
+            //positionNodesRandom();
+            positionNodeTest3();
+            clusterVoronoiInit();
+        }
+        else if( !normalNodePos )
+        {
+            clusterVoronoi( delta );
+            updateCore();
+            checkErrorNormal();
+        }
+    }
+
     private void positionClusterNodesFinal()
     {
         for( Cluster c : clusters )
@@ -713,10 +747,15 @@ public class Simulation
         {
             Site s = c.getSite();
             PolygonSimple p = s.getPolygon();
-            areaHave = p.getArea();
-            areaWant = boundingPolygon.getArea()*s.getPercentage();
-            error = Math.abs(areaWant - areaHave) / (areaWant);
-
+            if( p == null )
+            {
+                error = 100;
+            }
+            else {
+                areaHave = p.getArea();
+                areaWant = boundingPolygon.getArea() * s.getPercentage();
+                error = Math.abs(areaWant - areaHave) / (areaWant);
+            }
             if( error < 0.011 )
             {
                 doneclusters++;
@@ -752,7 +791,7 @@ public class Simulation
                     areaWant = c.getSite().getPolygon().getArea() * s.getPercentage();
                     error = Math.abs(areaWant - areaHave) / (areaWant);
                 }
-                if (error < 0.02) {
+                if (error < 0.011) {
                     doneNodes++;
                 }
             }

@@ -65,7 +65,7 @@ public class SpringForce
 
     public void ApplyForce( Edge edge )
     {
-        double ks = 0.03;
+        double ks = 0.05;
         posdif.x = edge.getSource().getPos().x - edge.getDest().getPos().x;
         posdif.y = edge.getSource().getPos().y - edge.getDest().getPos().y;
 
