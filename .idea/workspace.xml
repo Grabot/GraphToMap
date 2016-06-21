@@ -6,12 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="141e5fe2-5b11-4221-b9f9-55a3fc84ac6f" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/datasets/miserables_2.gv" afterPath="$PROJECT_DIR$/datasets/miserables_2.gv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/Main.java" afterPath="$PROJECT_DIR$/src/Tue/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Display.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Display.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/ForceDirectedMovement.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/ForceDirectedMovement.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java" afterPath="$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/Cluster.java" afterPath="$PROJECT_DIR$/src/Tue/objects/Cluster.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/Node.java" afterPath="$PROJECT_DIR$/src/Tue/objects/Node.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,12 +40,12 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="104" column="69" selection-start-line="104" selection-start-column="69" selection-end-line="104" selection-end-column="69" />
+            <state vertical-scroll-proportion="-11.655172">
+              <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2443#2589#0" expanded="true" />
-                <element signature="e#2588#2589#0" expanded="true" />
+                <element signature="e#2451#2597#0" expanded="true" />
+                <element signature="e#2596#2597#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -51,7 +55,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Display.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="182" column="33" selection-start-line="182" selection-start-column="33" selection-end-line="182" selection-end-column="33" />
+              <caret line="36" column="36" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -61,29 +65,30 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="770" column="5" selection-start-line="770" selection-start-column="5" selection-end-line="770" selection-end-column="5" />
-              <folding>
-                <element signature="e#12816#12825#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Vector2.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Tue/load/Vector2.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="113" column="24" selection-start-line="113" selection-start-column="19" selection-end-line="113" selection-end-column="24" />
+              <caret line="757" column="9" selection-start-line="757" selection-start-column="9" selection-end-line="757" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Cluster.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VoronoiCore.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="294" column="31" selection-start-line="294" selection-start-column="31" selection-end-line="294" selection-end-column="31" />
+              <folding>
+                <element signature="e#8135#8136#0" expanded="true" />
+                <element signature="e#8160#8161#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Cluster.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tue/objects/Cluster.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.87752163">
-              <caret line="104" column="164" selection-start-line="104" selection-start-column="164" selection-end-line="104" selection-end-column="164" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="101" column="24" selection-start-line="101" selection-start-column="16" selection-end-line="101" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -93,20 +98,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/ForceDirectedMovement.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="211" column="25" selection-start-line="211" selection-start-column="25" selection-end-line="211" selection-end-column="25" />
-              <folding>
-                <element signature="e#3283#3284#0" expanded="true" />
-                <element signature="e#3318#3319#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpringForce.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+              <caret line="95" column="13" selection-start-line="95" selection-start-column="13" selection-end-line="95" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -115,26 +107,37 @@
       <file leaf-file-name="Renderer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="189" column="48" selection-start-line="189" selection-start-column="48" selection-end-line="189" selection-end-column="48" />
+            <state vertical-scroll-proportion="-20.48276">
+              <caret line="140" column="10" selection-start-line="140" selection-start-column="10" selection-end-line="140" selection-end-column="10" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#12084#12085#0" expanded="true" />
-                <element signature="e#12134#12135#0" expanded="true" />
-                <element signature="e#13145#13154#0" expanded="true" />
-                <element signature="e#13400#13401#0" expanded="true" />
-                <element signature="e#13434#13435#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Node.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Tue/objects/Node.java">
+      <file leaf-file-name="LabelObject.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Tue/load/LabelObject.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="55" column="32" selection-start-line="54" selection-start-column="8" selection-end-line="55" selection-end-column="32" />
-              <folding />
+              <caret line="32" column="16" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
+              <folding>
+                <element signature="e#606#607#0" expanded="true" />
+                <element signature="e#638#639#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Tue/objects/Node.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.56278366">
+              <caret line="108" column="9" selection-start-line="108" selection-start-column="9" selection-end-line="108" selection-end-column="9" />
+              <folding>
+                <element signature="e#4244#4245#0" expanded="true" />
+                <element signature="e#4278#4279#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -143,7 +146,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/parser/DotParser.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="180" column="55" selection-start-line="180" selection-start-column="55" selection-end-line="180" selection-end-column="55" />
+              <caret line="103" column="28" selection-start-line="103" selection-start-column="24" selection-end-line="103" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -172,7 +175,6 @@
         <option value="$PROJECT_DIR$/src/Tue/objects/ClusterNode.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/DelaunayEdge.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Positioning.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/FrictionForce.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/Force.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/TestEdge.java" />
@@ -183,15 +185,16 @@
         <option value="$PROJECT_DIR$/src/Tue/load/LabelObject.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Vector2.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/ColorBrewer.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
-        <option value="$PROJECT_DIR$/src/Tue/objects/Node.java" />
-        <option value="$PROJECT_DIR$/src/Tue/parser/DotParser.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/Display.java" />
-        <option value="$PROJECT_DIR$/src/Tue/Main.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
+        <option value="$PROJECT_DIR$/src/Tue/parser/DotParser.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/ForceDirectedMovement.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/Cluster.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/Display.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
+        <option value="$PROJECT_DIR$/src/Tue/Main.java" />
+        <option value="$PROJECT_DIR$/src/Tue/objects/Node.java" />
       </list>
     </option>
   </component>
@@ -358,6 +361,32 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Geometry" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GraphToMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GraphToMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Tue" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="load" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Forces" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -388,24 +417,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GraphToMap" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GraphToMap" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="datasets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -717,7 +732,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -726,10 +741,10 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23701298" sideWeight="0.5021322" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21861471" sideWeight="0.4978678" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22294372" sideWeight="0.4978678" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26066098" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26332623" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -758,7 +773,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="2" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -767,13 +782,30 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/Tue/objects/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="32" selection-start-line="54" selection-start-column="8" selection-end-line="55" selection-end-column="32" />
+          <folding>
+            <element signature="e#4244#4245#0" expanded="true" />
+            <element signature="e#4278#4279#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/parser/DotParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="180" column="55" selection-start-line="180" selection-start-column="55" selection-end-line="180" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#12816#12825#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -804,10 +836,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
-          <folding>
-            <element signature="e#3283#3284#0" expanded="true" />
-            <element signature="e#3318#3319#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -827,11 +856,6 @@
           <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#12084#12085#0" expanded="true" />
-            <element signature="e#12134#12135#0" expanded="true" />
-            <element signature="e#13145#13154#0" expanded="true" />
-            <element signature="e#13400#13401#0" expanded="true" />
-            <element signature="e#13434#13435#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -840,9 +864,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="47" column="116" selection-start-line="47" selection-start-column="116" selection-end-line="47" selection-end-column="116" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -852,8 +874,8 @@
           <caret line="19" column="24" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2443#2589#0" expanded="true" />
-            <element signature="e#2588#2589#0" expanded="true" />
+            <element signature="e#2451#2597#0" expanded="true" />
+            <element signature="e#2596#2597#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -870,9 +892,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="45" column="208" selection-start-line="45" selection-start-column="161" selection-end-line="45" selection-end-column="208" />
-          <folding>
-            <element signature="e#12816#12825#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -882,11 +902,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#12084#12085#0" expanded="true" />
-            <element signature="e#12134#12135#0" expanded="true" />
-            <element signature="e#13145#13154#0" expanded="true" />
-            <element signature="e#13400#13401#0" expanded="true" />
-            <element signature="e#13434#13435#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -911,10 +926,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="40" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
-          <folding>
-            <element signature="e#3283#3284#0" expanded="true" />
-            <element signature="e#3318#3319#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -922,9 +934,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="53" column="24" selection-start-line="53" selection-start-column="24" selection-end-line="53" selection-end-column="24" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1054,24 +1064,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/LabelObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="16" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#463#464#0" expanded="false" />
-            <element signature="e#495#496#0" expanded="false" />
-            <element signature="e#528#529#0" expanded="false" />
-            <element signature="e#555#556#0" expanded="false" />
-            <element signature="e#606#607#0" expanded="false" />
-            <element signature="e#638#639#0" expanded="false" />
-            <element signature="e#680#681#0" expanded="false" />
-            <element signature="e#707#708#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/ClusterNode.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1107,22 +1099,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="286" column="16" selection-start-line="286" selection-start-column="16" selection-end-line="286" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/voronoitreemap/convexHull/JConvexHull.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="217" column="23" selection-start-line="217" selection-start-column="19" selection-end-line="217" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Vector2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1131,51 +1107,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/parser/DotParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="180" column="55" selection-start-line="180" selection-start-column="55" selection-end-line="180" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="189" column="48" selection-start-line="189" selection-start-column="48" selection-end-line="189" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#12084#12085#0" expanded="true" />
-            <element signature="e#12134#12135#0" expanded="true" />
-            <element signature="e#13145#13154#0" expanded="true" />
-            <element signature="e#13400#13401#0" expanded="true" />
-            <element signature="e#13434#13435#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="770" column="5" selection-start-line="770" selection-start-column="5" selection-end-line="770" selection-end-column="5" />
-          <folding>
-            <element signature="e#12816#12825#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Display.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="182" column="33" selection-start-line="182" selection-start-column="33" selection-end-line="182" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+          <caret line="68" column="65" selection-start-line="68" selection-start-column="65" selection-end-line="68" selection-end-column="65" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/voronoitreemap/convexHull/JConvexHull.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="244" column="0" selection-start-line="244" selection-start-column="0" selection-end-line="244" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#8487#8488#0" expanded="false" />
+            <element signature="e#8514#8515#0" expanded="false" />
+            <element signature="e#8549#8550#0" expanded="false" />
+            <element signature="e#8576#8577#0" expanded="false" />
+            <element signature="e#8606#8607#0" expanded="false" />
+            <element signature="e#8633#8634#0" expanded="false" />
+            <element signature="e#8665#8666#0" expanded="false" />
+            <element signature="e#8692#8693#0" expanded="false" />
+            <element signature="e#8725#8726#0" expanded="false" />
+            <element signature="e#8748#8749#0" expanded="false" />
+            <element signature="e#8796#8797#0" expanded="false" />
+            <element signature="e#8829#8830#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/parser/DotParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="103" column="28" selection-start-line="103" selection-start-column="24" selection-end-line="103" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="294" column="31" selection-start-line="294" selection-start-column="31" selection-end-line="294" selection-end-column="31" />
+          <folding>
+            <element signature="e#8135#8136#0" expanded="true" />
+            <element signature="e#8160#8161#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/LabelObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="16" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
+          <folding>
+            <element signature="e#606#607#0" expanded="true" />
+            <element signature="e#638#639#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/objects/Cluster.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="101" column="24" selection-start-line="101" selection-start-column="16" selection-end-line="101" selection-end-column="24" />
           <folding />
         </state>
       </provider>
@@ -1183,39 +1181,57 @@
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/ForceDirectedMovement.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="211" column="25" selection-start-line="211" selection-start-column="25" selection-end-line="211" selection-end-column="25" />
+          <caret line="95" column="13" selection-start-line="95" selection-start-column="13" selection-end-line="95" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-20.48276">
+          <caret line="140" column="10" selection-start-line="140" selection-start-column="10" selection-end-line="140" selection-end-column="10" />
           <folding>
-            <element signature="e#3283#3284#0" expanded="true" />
-            <element signature="e#3318#3319#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Display.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="36" column="36" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="757" column="9" selection-start-line="757" selection-start-column="9" selection-end-line="757" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="104" column="69" selection-start-line="104" selection-start-column="69" selection-end-line="104" selection-end-column="69" />
+        <state vertical-scroll-proportion="-11.655172">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2443#2589#0" expanded="true" />
-            <element signature="e#2588#2589#0" expanded="true" />
+            <element signature="e#2451#2597#0" expanded="true" />
+            <element signature="e#2596#2597#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="55" column="32" selection-start-line="54" selection-start-column="8" selection-end-line="55" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/objects/Cluster.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.87752163">
-          <caret line="104" column="164" selection-start-line="104" selection-start-column="164" selection-end-line="104" selection-end-column="164" />
-          <folding />
+        <state vertical-scroll-proportion="0.56278366">
+          <caret line="108" column="9" selection-start-line="108" selection-start-column="9" selection-end-line="108" selection-end-column="9" />
+          <folding>
+            <element signature="e#4244#4245#0" expanded="true" />
+            <element signature="e#4278#4279#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

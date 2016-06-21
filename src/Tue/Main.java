@@ -83,10 +83,10 @@ public class Main {
 
         graphScaling = points.getScaling();
 
-        for( Edge e : edges )
-        {
-            e.setWeight(e.getWeight()*(graphScaling/10));
-        }
+//        for( Edge e : edges )
+//        {
+//            e.setWeight(e.getWeight()*(graphScaling/10));
+//        }
 
         EventQueue.invokeLater(new Runnable()
         {
@@ -102,7 +102,7 @@ public class Main {
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/random3.gv"));
+            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -185,5 +185,40 @@ public class Main {
         edges.add(edge7);
         edges.add(edge8);
         edges.add(edge9);
+    }
+
+    private void handMadeGraph2()
+    {
+        Node node1 = new Node(forces, "node1", 0);
+        node1.addLabel("node1");
+        Node node2 = new Node(forces, "node2", 1);
+        node2.addLabel("node2");
+        Node node3 = new Node(forces, "node3", 2);
+        node3.addLabel("node3");
+
+        node1.addWeight(1);
+        node1.addCluster("1");
+        node2.addWeight(1);
+        node2.addCluster("2");
+        node3.addWeight(1);
+        node3.addCluster("3");
+
+        nodes.clear();
+        nodes.add(node1);
+        nodes.add(node2);
+        nodes.add(node3);
+
+        Edge edge1 = new Edge(nodes.get(0), nodes.get(1), forces);
+        Edge edge2 = new Edge(nodes.get(1), nodes.get(2), forces);
+        Edge edge3 = new Edge(nodes.get(2), nodes.get(0), forces);
+
+        edge1.setWeight(2);
+        edge2.setWeight(2);
+        edge3.setWeight(2);
+
+        edges.clear();
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
     }
 }

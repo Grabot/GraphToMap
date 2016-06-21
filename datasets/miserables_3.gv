@@ -76,7 +76,6 @@ graph{
 "Child2" [cluster=10,label="Child2"];
 "Brujon" [cluster=4,label="Brujon"];
 "Mme.Hucheloup" [cluster=8,label="Mme.Hucheloup"];
-"fix" [cluster=6,label="fix"];
 "Napoleon"--"Myriel";
 "Mlle.Baptistine"--"Myriel";
 "Mme.Magloire"--"Myriel";
@@ -331,5 +330,4 @@ graph{
 "Mme.Hucheloup"--"Courfeyrac";
 "Mme.Hucheloup"--"Gavroche";
 "Mme.Hucheloup"--"Enjolras";
-"fix"--"Boulatruelle";
 }

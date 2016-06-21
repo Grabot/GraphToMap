@@ -39,10 +39,12 @@ public class ForceDirectedMovement
         boundingClusters = new PolygonSimple[clusters.size()];
     }
 
-    public ForceDirectedMovement(ArrayList<Node> nodes, ArrayList<Edge> edges)
+    public ForceDirectedMovement(ArrayList<Node> nodes, ArrayList<Edge> edges, ArrayList<Cluster> clusters)
     {
         this.nodes = nodes;
         this.edges = edges;
+
+        this.clusters = clusters;
     }
 
     public void ForceMoveNormal( float delta ) {
@@ -68,31 +70,29 @@ public class ForceDirectedMovement
     {
         calculateForcesNormal();
 
-        for( int i = 0; i < nodes.size(); i++ )
-        {
-            double xMove = (nodes.get(i).getForce().x * delta);
-            double yMove = (nodes.get(i).getForce().y * delta);
+        for( Cluster c : clusters ) {
+            if( c.getNodes().size() != 1 ) {
+                for (int i = 0; i < c.getNodes().size(); i++) {
+                    double xMove = (c.getNodes().get(i).getForce().x * delta);
+                    double yMove = (c.getNodes().get(i).getForce().y * delta);
 
-            Vector2 newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
+                    Vector2 newPos = new Vector2((c.getNodes().get(i).getPos().x + xMove), c.getNodes().get(i).getPos().y + yMove);
 
-            PolygonSimple poly = nodes.get(i).getSite().getPolygon();
-            if( poly == null )
-            {
-                xMove = 0;
-                yMove = 0;
-                newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
-                nodes.get(i).setPos( newPos );
-            }
-            else if( pnpoly( poly.length, poly.getXPoints(), poly.getYPoints(), newPos.getX(), newPos.getY() ))
-            {
-                nodes.get(i).setPos( newPos );
-            }
-            else
-            {
-                xMove = (xMove/5);
-                yMove = (yMove/5);
-                newPos = new Vector2((nodes.get(i).getPos().x + xMove), nodes.get(i).getPos().y + yMove);
-                nodes.get(i).setPos( newPos );
+                    PolygonSimple poly = c.getNodes().get(i).getSite().getPolygon();
+                    if (poly == null) {
+                        xMove = 0;
+                        yMove = 0;
+                        newPos = new Vector2((c.getNodes().get(i).getPos().x + xMove), c.getNodes().get(i).getPos().y + yMove);
+                        c.getNodes().get(i).setPos(newPos);
+                    } else if (pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), newPos.getX(), newPos.getY())) {
+                        c.getNodes().get(i).setPos(newPos);
+                    } else {
+                        xMove = (xMove / 5);
+                        yMove = (yMove / 5);
+                        newPos = new Vector2((c.getNodes().get(i).getPos().x + xMove), c.getNodes().get(i).getPos().y + yMove);
+                        c.getNodes().get(i).setPos(newPos);
+                    }
+                }
             }
         }
 
@@ -207,35 +207,36 @@ public class ForceDirectedMovement
 
     private void getVoronoiForceNormal()
     {
-        for( Node n : nodes )
-        {
-            double ks = 3;
-            Site s = n.getSite();
+        for( Cluster c : clusters ) {
+            if( c.getNodes().size() != 1 ) {
+                for (Node n : c.getNodes()) {
+                    double ks = 3;
+                    Site s = n.getSite();
 
-            PolygonSimple poly = s.getPolygon();
-            double distance = 0;
-            double distanceX = 0;
-            double distanceY = 0;
-            if( poly == null )
-            {
-                distance = 0;
-                distanceX = 0;
-                distanceY = 0;
-            }
-            else {
-                distance = n.getPos().distance(new Vector2(poly.getCentroid().getX(), poly.getCentroid().getY()));
-                distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
-                distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
-            }
+                    PolygonSimple poly = s.getPolygon();
+                    double distance = 0;
+                    double distanceX = 0;
+                    double distanceY = 0;
+                    if (poly == null) {
+                        distance = 0;
+                        distanceX = 0;
+                        distanceY = 0;
+                    } else {
+                        distance = n.getPos().distance(new Vector2(poly.getCentroid().getX(), poly.getCentroid().getY()));
+                        distanceX = n.getPos().getX() - s.getPolygon().getCentroid().getX();
+                        distanceY = n.getPos().getY() - s.getPolygon().getCentroid().getY();
+                    }
 
-            double forceX = 0;
-            double forceY = 0;
-            if( distance != 0 ) {
-                forceX = (-((distanceX / distance) * ((ks * distance))));
-                forceY = (-((distanceY / distance) * ((ks * distance))));
-            }
+                    double forceX = 0;
+                    double forceY = 0;
+                    if (distance != 0) {
+                        forceX = (-((distanceX / distance) * ((ks * distance))));
+                        forceY = (-((distanceY / distance) * ((ks * distance))));
+                    }
 
-            n.setForce( new Vector2( n.getForce().getX() + (forceX), n.getForce().getY() + (forceY)));
+                    n.setForce(new Vector2(n.getForce().getX() + (forceX), n.getForce().getY() + (forceY)));
+                }
+            }
         }
     }
 

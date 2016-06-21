@@ -33,10 +33,13 @@ public class Node
     private double weight = 1;
 
     private int textHeight = 0;
+    private int textWidth = 0;
 
     private PolygonSimple rect;
 
     private int initialTextSize = 20;
+
+    private String newline = System.getProperty("line.separator");
 
     public Node(Force forces, String name, int index)
     {
@@ -55,9 +58,17 @@ public class Node
         Font defaultFont = new Font("Arial", Font.BOLD, (int)(initialTextSize*zoominverse));
         g2.setFont(defaultFont);
 
-        String nodeName = ("" + this.getName());
-        textHeight = (int)(initialTextSize*zoominverse);
-        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        String nodeName = ("" + this.getLabel());
+        if( nodeName.contains("\n"))
+        {
+            textHeight = (int)((initialTextSize*2)*zoominverse);
+            textWidth = g2.getFontMetrics().stringWidth(nodeName.split("\n")[0]);
+        }
+        else
+        {
+            textHeight = (int)(initialTextSize*zoominverse);
+            textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        }
         PolygonSimple nodePolygon = this.getSite().getPolygon();
         float centroidX = 0;
         float centroidY = 0;
@@ -83,8 +94,7 @@ public class Node
     public void drawText( Graphics2D g2 )
     {
         g2.setColor(Color.BLACK);
-        String nodeName = ("" + this.getName());
-        int textWidth = g2.getFontMetrics().stringWidth(nodeName);
+        String nodeName = ("" + this.getLabel());
         PolygonSimple nodePolygon = this.getSite().getPolygon();
         float centroidX = 0;
         float centroidY = 0;
@@ -97,7 +107,14 @@ public class Node
             centroidX = (float) nodePolygon.getCentroid().getX();
             centroidY = (float) nodePolygon.getCentroid().getY();
         }
-        g2.drawString(nodeName, (centroidX-(textWidth/2)), (centroidY+(textHeight/2)) );
+        if( nodeName.contains("\n"))
+        {
+            g2.drawString(nodeName.split("\n")[0], (centroidX - (textWidth / 2)), (centroidY));
+            g2.drawString(nodeName.split("\n")[1], (centroidX - (textWidth / 2)), (centroidY + (textHeight / 2)));
+        }
+        else {
+            g2.drawString(nodeName, (centroidX - (textWidth / 2)), (centroidY + (textHeight / 2)));
+        }
     }
 
     public void drawNode( Graphics2D g2 )

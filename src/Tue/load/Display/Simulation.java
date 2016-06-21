@@ -58,6 +58,7 @@ public class Simulation
     private double[][] pairD;
 
     private int iterations = 0;
+    private int normalIterations = 0;
 
     private ConvexHull boundary;
     private ForceDirectedMovement forceMove;
@@ -72,6 +73,8 @@ public class Simulation
     private double graphScaling = 0;
 
     private boolean normalNodePos = false;
+    private boolean randomPos = false;
+    private Vector2 nodePosition = new Vector2(0, 0);
 
     public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
     {
@@ -208,11 +211,12 @@ public class Simulation
         checkImage();
     }
 
+    private boolean lastPositioning = true;
     public void update( float delta )
     {
         //calculate the area's and apply them
 
-        updateCore();
+        //updateCore();
         while( !clustererrors )
         {
             iterations++;
@@ -225,23 +229,44 @@ public class Simulation
             checkError();
         }
 
-        if( !clusterNodesPos )
-        {
-            clusterNodesPos = true;
-            System.out.println("iterations: " + iterations );
-            positionClusterNodesFinal();
-            //createTestEdges();
 
-            //positionNodesRandom();
-            positionNodeTest3();
-            clusterVoronoiInit();
-        }
 
         while( !normalNodePos )
         {
-            clusterVoronoi( delta );
-            updateCore();
-            checkErrorNormal();
+            normalIterations++;
+            if( !clusterNodesPos )
+            {
+                clusterNodesPos = true;
+                System.out.println("iterations: " + iterations );
+                positionClusterNodesFinal();
+                //createTestEdges();
+
+                System.out.println("random pos: " + randomPos );
+                if( randomPos ) {
+                    System.out.println("test");
+                    positionNodesRandom();
+                }
+                else {
+                    beacondBasedPositioning();
+                }
+                clusterVoronoiInit();
+
+                if( clusterNodesPos ) {
+                    finalPositioningCheck();
+                    render.setNormalNodes(nodes);
+                    render.setNormalEdges(edges);
+                }
+            }
+            else {
+                clusterVoronoi(delta);
+                checkErrorNormal();
+            }
+        }
+        if( lastPositioning )
+        {
+            System.out.println("normal nodes iterations: " + normalIterations );
+            lastPositioning = false;
+            finalNodePositioning();
         }
     }
 
@@ -267,15 +292,47 @@ public class Simulation
             positionClusterNodesFinal();
             //createTestEdges();
 
-            //positionNodesRandom();
-            positionNodeTest3();
+            if( randomPos ) {
+                positionNodesRandom();
+            }
+            else {
+                beacondBasedPositioning();
+            }
             clusterVoronoiInit();
+            //updateCore();
+
+            if( clusterNodesPos ) {
+                finalPositioningCheck();
+                render.setNormalNodes(nodes);
+                render.setNormalEdges(edges);
+            }
         }
         else if( !normalNodePos )
         {
+            normalIterations++;
             clusterVoronoi( delta );
-            updateCore();
             checkErrorNormal();
+        }
+
+
+        if( lastPositioning && normalNodePos )
+        {
+            System.out.println("normal nodes iterations: " + normalIterations );
+            lastPositioning = false;
+            finalNodePositioning();
+        }
+    }
+
+    private void finalNodePositioning()
+    {
+        for( Cluster c : clusters )
+        {
+            if( c.getNodes().size() != 1 ) {
+                for (Node n : c.getNodes()) {
+                    PolygonSimple p = n.getSite().getPolygon();
+                    n.setPos(new Vector2(p.getCentroid().getX(), p.getCentroid().getY()));
+                }
+            }
         }
     }
 
@@ -288,60 +345,8 @@ public class Simulation
         }
     }
 
-    private void createTestEdges()
-    {
-        Cluster cl = clusters.get(3);
-        for( Node n1 : cl.getNodes()) {
-            double[] nodeToCluster = new double[clusterD.length];
 
-            for (Cluster c : clusters) {
-                TestEdge e = new TestEdge(n1, c, forces);
-                t_edges.add(e);
-                double total = 0;
-                int amount = 0;
-                for (Node n2 : c.getNodes()) {
-                    amount++;
-                    total = (total + pairD[n1.getIndex()][n2.getIndex()]);
-                }
-                if ((total / amount) == 0) {
-                    nodeToCluster[c.getNumber()] = 0.01;
-                } else {
-                    nodeToCluster[c.getNumber()] = (total / amount);
-                }
-                total = 0;
-                amount = 0;
-            }
-
-            for (TestEdge e : t_edges) {
-                Cluster c = e.getDest();
-                e.setWeight((nodeToCluster[c.getNumber()]*130));
-            }
-        }
-        render.setNormalNodes(nodes);
-    }
-
-    private void getTestEdgeForces( float delta )
-    {
-        for( Node n : nodes )
-        {
-            n.setForce( new Vector2(0, 0));
-        }
-
-        for( TestEdge e : t_edges )
-        {
-            e.ApplyForces();
-        }
-        render.addTestEdge(t_edges);
-
-        for( Node n : clusters.get(3).getNodes()) {
-            double xMove = (n.getForce()).getX() * delta;
-            double yMove = (n.getForce()).getY() * delta;
-
-            n.setPos(new Vector2(n.getPos().getX() + xMove, n.getPos().y + yMove));
-        }
-    }
-
-    private void positionNodeTest3() {
+    private void beacondBasedPositioning() {
         //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
         for( Cluster cl : clusters )
         {
@@ -364,19 +369,15 @@ public class Simulation
                     amount = 0;
                 }
 
-                beaconBasedPositioning2(nodeToCluster);
+                beaconIntersections(nodeToCluster);
                 Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
                 nodes.get(n.getIndex()).setPos(foundPosition);
-                circleIntersections.clear();
                 System.out.println("found position node: " + n.getIndex() );
             }
             scaleToCluster(cl);
         }
 
-        finalPositioningCheck();
 
-        render.setNormalNodes(nodes);
-        render.setNormalEdges(edges);
     }
 
     private void finalPositioningCheck()
@@ -392,33 +393,49 @@ public class Simulation
                     {
                         //if this is the case, just move one a bit to the side.
                         n1.setPos(new Vector2((n1.getPos().getX()-0.1), (n1.getPos().getY()-0.1)));
-                        n2.setPos(new Vector2((n2.getPos().getX()+0.1), (n2.getPos().getY()+0.1)));
                     }
                 }
             }
         }
+        singleClusterCheck();
     }
 
-    private void beaconBasedPositioning2( double[] nodeToCluster )
+    private void singleClusterCheck()
+    {
+        //also if there is a cluster with only 1 node we will place that node in the cluster center
+        for( Cluster c : clusters )
+        {
+            if( c.getNodes().size() == 1 )
+            {
+                Node n = c.getNodes().get(0);
+                PolygonSimple p = c.getSite().getPolygon();
+                n.setPos(new Vector2(p.getCentroid().getX(), p.getCentroid().getY() ));
+                //we will also set the polygon for this node, since it won't have a site.
+                n.setSite( c.getSite() );
+            }
+        }
+    }
+
+    private void beaconIntersections( double[] nodeToCluster )
     {
         double[] distances = new double[nodeToCluster.length];
-        double lambda = 1;
+        double lambda = 0.1;
 
         for( int i = 0; i < 100000; i++ ) {
             for (int j = 0; j < nodeToCluster.length; j++) {
                 distances[j] = nodeToCluster[j] * lambda;
             }
-            lambda = (lambda + 1);
-            if( circleIntersectionCheck2(distances) )
+            lambda = (lambda + 0.1);
+            if( circleIntersectionCheck(distances) )
             {
                 break;
             }
         }
     }
 
-    private ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
-    private boolean circleIntersectionCheck2( double[] nodeToClusters )
+    private boolean circleIntersectionCheck( double[] nodeToClusters )
     {
+        ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
         boolean intersects = true;
 
         double radiusR1 = 0;
@@ -477,14 +494,14 @@ public class Simulation
             }
         }
 
-        intersects = checkPointsIntersection( nodeToClusters );
+        intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
 
         render.addNodeToClusterTest(nodeToClusters);
         render.addCircleTest(circleIntersections);
         return intersects;
     }
 
-    private boolean checkPointsIntersection( double[] nodeToClusters )
+    private boolean checkPointsIntersection( double[] nodeToClusters, ArrayList<Vector2> circleIntersections )
     {
         if( circleIntersections.size() > 0 )
         {
@@ -515,39 +532,6 @@ public class Simulation
         return false;
     }
 
-    private Vector2 nodePosition = new Vector2(0, 0);
-    private void positionNodeTest2() {
-
-        for( Cluster cl : clusters ) {
-            PolygonSimple poly = cl.getSite().getPolygon();
-            for (Node n : cl.getNodes()) {
-                double[] nodeToCluster = new double[clusterD.length];
-
-                for (Cluster c : clusters) {
-                    double total = 0;
-                    int amount = 0;
-                    for (Node n2 : c.getNodes()) {
-                        amount++;
-                        total = (total + pairD[n.getIndex()][n2.getIndex()]);
-                    }
-                    if ((total / amount) == 0) {
-                        nodeToCluster[c.getNumber()] = 0.01;
-                    } else {
-                        nodeToCluster[c.getNumber()] = (total / amount);
-                    }
-                    total = 0;
-                    amount = 0;
-                }
-
-                beaconBasedPositioning(nodeToCluster);
-                Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
-                nodes.get(n.getIndex()).setPos(foundPosition);
-            }
-            scaleToCluster( cl );
-        }
-        render.setNormalNodes(nodes);
-    }
-
     private void scaleToCluster( Cluster cl )
     {
         //check if all the points are inside the cluster
@@ -574,68 +558,6 @@ public class Simulation
                 }
             }
         }
-    }
-
-
-    private void beaconBasedPositioning(double[] nodeToCluster )
-    {
-        double[] distances = new double[nodeToCluster.length];
-        double lambda = 0.1;
-
-        for( int i = 0; i < 10000; i++ ) {
-            for (int j = 0; j < nodeToCluster.length; j++) {
-                distances[j] = nodeToCluster[j] * lambda;
-            }
-            lambda = (lambda + 0.1);
-            if( circleIntersectionCheck(distances) )
-            {
-                break;
-            }
-        }
-    }
-
-    private boolean circleIntersectionCheck( double[] nodeToClusters )
-    {
-        boolean intersects = true;
-
-        double radiusR1 = 0;
-        double radiusR2 = 0;
-        double distance = 0;
-
-        double closest = 999;
-        for( Cluster c1 : clusters ) {
-            for( Cluster c2 : clusters )
-            {
-                if( c1.getNumber() != c2.getNumber() )
-                {
-                    radiusR1 = nodeToClusters[c1.getNumber()];
-                    radiusR2 = nodeToClusters[c2.getNumber()];
-                    distance = c1.getPos().distance(c2.getPos());
-
-                    if (distance > (radiusR1 + radiusR2))
-                    {
-                        intersects = false;
-                    }
-                    else
-                    {
-                        double testDistance = (radiusR1+radiusR2) - distance;
-                        if( testDistance < closest )
-                        {
-                            closest = testDistance;
-
-                            double blend = (radiusR1/distance);
-                            double newX = c1.getPos().getX() + blend * (c2.getPos().getX() - c1.getPos().getX());
-                            double newY = c1.getPos().getY() + blend * (c2.getPos().getY() - c1.getPos().getY());
-
-                            nodePosition.x = newX;
-                            nodePosition.y = newY;
-                        }
-                    }
-                }
-            }
-        }
-
-        return intersects;
     }
 
     private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
@@ -692,48 +614,62 @@ public class Simulation
     {
 
         for( int i = 0; i < clusterD.length; i++ ) {
-            //calculate the area's and apply them
-            if( !forceMove.getMovement() ) {
-                forceMove.ForceMoveNormal(delta);
+            if( clusters.get(i).getNodes().size() != 1 ) {
+                //calculate the area's and apply them
+                if (!forceMove.getMovement()) {
+                    forceMove.ForceMoveNormal(delta);
+                }
+                coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
+
+                //calculate the area's and apply them
+                coreCluster[i].adaptWeightsSimple();
+                coreCluster[i].voroDiagram();
+
+                render.addSites2(coreCluster[i].getSites(), i);
             }
-            coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
-
-            //calculate the area's and apply them
-            coreCluster[i].adaptWeightsSimple();
-            coreCluster[i].voroDiagram();
-
-            render.addSites2(coreCluster[i].getSites(), i);
         }
     }
 
     private void clusterVoronoiInit()
     {
+        randomPos = false;
         PolygonSimple[] boundingCluster = new PolygonSimple[clusterD.length];
         for( int i = 0; i < clusterD.length; i++ ) {
             boundingCluster[i] = clusters.get(i).getSite().getPolygon();
         }
 
         for( int i = 0; i < clusterD.length; i++ ) {
-            sitesCluster[i] = new OpenList();
-            coreCluster[i] = new VoronoiCore();
+            if( clusters.get(i).getNodes().size() != 1) {
+                sitesCluster[i] = new OpenList();
+                coreCluster[i] = new VoronoiCore();
 
-            for (Node n : clusters.get(i).getNodes()) {
-                Site site = new Site(n.getPos().getX(), n.getPos().getY());
-                site.setPercentage(n.getWeight());
-                site.setWeight(n.getWeight());
-                n.setSite(site);
-                sitesCluster[i].add(site);
+                for (Node n : clusters.get(i).getNodes()) {
+                    Site site = new Site(n.getPos().getX(), n.getPos().getY());
+                    site.setPercentage(n.getWeight());
+                    site.setWeight(n.getWeight());
+                    n.setSite(site);
+                    sitesCluster[i].add(site);
+                }
+
+                try {
+                    coreCluster[i].normalizeSites(sitesCluster[i]);
+                    coreCluster[i].setSites(sitesCluster[i]);
+                    coreCluster[i].setClipPolygon(boundingCluster[i]);
+                    coreCluster[i].voroDiagram();
+                    coreCluster[i].setOldPoint();
+                    coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
+                } catch (Exception e) {
+                    clusterNodesPos = false;
+                    randomPos = true;
+                    System.out.println("error: " + e);
+                    break;
+                }
             }
-
-            coreCluster[i].normalizeSites(sitesCluster[i]);
-            coreCluster[i].setSites(sitesCluster[i]);
-            coreCluster[i].setClipPolygon(boundingCluster[i]);
-            coreCluster[i].voroDiagram();
-            coreCluster[i].setOldPoint();
-            coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
         }
 
-        forceMove = new ForceDirectedMovement( nodes, edges );
+        if( !randomPos ) {
+            forceMove = new ForceDirectedMovement(nodes, edges, clusters);
+        }
 
     }
 
@@ -767,6 +703,14 @@ public class Simulation
             secondImage = true;
             System.out.println("all area's low error");
         }
+
+        //hard exit on the cluster resizing
+        if( iterations >= 200000 )
+        {
+            clustererrors = true;
+            secondImage = true;
+            System.out.println("all area's low error");
+        }
         doneclusters = 0;
     }
 
@@ -779,25 +723,35 @@ public class Simulation
         int doneNodes = 0;
         for( Cluster c : clusters )
         {
-            for( Node n : c.getNodes() ) {
-                Site s = n.getSite();
-                PolygonSimple p = s.getPolygon();
-                if( p == null )
-                {
-                    error = 100;
+            if( c.getNodes().size() != 1 ) {
+                for (Node n : c.getNodes()) {
+                    Site s = n.getSite();
+                    PolygonSimple p = s.getPolygon();
+                    if (p == null) {
+                        error = 100;
+                    } else {
+                        areaHave = p.getArea();
+                        areaWant = c.getSite().getPolygon().getArea() * s.getPercentage();
+                        error = Math.abs(areaWant - areaHave) / (areaWant);
+                    }
+                    if (error < 0.011) {
+                        doneNodes++;
+                    }
                 }
-                else {
-                    areaHave = p.getArea();
-                    areaWant = c.getSite().getPolygon().getArea() * s.getPercentage();
-                    error = Math.abs(areaWant - areaHave) / (areaWant);
-                }
-                if (error < 0.011) {
-                    doneNodes++;
-                }
+            }
+            else
+            {
+                doneNodes++;
             }
         }
 
         if( doneNodes == nodes.size() )
+        {
+            normalNodePos = true;
+            System.out.println("all normal node area's low error");
+        }
+
+        if( normalIterations >= 200000 )
         {
             normalNodePos = true;
             System.out.println("all normal node area's low error");
@@ -834,24 +788,6 @@ public class Simulation
         clusterNodesPos = true;
     }
 
-    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
-    //check to see whether point is inside polygon
-    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
-    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
-    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
-    {
-        int i, j = 0;
-        boolean c = false;
-
-        for (i = 0, j = nvert-1; i < nvert; j = i++)
-        {
-            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
-            {
-                c = !c;
-            }
-        }
-        return c;
-    }
 
     private ArrayList<DelaunayEdge> getDelaunay()
     {
@@ -905,4 +841,22 @@ public class Simulation
         return d_edges;
     }
 
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
+    }
 }

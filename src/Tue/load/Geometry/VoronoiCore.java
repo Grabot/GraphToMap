@@ -216,8 +216,9 @@ public class VoronoiCore {
 			double wantedArea = completeArea * point.getPercentage();
 
 			double increase = wantedArea / currentArea;
-			if (currentArea == 0.0)
+			if (currentArea == 0.0) {
 				increase = 2.0;
+			}
 
 			double weight = point.getWeight();
 
@@ -237,7 +238,12 @@ public class VoronoiCore {
 			else if (increase > (1.0 + epsilon))
 				weight += step;
 
-			point.setWeight(weight);
+			if (Double.isNaN(weight)) {
+				point.setWeight(0.00000000001);
+			}
+			else {
+				point.setWeight(weight);
+			}
 
 			// debug purpose
 			point.setLastIncrease(increase);
@@ -271,12 +277,14 @@ public class VoronoiCore {
 		double avg = 0;
 		int num = 0;
 		for (Site point : sites)
-			if (point.getNeighbours() != null)
+			if (point.getNeighbours() != null) {
 				for (Site neighbour : point.getNeighbours()) {
 					double distance = neighbour.distance(point);
 					avg += distance;
 					num++;
 				}
+			}
+
 		avg /= num;
 		return avg;
 	}

@@ -97,7 +97,10 @@ public class Cluster extends ClusterNode
         g2.setColor(Color.BLACK);
         Ellipse2D.Double shape2 = new Ellipse2D.Double(this.getSite().getPolygon().getCentroid().getX()-(radius/2), this.getSite().getPolygon().getCentroid().getY()-(radius/2), radius, radius);
         g2.fill(shape2);
+    }
 
+    public void drawText( Graphics2D g2 )
+    {
         Font defaultFont = new Font("Arial", Font.BOLD, 20);
         g2.setFont(defaultFont);
 

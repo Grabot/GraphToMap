@@ -323,6 +323,7 @@ public class Renderer
             for (Cluster Cnode : clusternodes) {
                 double radius = 10;
                 Cnode.draw(g2, radius, Color.BLACK);
+                Cnode.drawText(g2);
             }
         }
     }
@@ -357,41 +358,55 @@ public class Renderer
 
     private void drawVoronoiArea()
     {
-        double area = 0;
-        double want = 0;
-        double error = 0;
-        double negerror = 0;
-        g2.setColor(Colors.circleFill);
-        for( Site s : sites )
-        {
-            PolygonSimple poly = s.getPolygon();
-            if (poly != null) {
-                area = poly.getArea();
-                want = boundingPolygon.getArea()*s.getPercentage();
-                error = area/want;
-                error = (1-error);
-                if( error < 0 )
-                {
-                    negerror = (error*-1);
+        if( !labelfill ) {
+            double area = 0;
+            double want = 0;
+            double error = 0;
+            double negerror = 0;
+            g2.setColor(Colors.circleFill);
+            for (Site s : sites) {
+                PolygonSimple poly = s.getPolygon();
+                if (poly != null) {
+                    area = poly.getArea();
+                    want = boundingPolygon.getArea() * s.getPercentage();
+                    error = area / want;
+                    error = (1 - error);
+                    if (error < 0) {
+                        negerror = (error * -1);
+                        error = 0;
+                    }
+                    error = (error * 255);
+                    negerror = (negerror * 255);
+                    if (error >= 255) {
+                        error = 255;
+                    }
+                    if (negerror >= 255) {
+                        negerror = 255;
+                    }
+                    Color co = new Color((255 - (int) negerror), 255 - ((int) error + (int) negerror), 255 - ((int) error));
+                    g2.setColor(co);
+                    g2.fill(poly);
+                    g2.setColor(Color.GREEN);
+                    g2.draw(poly);
+                    negerror = 0;
                     error = 0;
                 }
-                error = (error*255);
-                negerror = (negerror*255);
-                if( error >= 255 )
-                {
-                    error = 255;
+            }
+        }
+        else
+        {
+            for( int i = 0; i < siteCluster.length; i++ ) {
+                if (siteCluster[i] != null) {
+
+                    g2.setColor(Colors.circleFill);
+                    PolygonSimple poly = clusternodes.get(i).getSite().getPolygon();
+                    if (poly != null) {
+                        g2.setColor(siteColours[i]);
+                        g2.fill(poly);
+                        g2.setColor( new Color( 0, 0, 0, 120) );
+                        g2.draw(poly);
+                    }
                 }
-                if( negerror >= 255 )
-                {
-                    negerror = 255;
-                }
-                Color co = new Color((255-(int)negerror), 255-((int)error+(int)negerror), 255-((int)error));
-                g2.setColor(co);
-                g2.fill(poly);
-                g2.setColor(Color.GREEN);
-                g2.draw(poly);
-                negerror = 0;
-                error = 0;
             }
         }
     }

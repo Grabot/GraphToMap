@@ -34,7 +34,7 @@ public class Display extends JPanel implements ActionListener
     private boolean showDelaunay = false;
     private boolean showSites = false;
     private boolean movement = true;
-    private boolean showData = true;
+    private boolean showData = false;
 
     private Renderer render;
     private Simulation simulation;
