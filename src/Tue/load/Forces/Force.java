@@ -42,7 +42,10 @@ public class Force
 
     public void ApplyEdgeForce( Edge edge )
     {
-        spring.ApplyForce( edge );
+        if(!(edge.getDest() == null) && !(edge.getSource() == null) )
+        {
+            spring.ApplyForce( edge );
+        }
     }
 
     public void ApplyEdgeForce( TestEdge edge )

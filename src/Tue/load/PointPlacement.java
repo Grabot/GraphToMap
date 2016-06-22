@@ -5,6 +5,9 @@ import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.*;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -45,13 +48,54 @@ public class PointPlacement
         this.nodes = nodes;
         this.edges = edges;
 
-        Graph g = new Graph(nodes, edges);
 
         pairD = new double[nodes.size()][nodes.size()];
 
+    }
+
+    public void findPairDCalc()
+    {
+        Graph g = new Graph(nodes, edges);
         for( int i = 0; i < nodes.size(); i++ )
         {
             pairD[i] = g.BFS(nodes.get(i));
+        }
+    }
+
+    public void findPairDFile( String fileName )
+    {
+        String fileToString = null;//reads each
+
+        try
+        {
+            File file = new File(fileName);
+            FileReader fileReader = new FileReader(file);//file is read
+            BufferedReader bufferedReader = new BufferedReader(fileReader );//BufferReader reads file, line by line
+            StringBuffer stringBuffer = new StringBuffer();//appended to StringBuffer
+
+            while ((fileToString = bufferedReader.readLine()) != null) {
+                stringBuffer.append(fileToString + "\n");
+            }
+            fileReader.close();
+            fileToString = stringBuffer.toString();
+
+        }
+        catch( Exception e )
+        {
+
+        }
+
+        String[] lines = fileToString.split("\n");
+        String[][] arrayString = new String[lines.length][lines.length];
+        for( int i = 0; i < lines.length; i++ )
+        {
+            arrayString[i] = lines[i].split(", ");
+        }
+
+        for( int i = 0; i < arrayString.length; i++ ) {
+            for (int j = 0; j < arrayString[i].length; j++) {
+                pairD[i][j] = Double.parseDouble("" + arrayString[i][j] );
+            }
         }
     }
 

@@ -241,9 +241,7 @@ public class Simulation
                 positionClusterNodesFinal();
                 //createTestEdges();
 
-                System.out.println("random pos: " + randomPos );
                 if( randomPos ) {
-                    System.out.println("test");
                     positionNodesRandom();
                 }
                 else {
@@ -262,7 +260,7 @@ public class Simulation
                 checkErrorNormal();
             }
         }
-        if( lastPositioning )
+        if( lastPositioning && normalNodePos  )
         {
             System.out.println("normal nodes iterations: " + normalIterations );
             lastPositioning = false;
@@ -751,10 +749,15 @@ public class Simulation
             System.out.println("all normal node area's low error");
         }
 
-        if( normalIterations >= 200000 )
+        if( normalIterations >= 10000 )
         {
             normalNodePos = true;
             System.out.println("all normal node area's low error");
+        }
+
+        if(( normalIterations % 100 ) == 0 )
+        {
+            System.out.println("iterations: " + normalIterations );
         }
         doneNodes = 0;
     }

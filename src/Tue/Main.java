@@ -10,9 +10,7 @@ import Tue.parser.DotParser;
 import Tue.parser.DotScanner;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Main {
@@ -36,12 +34,78 @@ public class Main {
     public double graphScaling;
     private PolygonSimple boundingPolygon;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws FileNotFoundException {
 
         Main main = new Main();
         main.execute( main );
 
+    }
+
+    private void execute2( Main main ) throws FileNotFoundException {
+        double[][] distanceMatrix = {{1, 2}, {3, 4}};
+        writeArrayToFile( distanceMatrix, "output.csv");
+        readArrayFromFile( "output.csv" );
+    }
+
+    private void writeArrayToFile(double[][] distanceMatrix, String fileName)
+    {
+        try {
+            PrintStream output = new PrintStream(new File(fileName));
+            for (int i = 0; i < distanceMatrix.length; i++) {
+                for (int j = 0; j < distanceMatrix[i].length; j++) {
+                    output.print("" + distanceMatrix[i][j] + ", ");
+                }
+                output.println("");
+            }
+        }
+        catch( Exception e ) {
+        }
+
+
+    }
+
+    private void readArrayFromFile( String fileName )
+    {
+        String fileToString = null;//reads each
+
+        try
+        {
+            File file = new File(fileName);
+            FileReader fileReader = new FileReader(file);//file is read
+            BufferedReader bufferedReader = new BufferedReader(fileReader );//BufferReader reads file, line by line
+            StringBuffer stringBuffer = new StringBuffer();//appended to StringBuffer
+
+            while ((fileToString = bufferedReader.readLine()) != null) {
+                stringBuffer.append(fileToString + "\n");
+            }
+            fileReader.close();
+            fileToString = stringBuffer.toString();
+
+        }
+        catch( Exception e )
+        {
+
+        }
+
+        String[] lines = fileToString.split("\n");
+        String[][] arrayString = new String[lines.length][lines.length];
+        for( int i = 0; i < lines.length; i++ )
+        {
+            arrayString[i] = lines[i].split(", ");
+        }
+
+        double[][] resultArray = new double[lines.length][lines.length];
+        for( int i = 0; i < arrayString.length; i++ ) {
+            for (int j = 0; j < arrayString[i].length; j++) {
+                resultArray[i][j] = Double.parseDouble("" + arrayString[i][j] );
+            }
+        }
+        for( int i = 0; i < arrayString.length; i++ ) {
+            for (int j = 0; j < arrayString[i].length; j++) {
+                System.out.print("" + resultArray[i][j] + ", ");
+            }
+            System.out.println("");
+        }
     }
 
     private void ellipseBorder()
@@ -62,7 +126,10 @@ public class Main {
     private void execute(final Main main ) {
 
         forces = new Force(width, height);
-        final DotParser parser = parserInput(forces);
+        //RecipesWithClustering3
+        //universitiesclean
+        String fileName = "universitiesclean";
+        final DotParser parser = parserInput(forces, fileName);
 
         nodes = parser.getNodes();
         edges = parser.getEdges();
@@ -73,20 +140,23 @@ public class Main {
         //handMadeGraph();
 
         points = new PointPlacement(boundingPolygon, nodes, edges, forces);
+        points.findPairDFile( "" + fileName + ".csv");
+        //points.findPairDCalc();
         points.PointPlacementCluster();
 
         clusterDistance = points.getClusterD();
         pairD = points.getPairD();
 
+        //writeArrayToFile( pairD, "" + fileName + ".csv");
         clusters = points.getClusters();
         clusterEdges = points.getClusterEdges();
 
         graphScaling = points.getScaling();
 
-//        for( Edge e : edges )
-//        {
-//            e.setWeight(e.getWeight()*(graphScaling/10));
-//        }
+        for( Edge e : edges )
+        {
+            e.setWeight(e.getWeight()*(graphScaling/10));
+        }
 
         EventQueue.invokeLater(new Runnable()
         {
@@ -98,11 +168,11 @@ public class Main {
 
     }
 
-    private DotParser parserInput(Force forces)
+    private DotParser parserInput(Force forces, String fileName)
     {
         DotScanner scanner = null;
         try {
-            scanner = new DotScanner(new FileReader("datasets/universitiesclean.gv"));
+            scanner = new DotScanner(new FileReader("datasets/" + fileName + ".gv"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

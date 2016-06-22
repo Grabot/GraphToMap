@@ -44,9 +44,11 @@ public class Edge
 
     public void draw(Graphics2D g2, Color color )
     {
-        g2.setColor(color);
-        Shape shape = new Line2D.Double(this.getSource().getPos().x, this.getSource().getPos().y, this.getDest().getPos().x, this.getDest().getPos().y);
-        g2.draw(shape);
+        if( dest != null && source != null ) {
+            g2.setColor(color);
+            Shape shape = new Line2D.Double(this.getSource().getPos().x, this.getSource().getPos().y, this.getDest().getPos().x, this.getDest().getPos().y);
+            g2.draw(shape);
+        }
     }
 
     public void ApplyForces()

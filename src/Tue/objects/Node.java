@@ -39,8 +39,6 @@ public class Node
 
     private int initialTextSize = 20;
 
-    private String newline = System.getProperty("line.separator");
-
     public Node(Force forces, String name, int index)
     {
         pos = new Vector2(0, 0);
@@ -59,6 +57,10 @@ public class Node
         g2.setFont(defaultFont);
 
         String nodeName = ("" + this.getLabel());
+        if( nodeName.isEmpty() || nodeName == null )
+        {
+            nodeName = ("" + this.getName() );
+        }
         if( nodeName.contains("\n"))
         {
             textHeight = (int)((initialTextSize*2)*zoominverse);
@@ -94,7 +96,13 @@ public class Node
     public void drawText( Graphics2D g2 )
     {
         g2.setColor(Color.BLACK);
+
         String nodeName = ("" + this.getLabel());
+        if( nodeName.isEmpty() || nodeName == null )
+        {
+            nodeName = ("" + this.getName() );
+        }
+
         PolygonSimple nodePolygon = this.getSite().getPolygon();
         float centroidX = 0;
         float centroidY = 0;

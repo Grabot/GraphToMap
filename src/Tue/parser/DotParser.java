@@ -161,7 +161,7 @@ public class DotParser {
             next();
 
             if (t.type == '[') {
-                System.out.println("Entering edge attribute:" + t.text);
+                //System.out.println("Entering edge attribute:" + t.text);
                 //edgeAttr(temp);
             } else {
                 //there are no attributes for this edge.
@@ -174,6 +174,7 @@ public class DotParser {
 
     }
 
+    boolean lightGreen = false;
     public void node() throws IOException {
         if (nodes != null) {
             //add new node.
