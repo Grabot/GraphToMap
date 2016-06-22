@@ -29,23 +29,16 @@ public class Simulation
     private ArrayList<Vector2> borderpoints = new ArrayList<Vector2>();
     private ArrayList<Node> nodes = new ArrayList<Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
-    private ArrayList<TestEdge> t_edges = new ArrayList<TestEdge>();
     private boolean[][] neighbours;
     private boolean clustererrors = false;
-    private boolean cluster1Pos = false;
     private boolean clusterNodesPos = false;
 
     private int width;
     private int height;
-    private double radiusGlobal = 10;
-    private double stepSize = 0.1;
 
     private PolygonSimple boundingPolygon;
     private OpenList sites;
     private VoronoiCore core;
-
-    private OpenList sites2;
-    private VoronoiCore core2;
 
     private OpenList[] sitesCluster;
     private VoronoiCore[] coreCluster;
@@ -61,7 +54,6 @@ public class Simulation
 
     private ConvexHull boundary;
     private ForceDirectedMovement forceMove;
-    private ForceDirectedMovement forceMove2;
     private PointPlacement points;
 
     private Display display;
@@ -72,6 +64,7 @@ public class Simulation
     private BeaconPositioning beacon;
 
     private boolean normalNodePos = false;
+    private boolean lastPositioning = true;
     private boolean randomPos = false;
 
     public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges )
@@ -120,9 +113,6 @@ public class Simulation
         render.addDelaunay(d_edges);
 
         forceMove = new ForceDirectedMovement( boundingPolygon, clusters, clusteredges, d_edges );
-
-        sites2 = new OpenList();
-        core2 = new VoronoiCore();
 
         sitesCluster = new OpenList[clusterD.length];
         coreCluster = new VoronoiCore[clusterD.length];
@@ -201,62 +191,118 @@ public class Simulation
         }
     }
 
-    private void updateCore()
+    private void clusterPositioning( float delta )
     {
+        iterations++;
+        //applying force and do movement
+        forceMove.ForceMoveCluster(delta);
+
+        core.moveSitesBackCluster(clusters);
         core.adaptWeightsSimple();
         core.voroDiagram();
+
         render.addSites( core.getSites() );
         checkImage();
+        //calculate the area's and apply them
+        //distortionmetric();
+        checkError();
     }
 
-    private boolean lastPositioning = true;
-    public void update( float delta )
+    private void NodePlacementInit()
+    {
+        clusterNodesPos = true;
+        System.out.println("iterations: " + iterations );
+        beacon.positionClusterNodesFinal();
+
+        if( randomPos ) {
+            beacon.positionNodesRandom( width, height );
+        }
+        else {
+            beacon.beacondBasedPositioning(clusterD, pairD);
+        }
+        clusterVoronoiInit();
+
+        if( clusterNodesPos ) {
+            beacon.finalPositioningCheck();
+        }
+    }
+
+
+    private void NodePlacementVoronoi( float delta )
+    {
+
+        for( int i = 0; i < clusterD.length; i++ ) {
+            if( clusters.get(i).getNodes().size() != 1 ) {
+                //calculate the area's and apply them
+                if (!forceMove.getMovement()) {
+                    forceMove.ForceMoveNormal(delta);
+                }
+                coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
+
+                //calculate the area's and apply them
+                coreCluster[i].adaptWeightsSimple();
+                coreCluster[i].voroDiagram();
+
+                render.addSites2(coreCluster[i].getSites(), i);
+            }
+        }
+    }
+
+    public void update( float delta, boolean iterate, boolean demo )
     {
         //calculate the area's and apply them
 
-        //updateCore();
-        while( !clustererrors )
+        if( iterate )
         {
-            iterations++;
-            //applying force and do movement
-            forceMove.ForceMoveCluster(delta);
-            core.moveSitesBackCluster(clusters);
-            updateCore();
-            //calculate the area's and apply them
-            //distortionmetric();
-            checkError();
-        }
-
-
-
-        while( !normalNodePos )
-        {
-            normalIterations++;
-            if( !clusterNodesPos )
+            if( !clustererrors )
             {
-                clusterNodesPos = true;
-                System.out.println("iterations: " + iterations );
-                beacon.positionClusterNodesFinal();
-                //createTestEdges();
-
-                if( randomPos ) {
-                    beacon.positionNodesRandom( width, height );
+                if( demo )
+                {
+                    for( int i = 0; i < (iterations/400); i++ )
+                    {
+                        clusterPositioning( delta );
+                    }
                 }
-                else {
-                    beacon.beacondBasedPositioning(clusterD, pairD);
-                }
-                clusterVoronoiInit();
-
+                clusterPositioning( delta );
+            }
+            else if( !clusterNodesPos )
+            {
+                NodePlacementInit();
                 if( clusterNodesPos ) {
-                    beacon.finalPositioningCheck();
+                    render.setNormalNodes(nodes);
+                    render.setNormalEdges(edges);
                 }
             }
-            else {
-                clusterVoronoi(delta);
+            else if( !normalNodePos )
+            {
+                normalIterations++;
+                NodePlacementVoronoi( delta );
                 checkErrorNormal();
             }
         }
-        if( lastPositioning && normalNodePos  )
+        else
+        {
+            while( !clustererrors )
+            {
+                clusterPositioning( delta );
+            }
+
+            while( !normalNodePos )
+            {
+                normalIterations++;
+                if( !clusterNodesPos )
+                {
+                    NodePlacementInit();
+                }
+                else
+                {
+                    NodePlacementVoronoi(delta);
+                    checkErrorNormal();
+                }
+            }
+        }
+
+        if( lastPositioning && normalNodePos )
         {
             System.out.println("normal nodes iterations: " + normalIterations );
             lastPositioning = false;
@@ -265,60 +311,6 @@ public class Simulation
             render.setNormalEdges(edges);
         }
     }
-
-    public void updateIterative( float delta )
-    {
-        //calculate the area's and apply them
-
-        if( !clustererrors )
-        {
-            iterations++;
-            //applying force and do movement
-            forceMove.ForceMoveCluster(delta);
-            core.moveSitesBackCluster(clusters);
-            updateCore();
-            //calculate the area's and apply them
-            //distortionmetric();
-            checkError();
-        }
-        else if( !clusterNodesPos )
-        {
-            clusterNodesPos = true;
-            System.out.println("iterations: " + iterations );
-            beacon.positionClusterNodesFinal();
-            //createTestEdges();
-
-            if( randomPos ) {
-                beacon.positionNodesRandom( width, height );
-            }
-            else {
-                beacon.beacondBasedPositioning(clusterD, pairD);
-            }
-            clusterVoronoiInit();
-            //updateCore();
-
-            if( clusterNodesPos ) {
-                beacon.finalPositioningCheck();
-                render.setNormalNodes(nodes);
-                render.setNormalEdges(edges);
-            }
-        }
-        else if( !normalNodePos )
-        {
-            normalIterations++;
-            clusterVoronoi( delta );
-            checkErrorNormal();
-        }
-
-
-        if( lastPositioning && normalNodePos )
-        {
-            System.out.println("normal nodes iterations: " + normalIterations );
-            lastPositioning = false;
-            beacon.finalNodePositioning();
-        }
-    }
-
 
     private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
     {
@@ -368,26 +360,6 @@ public class Simulation
         distortion = (contraction*expansion);
 
         return distortion;
-    }
-
-    private void clusterVoronoi( float delta )
-    {
-
-        for( int i = 0; i < clusterD.length; i++ ) {
-            if( clusters.get(i).getNodes().size() != 1 ) {
-                //calculate the area's and apply them
-                if (!forceMove.getMovement()) {
-                    forceMove.ForceMoveNormal(delta);
-                }
-                coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
-
-                //calculate the area's and apply them
-                coreCluster[i].adaptWeightsSimple();
-                coreCluster[i].voroDiagram();
-
-                render.addSites2(coreCluster[i].getSites(), i);
-            }
-        }
     }
 
     private void clusterVoronoiInit()

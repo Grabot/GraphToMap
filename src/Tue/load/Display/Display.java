@@ -183,7 +183,7 @@ public class Display extends JPanel implements ActionListener
         //delta = (delta / 1000);
         delta = 0.040f;
 
-        simulation.update( delta );
+        simulation.update( delta, true, true );
 
         this.repaint();
     }

@@ -42,7 +42,7 @@ public class PointPlacement
 
     public PointPlacement(PolygonSimple boundingPolygon, ArrayList<Node> nodes, ArrayList<Edge> edges, Force forces )
     {
-        rand = new Random();
+        rand = new Random(5581);
         this.boundingPolygon = boundingPolygon;
         this.forces = forces;
         this.nodes = nodes;
