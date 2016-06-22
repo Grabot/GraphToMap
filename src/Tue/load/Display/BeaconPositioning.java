@@ -6,6 +6,7 @@ import Tue.objects.Cluster;
 import Tue.objects.Node;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by s138362 on 22-6-2016.
@@ -13,12 +14,21 @@ import java.util.ArrayList;
 public class BeaconPositioning
 {
 
-    public BeaconPositioning()
-    {
+    private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
+    private ArrayList<Node> nodes = new ArrayList<Node>();
+    private Vector2 nodePosition = new Vector2(0, 0);
 
+    private Random rand;
+
+    public BeaconPositioning(ArrayList<Cluster> clusters, ArrayList<Node> nodes)
+    {
+        this.clusters = clusters;
+        this.nodes = nodes;
+
+        rand = new Random();
     }
-    
-    private void finalNodePositioning()
+
+    public void finalNodePositioning()
     {
         for( Cluster c : clusters )
         {
@@ -31,7 +41,7 @@ public class BeaconPositioning
         }
     }
 
-    private void positionClusterNodesFinal()
+    public void positionClusterNodesFinal()
     {
         for( Cluster c : clusters )
         {
@@ -41,7 +51,7 @@ public class BeaconPositioning
     }
 
 
-    private void beacondBasedPositioning() {
+    public void beacondBasedPositioning( double[][] clusterD, double[][] pairD) {
         //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
         for( Cluster cl : clusters )
         {
@@ -75,7 +85,7 @@ public class BeaconPositioning
 
     }
 
-    private void finalPositioningCheck()
+    public void finalPositioningCheck()
     {
         //it checks wheter 2 points are placed on top of each other, this messes up the voronoi creation.
         for( Node n1 : nodes )
@@ -111,7 +121,7 @@ public class BeaconPositioning
         }
     }
 
-    private void beaconIntersections( double[] nodeToCluster )
+    public void beaconIntersections( double[] nodeToCluster )
     {
         double[] distances = new double[nodeToCluster.length];
         double lambda = 0.1;
@@ -191,8 +201,6 @@ public class BeaconPositioning
 
         intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
 
-        render.addNodeToClusterTest(nodeToClusters);
-        render.addCircleTest(circleIntersections);
         return intersects;
     }
 
@@ -251,6 +259,32 @@ public class BeaconPositioning
                         n.setPos(new Vector2(n.getPos().getX() + center.getX(), n.getPos().getY() + center.getY()));
                     }
                 }
+            }
+        }
+    }
+
+
+    public void positionNodesRandom( int width, int height )
+    {
+        double xPos = 0;
+        double yPos = 0;
+
+        PolygonSimple poly = null;
+
+        for( Cluster c : clusters )
+        {
+            poly = c.getSite().getPolygon();
+            for( Node n : c.getNodes() )
+            {
+                xPos = rand.nextDouble()*width;
+                yPos = rand.nextDouble()*height;
+
+                while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+                {
+                    xPos = rand.nextDouble()*width;
+                    yPos = rand.nextDouble()*height;
+                }
+                n.setPos(new Vector2( xPos, yPos ));
             }
         }
     }

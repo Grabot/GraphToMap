@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="141e5fe2-5b11-4221-b9f9-55a3fc84ac6f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/Main.java" afterPath="$PROJECT_DIR$/src/Tue/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/Force.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/Force.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/PointPlacement.java" afterPath="$PROJECT_DIR$/src/Tue/load/PointPlacement.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/Edge.java" afterPath="$PROJECT_DIR$/src/Tue/objects/Edge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/Node.java" afterPath="$PROJECT_DIR$/src/Tue/objects/Node.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/parser/DotParser.java" afterPath="$PROJECT_DIR$/src/Tue/parser/DotParser.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="130" column="46" selection-start-line="130" selection-start-column="46" selection-end-line="130" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.5198777">
+              <caret line="130" column="49" selection-start-line="130" selection-start-column="49" selection-end-line="130" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -62,19 +56,24 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="863" column="5" selection-start-line="846" selection-start-column="4" selection-end-line="863" selection-end-column="5" />
-              <folding />
+              <caret line="291" column="58" selection-start-line="291" selection-start-column="58" selection-end-line="291" selection-end-column="58" />
+              <folding>
+                <element signature="e#823#832#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BeaconPositioning.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BeaconPositioning.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27217126">
-              <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="266" column="59" selection-start-line="266" selection-start-column="59" selection-end-line="266" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#343#352#0" expanded="true" />
+                <element signature="e#405#411#0" expanded="true" />
+                <element signature="e#4566#4575#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -85,6 +84,16 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="179" column="27" selection-start-line="179" selection-start-column="27" selection-end-line="179" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Renderer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -133,9 +142,9 @@
         <option value="$PROJECT_DIR$/RecipesWithClustering3.csv" />
         <option value="$PROJECT_DIR$/src/Tue/parser/DotParser.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/Display.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
         <option value="$PROJECT_DIR$/src/Tue/Main.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
       </list>
     </option>
   </component>
@@ -303,32 +312,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Geometry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GraphToMap" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GraphToMap" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Tue" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="load" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Forces" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -687,7 +670,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -699,7 +682,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26190478" sideWeight="0.4936034" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35341153" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35341153" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1080,31 +1063,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
-          <folding>
-            <element signature="e#5462#5463#0" expanded="false" />
-            <element signature="e#5500#5501#0" expanded="false" />
-            <element signature="e#9509#9510#0" expanded="false" />
-            <element signature="e#9543#9544#0" expanded="false" />
-            <element signature="e#10439#10440#0" expanded="false" />
-            <element signature="e#10493#10494#0" expanded="false" />
-            <element signature="e#10543#10544#0" expanded="false" />
-            <element signature="e#10577#10578#0" expanded="false" />
-            <element signature="e#10640#10641#0" expanded="false" />
-            <element signature="e#10688#10689#0" expanded="false" />
-            <element signature="e#10758#10759#0" expanded="false" />
-            <element signature="e#10796#10797#0" expanded="false" />
-            <element signature="e#12820#12821#0" expanded="false" />
-            <element signature="e#12870#12871#0" expanded="false" />
-            <element signature="e#14136#14137#0" expanded="false" />
-            <element signature="e#14170#14171#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/Edge.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1169,12 +1127,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="130" column="46" selection-start-line="130" selection-start-column="46" selection-end-line="130" selection-end-column="46" />
+          <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="266" column="59" selection-start-line="266" selection-start-column="59" selection-end-line="266" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#343#352#0" expanded="true" />
+            <element signature="e#405#411#0" expanded="true" />
+            <element signature="e#4566#4575#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1182,15 +1151,17 @@
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="863" column="5" selection-start-line="846" selection-start-column="4" selection-end-line="863" selection-end-column="5" />
-          <folding />
+          <caret line="291" column="58" selection-start-line="291" selection-start-column="58" selection-end-line="291" selection-end-column="58" />
+          <folding>
+            <element signature="e#823#832#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27217126">
-          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.5198777">
+          <caret line="130" column="49" selection-start-line="130" selection-start-column="49" selection-end-line="130" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -128,7 +128,7 @@ public class Main {
         forces = new Force(width, height);
         //RecipesWithClustering3
         //universitiesclean
-        String fileName = "universitiesclean";
+        String fileName = "RecipesWithClustering3";
         final DotParser parser = parserInput(forces, fileName);
 
         nodes = parser.getNodes();
