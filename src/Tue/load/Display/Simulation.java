@@ -208,6 +208,40 @@ public class Simulation
         checkError();
     }
 
+    boolean beaconTest = false;
+    private void NodePlacementInit2()
+    {
+        if( !beaconTest ) {
+            beaconTest = true;
+
+            beacon.positionClusterNodesFinal();
+
+            double[] nodeToCluster = new double[clusterD.length];
+            Cluster cl = clusters.get(0);
+            Node n = cl.getNodes().get(0);
+
+            //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
+
+            for (Cluster c : clusters) {
+                double total = 0;
+                int amount = 0;
+                for (Node n2 : c.getNodes()) {
+                    amount++;
+                    total = (total + pairD[n.getIndex()][n2.getIndex()]);
+                }
+                if ((total / amount) == 0) {
+                    nodeToCluster[c.getNumber()] = 0.01;
+                } else {
+                    nodeToCluster[c.getNumber()] = (total / amount);
+                }
+                total = 0;
+                amount = 0;
+            }
+
+            n.setPos( new Vector2( 0, 0 ));
+            render.setBeaconBasedTest(nodeToCluster, n);
+        }
+    }
     private void NodePlacementInit()
     {
         clusterNodesPos = true;
@@ -287,18 +321,20 @@ public class Simulation
                 clusterPositioning( delta );
             }
 
-            while( !normalNodePos )
+            if( !normalNodePos )
             {
                 normalIterations++;
                 if( !clusterNodesPos )
                 {
-                    NodePlacementInit();
+                    NodePlacementInit2();
                 }
                 else
                 {
                     NodePlacementVoronoi(delta);
                     checkErrorNormal();
                 }
+//                render.setNormalNodes(nodes);
+//                render.setNormalEdges(edges);
             }
         }
 

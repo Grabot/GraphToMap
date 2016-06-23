@@ -128,6 +128,7 @@ public class Main {
         forces = new Force(width, height);
         //RecipesWithClustering3
         //universitiesclean
+        //miserables_3
         String fileName = "universitiesclean";
         final DotParser parser = parserInput(forces, fileName);
 

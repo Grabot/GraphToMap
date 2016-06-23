@@ -63,7 +63,7 @@ public class Display extends JPanel implements ActionListener
     {
         lastLoopTime = System.currentTimeMillis();
 
-        render = new Renderer(this, clusters, clusterEdges);
+        render = new Renderer(this, clusters, clusterEdges, graphScaling);
         simulation = new Simulation(this, render, clusters, clusterEdges, width, height, forces, pairD, clusterDistance, points, nodes, edges );
 
         JFrame f = new JFrame("Graph To Map");
@@ -183,7 +183,7 @@ public class Display extends JPanel implements ActionListener
         //delta = (delta / 1000);
         delta = 0.040f;
 
-        simulation.update( delta, true, true );
+        simulation.update( delta, false, false );
 
         this.repaint();
     }
