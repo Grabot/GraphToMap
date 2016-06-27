@@ -64,7 +64,7 @@ public class Display extends JPanel implements ActionListener
         lastLoopTime = System.currentTimeMillis();
 
         render = new Renderer(this, clusters, clusterEdges, graphScaling);
-        simulation = new Simulation(this, render, clusters, clusterEdges, width, height, forces, pairD, clusterDistance, points, nodes, edges );
+        simulation = new Simulation(this, render, clusters, clusterEdges, width, height, forces, pairD, clusterDistance, points, nodes, edges, graphScaling );
 
         JFrame f = new JFrame("Graph To Map");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

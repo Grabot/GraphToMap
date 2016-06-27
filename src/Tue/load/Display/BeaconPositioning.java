@@ -235,7 +235,7 @@ public class BeaconPositioning
         return false;
     }
 
-    private void scaleToCluster( Cluster cl )
+    public void scaleToCluster( Cluster cl )
     {
         //check if all the points are inside the cluster
         boolean inside = false;
@@ -254,7 +254,7 @@ public class BeaconPositioning
                         //first translate it to the center, so the center of the cluster should be (0, 0)
                         n.setPos(new Vector2(n.getPos().getX() - center.getX(), n.getPos().getY() - center.getY()));
                         //scale it down
-                        n.setPos(new Vector2(n.getPos().getX() * 0.99, n.getPos().getY() * 0.99));
+                        n.setPos(new Vector2(n.getPos().getX() * 0.999, n.getPos().getY() * 0.999));
                         //translate it back
                         n.setPos(new Vector2(n.getPos().getX() + center.getX(), n.getPos().getY() + center.getY()));
                     }
@@ -264,7 +264,7 @@ public class BeaconPositioning
     }
 
 
-    public void positionNodesRandom( int width, int height )
+    public void positionNodesRandom( int width, int height)
     {
         double xPos = 0;
         double yPos = 0;
