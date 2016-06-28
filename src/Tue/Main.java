@@ -60,6 +60,21 @@ public class Main {
         }
     }
 
+    private void writeArrayToFile(double[][] distanceMatrix, String fileName)
+    {
+        try {
+            PrintStream output = new PrintStream(new File(fileName));
+            for (int i = 0; i < distanceMatrix.length; i++) {
+                for (int j = 0; j < distanceMatrix[i].length; j++) {
+                    output.print("" + distanceMatrix[i][j] + ", ");
+                }
+                output.println("");
+            }
+        }
+        catch( Exception e ) {
+        }
+    }
+
     private void execute(final Main main ) {
 
         forces = new Force(width, height);

@@ -8,7 +8,6 @@ graph{
 "Champtercier" [cluster=1,label="Champtercier"];
 "Cravatte" [cluster=1,label="Cravatte"];
 "Count" [cluster=1,label="Count"];
-"OldMan" [cluster=1,label="OldMan"];
 "Labarre" [cluster=2,label="Labarre"];
 "Valjean" [cluster=2,label="Valjean"];
 "Marguerite" [cluster=2,label="Marguerite"];

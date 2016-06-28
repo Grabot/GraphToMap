@@ -44,6 +44,7 @@ public class BeaconRenderer
         iterationTest++;
         if( once )
         {
+            getDistortionNodeScale( node.getX(), node.getY(), nodeToCluster );
             for( int i = 0; i < nodeToCluster.length; i++ )
             {
                 dist += nodeToCluster[i];
@@ -87,7 +88,6 @@ public class BeaconRenderer
                     contractionResult.y = expansionResult.getY();
                 }
 
-                //invert the result to get the proper gradient
                 gradientFields.add( new VectorGraphic( pos, expansionResult ));
             }
         }
@@ -150,6 +150,8 @@ public class BeaconRenderer
                 }
             }
         }
+
+        System.out.println("lowest: " + lowest );
 
         for( int i = 0; i < (int)(1200/stepsize); i++ ) {
             for (int j = 0; j < (int)(800/stepsize); j ++ ) {
@@ -215,50 +217,6 @@ public class BeaconRenderer
             }
         }
         distortion = (distortion/total);
-
-        return distortion;
-    }
-
-    private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
-    {
-        double distortion = 0;
-
-        double contractionlocal = 0;
-        double contractionmax = 0;
-        double expansionlocal = 0;
-        double expansionmax = 0;
-        int total = 0;
-
-        double[] mapping = new double[clusters.size()];
-
-        for (int i = 0; i < clusters.size(); i++) {
-            Vector2 node1 = new Vector2(xPos, yPos);
-            for (int j = 0; j < clusters.size(); j++)
-            {
-                Vector2 node2 = clusters.get(j).getPos();
-                //get the actual distances between all nodes to calculate the distorion metrics
-                mapping[j] = node1.distance(node2);
-            }
-        }
-
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            total++;
-            contractionlocal = ((graphScaling*nodeToCluster[clusters.get(i).getNumber()]) / mapping[i]);
-            expansionlocal = (mapping[i] / (graphScaling*nodeToCluster[clusters.get(i).getNumber()]));
-
-            if( contractionlocal >= contractionmax )
-            {
-                System.out.println("test2");
-                contractionmax = contractionlocal;
-            }
-            else if( expansionlocal >= expansionmax )
-            {
-                System.out.println("test1");
-                expansionmax = expansionlocal;
-            }
-        }
-        distortion = contractionmax*expansionmax;
 
         return distortion;
     }

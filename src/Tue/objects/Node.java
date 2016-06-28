@@ -56,7 +56,7 @@ public class Node
         Font defaultFont = new Font("Arial", Font.BOLD, (int)(initialTextSize*zoominverse));
         g2.setFont(defaultFont);
 
-        String nodeName = ("" + this.getLabel());
+        String nodeName = ("" + this.getName());
         if( nodeName.isEmpty() || nodeName == null )
         {
             nodeName = ("" + this.getName() );
@@ -97,7 +97,7 @@ public class Node
     {
         g2.setColor(Color.BLACK);
 
-        String nodeName = ("" + this.getLabel());
+        String nodeName = ("" + this.getName());
         if( nodeName.isEmpty() || nodeName == null )
         {
             nodeName = ("" + this.getName() );

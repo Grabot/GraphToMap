@@ -67,8 +67,6 @@ public class Simulation
     private boolean lastPositioning = true;
     private boolean randomPos = false;
 
-    private double graphScaling;
-    private double divideScale = 50;
     private double step = 100;
 
     public Simulation(Display display, Renderer render, ArrayList<Cluster> clusters, ArrayList<ClusterEdge> clusteredges, int width, int height, Force forces, double[][] pairD, double[][] clusterD, PointPlacement points, ArrayList<Node> nodes, ArrayList<Edge> edges, double graphScaling )
@@ -85,7 +83,6 @@ public class Simulation
         this.nodes = nodes;
         this.edges = edges;
         this.points = points;
-        this.graphScaling = graphScaling;
 
         neighbours = new boolean[clusters.size()][clusters.size()];
 
@@ -122,7 +119,8 @@ public class Simulation
         sitesCluster = new OpenList[clusterD.length];
         coreCluster = new VoronoiCore[clusterD.length];
 
-        beacon = new BeaconPositioning(clusters, nodes);
+        beacon = new BeaconPositioning(clusters, nodes, graphScaling);
+
     }
 
     private void ellipseBorder()
@@ -213,193 +211,26 @@ public class Simulation
         checkError();
     }
 
-    private void NodePlacementInit2() {
-        //clusterNodesPos = true;
-            beacon.positionClusterNodesFinal();
-
-            double[] nodeToCluster = new double[clusterD.length];
-
-            Cluster cl = clusters.get(3);
-            Node n = cl.getNodes().get(0);
-    //        for( Cluster cl : clusters )
-    //        {
-    //            for( Node n : cl.getNodes() )
-    //            {
-            //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
-
-            for (Cluster c : clusters) {
-                double total = 0;
-                int amount = 0;
-                for (Node n2 : c.getNodes()) {
-                    amount++;
-                    total = (total + pairD[n.getIndex()][n2.getIndex()]);
-                }
-                if ((total / amount) == 0) {
-                    nodeToCluster[c.getNumber()] = 0.01;
-                } else {
-                    nodeToCluster[c.getNumber()] = (total / amount);
-                }
-                total = 0;
-                amount = 0;
-            }
-        //set the start position for the node
-//                n.setPos( new Vector2(0, 0));
-//
-//                boolean nodePlaced = false;
-//                while( !nodePlaced )
-//                {
-//                    nodePlaced = placeNode( n, nodeToCluster );
-//                }
-
-        n.setPos(new Vector2(0, 0));
-        render.setBeaconBasedTest(nodeToCluster, n);
-//            }
-//            scaleInCluster( cl );
-//            beacon.scaleToCluster( cl );
-//        }
-//        clusterVoronoiInit();
-//
-//        if( clusterNodesPos ) {
-//            beacon.finalPositioningCheck();
-//        }
-//
-//        render.setNormalNodes( nodes );
-//        render.setNormalEdges( edges );
-    }
-
-    private void scaleInCluster( Cluster cl )
-    {
-        PolygonSimple poly = cl.getSite().getPolygon();
-        Vector2 polyCenter = new Vector2( poly.getCentroid().getX(), poly.getCentroid().getY() );
-        double closest = 9999;
-        double furthest = 0;
-        double distance = 0;
-        //first find the one furthest away and the one closest.
-        //Put the furthest on the edge and the closest on the center, the rest in between accordingly
-        for( Node n : cl.getNodes() )
-        {
-            distance = polyCenter.distance( n.getPos() );
-            if( distance > furthest )
-            {
-                furthest = distance;
-            }
-            if( distance < closest )
-            {
-                closest = distance;
-            }
-        }
-
-        //System.out.println("cluster: " + cl.getNumber() + " furthest: " + furthest + " closest: " + closest );
-    }
-
-    private boolean placeNode( Node n, double[] nodeToCluster )
-    {
-        Vector2 newPos = setNodePos( getDistortionNodeScale( n.getPos().getX(), n.getPos().getY(), nodeToCluster ), n, nodeToCluster );
-        if( !(newPos.getX() == 0 && newPos.getY() == 0) )
-        {
-            step = (step*2);
-            n.setPos(newPos);
-        }
-        else
-        {
-            step = (step/2);
-        }
-
-        if( step < 0.01 )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private Vector2 setNodePos( double distortionInit, Node n, double[] nodeToCluster )
-    {
-        //get a certain amount of samples around the node
-        int numPoints = 360;
-        double distortion = 0;
-        double lowest = 9999;
-        Vector2 newPos = new Vector2(0, 0);
-
-        for (int i = 0; i < numPoints; i++)
-        {
-            double angle = 2.0 * Math.PI * (i * 1.0 / numPoints);
-            double rotate = 2.0 * Math.PI / numPoints / 2;
-            double x = n.getPos().getX() + Math.cos(angle + rotate) * (step);
-            double y = n.getPos().getY() + Math.sin(angle + rotate) * (step);
-
-            distortion = getDistortionNodeScale( x, y, nodeToCluster );
-            if((distortion < lowest) && (distortion < distortionInit) )
-            {
-                lowest = distortion;
-                newPos = new Vector2( x ,y );
-            }
-        }
-
-        return newPos;
-    }
-
-    private double getDistortionNodeScale( double xPos, double yPos, double[] nodeToCluster )
-    {
-        double distortion = 0;
-
-        double contractionlocal = 0;
-        double expansionlocal = 0;
-        int total = 0;
-
-        double[] mapping = new double[clusters.size()];
-
-        for (int i = 0; i < clusters.size(); i++) {
-            Vector2 node1 = new Vector2(xPos, yPos);
-            for (int j = 0; j < clusters.size(); j++)
-            {
-                Vector2 node2 = clusters.get(j).getPos();
-                //get the actual distances between all nodes to calculate the distorion metrics
-                mapping[j] = node1.distance(node2);
-            }
-        }
-
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            total++;
-            contractionlocal = (((graphScaling/divideScale)*nodeToCluster[clusters.get(i).getNumber()]) / mapping[i]);
-            expansionlocal = (mapping[i] / ((graphScaling/divideScale)*nodeToCluster[clusters.get(i).getNumber()]));
-
-            if( contractionlocal >= expansionlocal )
-            {
-                distortion += contractionlocal;
-            }
-            else if( expansionlocal >= contractionlocal )
-            {
-                distortion += expansionlocal;
-            }
-        }
-        distortion = (distortion/total);
-
-        return distortion;
-    }
-
-    private void NodePlacementInit()
-    {
+    private void NodePlacementInit() {
         clusterNodesPos = true;
         System.out.println("iterations: " + iterations );
         beacon.positionClusterNodesFinal();
 
         if( randomPos ) {
             beacon.positionNodesRandom( width, height );
+            System.out.println("random positions");
         }
         else {
-            beacon.beacondBasedPositioning(clusterD, pairD);
+            beacon.beacondBasedPositioning( clusterD, pairD, width, height );
+            System.out.println("positions for nodes found");
         }
+
         clusterVoronoiInit();
 
         if( clusterNodesPos ) {
             beacon.finalPositioningCheck();
         }
     }
-
 
     private void NodePlacementVoronoi( float delta )
     {
@@ -421,7 +252,6 @@ public class Simulation
         }
     }
 
-    boolean test = true;
     public void update( float delta, boolean iterate, boolean demo )
     {
         //calculate the area's and apply them
@@ -440,7 +270,7 @@ public class Simulation
             }
             else if( !clusterNodesPos )
             {
-                NodePlacementInit2();
+                NodePlacementInit();
                 if( clusterNodesPos ) {
                     render.setNormalNodes(nodes);
                     render.setNormalEdges(edges);
@@ -465,18 +295,15 @@ public class Simulation
                 normalIterations++;
                 if( !clusterNodesPos )
                 {
-                    if( test ) {
-                        NodePlacementInit2();
-                        test = false;
-                    }
+                    NodePlacementInit2();
                 }
                 else
                 {
                     NodePlacementVoronoi(delta);
                     checkErrorNormal();
+                    render.setNormalNodes(nodes);
+                    render.setNormalEdges(edges);
                 }
-                render.setNormalNodes(nodes);
-                render.setNormalEdges(edges);
             }
         }
 
@@ -488,56 +315,6 @@ public class Simulation
             render.setNormalNodes(nodes);
             render.setNormalEdges(edges);
         }
-    }
-
-    private double getDistortionNode(double xPos, double yPos, double[] nodeToCluster )
-    {
-        //the maximum of the actual distance divided with the mapping distance
-        double contraction = 0;
-        //the maximum of the mapping distance divided with the actual distance
-        double expansion = 0;
-        //distortion is the multiplication of the 2. The ideal would be a distortion of 1
-        double distortion;
-
-        double contractiontotal = 0;
-        double contractionlocal = 0;
-        double expansiontotal = 0;
-        double expansionlocal = 0;
-        int total = 0;
-
-        double[] mapping = new double[clusterD.length];
-
-        for (int i = 0; i < clusterD.length; i++) {
-            Vector2 node1 = new Vector2(xPos, yPos);
-            for (int j = 0; j < clusterD.length; j++)
-            {
-                Vector2 node2 = clusters.get(j).getPos();
-                //get the actual distances between all nodes to calculate the distorion metrics
-                mapping[j] = node1.distance(node2);
-            }
-        }
-
-        System.out.println("");
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            System.out.println( mapping[i] );
-        }
-
-        for( int i = 0; i < mapping.length; i++ )
-        {
-            total++;
-            contractionlocal = (nodeToCluster[i] / mapping[i]);
-            expansionlocal = (mapping[i] / nodeToCluster[i]);
-
-            contractiontotal = (contractiontotal + contractionlocal);
-            expansiontotal = (expansiontotal + expansionlocal);
-        }
-
-        contraction = (contractiontotal/total);
-        expansion = (expansiontotal/total);
-        distortion = (contraction*expansion);
-
-        return distortion;
     }
 
     private void clusterVoronoiInit()
@@ -568,10 +345,13 @@ public class Simulation
                     coreCluster[i].voroDiagram();
                     coreCluster[i].setOldPoint();
                     coreCluster[i].moveSitesBackNormal(clusters.get(i).getNodes());
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     clusterNodesPos = false;
                     randomPos = true;
                     System.out.println("error: " + e);
+                    System.out.println("index: " + i + " cluster size: " + clusters.get(i).getNodes().size() + " cluster index: " + clusters.get(i).getNumber() );
                     break;
                 }
             }

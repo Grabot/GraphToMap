@@ -19,11 +19,15 @@ public class BeaconPositioning
     private Vector2 nodePosition = new Vector2(0, 0);
 
     private Random rand;
+    private double step = 100;
+    private double graphScaling;
+    private double divideScale = 50;
 
-    public BeaconPositioning(ArrayList<Cluster> clusters, ArrayList<Node> nodes)
+    public BeaconPositioning(ArrayList<Cluster> clusters, ArrayList<Node> nodes, double graphScaling )
     {
         this.clusters = clusters;
         this.nodes = nodes;
+        this.graphScaling = graphScaling;
 
         rand = new Random();
     }
@@ -50,11 +54,11 @@ public class BeaconPositioning
         }
     }
 
-
-    public void beacondBasedPositioning( double[][] clusterD, double[][] pairD) {
-        //this will find all intersecting points of any 2 circles and save them, later it will check if they engulf all points
+    public void beacondBasedPositioning( double[][] clusterD, double[][] pairD, int width, int height )
+    {
         for( Cluster cl : clusters )
         {
+            PolygonSimple poly = cl.getSite().getPolygon();
             for (Node n : cl.getNodes()) {
                 double[] nodeToCluster = new double[clusterD.length];
 
@@ -73,16 +77,133 @@ public class BeaconPositioning
                     total = 0;
                     amount = 0;
                 }
+                //set the start position for the node
 
-                beaconIntersections(nodeToCluster);
-                Vector2 foundPosition = new Vector2(nodePosition.x, nodePosition.y);
-                nodes.get(n.getIndex()).setPos(foundPosition);
-                System.out.println("found position node: " + n.getIndex() );
+                double dist = 0;
+                for( int i = 0; i < nodeToCluster.length; i++ )
+                {
+                    dist += nodeToCluster[i];
+                }
+                dist = (dist/nodeToCluster.length);
+
+                double xPos = rand.nextDouble()*width;
+                double yPos = rand.nextDouble()*height;
+                while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+                {
+                    xPos = rand.nextDouble()*width;
+                    yPos = rand.nextDouble()*height;
+                }
+                n.setPos(new Vector2( xPos, yPos ));
+                while( step > 0.0001 )
+                {
+                    placeNode( n, nodeToCluster, dist );
+                }
+                step = 100;
             }
             scaleToCluster(cl);
         }
+    }
 
+    private void placeNode( Node n, double[] nodeToCluster, double dist )
+    {
+        double distortion = getDistortionNodeScale( n.getPos().getX(), n.getPos().getY(), nodeToCluster );
+        Vector2 newPos = setNodePos( distortion, n, nodeToCluster, dist );
+        if(! (newPos == null) )
+        {
+            step = (step*2);
+            n.setPos(newPos);
+        }
+        else
+        {
+            step = (step/2);
+        }
+    }
 
+    private double getDistortionNodeScale( double xPos, double yPos, double[] nodeToCluster )
+    {
+        double distortion = 0;
+
+        double contractionlocal = 0;
+        double expansionlocal = 0;
+        int total = 0;
+
+        double[] mapping = new double[clusters.size()];
+
+        for (int i = 0; i < clusters.size(); i++) {
+            Vector2 node1 = new Vector2(xPos, yPos);
+            for (int j = 0; j < clusters.size(); j++)
+            {
+                Vector2 node2 = clusters.get(j).getPos();
+                //get the actual distances between all nodes to calculate the distorion metrics
+                mapping[j] = node1.distance(node2);
+            }
+        }
+
+        for( int i = 0; i < mapping.length; i++ )
+        {
+            total++;
+            contractionlocal = (((graphScaling/divideScale)*nodeToCluster[clusters.get(i).getNumber()]) / mapping[i]);
+            expansionlocal = (mapping[i] / ((graphScaling/divideScale)*nodeToCluster[clusters.get(i).getNumber()]));
+
+            if( contractionlocal >= expansionlocal )
+            {
+                distortion += contractionlocal;
+            }
+            else if( expansionlocal >= contractionlocal )
+            {
+                distortion += expansionlocal;
+            }
+        }
+        distortion = (distortion/total);
+
+        return distortion;
+    }
+
+    private Vector2 setNodePos( double distortionInit, Node n, double[] nodeToCluster, double dist)
+    {
+        Vector2 gradient = getDerivativeExpansion( n.getPos().getX(), n.getPos().getY(), dist );
+        Vector2 newPos = new Vector2(n.getPos().getX()-gradient.getX() * step, n.getPos().getY()-gradient.getY() * step);
+        if( distortionInit < getDistortionNodeScale(newPos.getX(), newPos.getY(), nodeToCluster))
+        {
+            return null;
+        }
+        else
+        {
+            return newPos;
+        }
+    }
+
+    private Vector2 getDerivativeExpansion( double xPos, double yPos, double dist)
+    {
+        double derivativeExpansionXTotal = 0;
+        double derivativeExpansionYTotal = 0;
+
+        for( Cluster c : clusters )
+        {
+            derivativeExpansionXTotal += getDerivativeExpansionX(xPos, yPos, c.getPos().getX(), c.getPos().getY(), dist);
+            derivativeExpansionYTotal += getDerivativeExpansionY(xPos, yPos, c.getPos().getX(), c.getPos().getY(), dist);
+        }
+
+        derivativeExpansionXTotal = ( derivativeExpansionXTotal/clusters.size() );
+        derivativeExpansionYTotal = ( derivativeExpansionYTotal/clusters.size() );
+
+        return (new Vector2( derivativeExpansionXTotal, derivativeExpansionYTotal ));
+    }
+
+    private double getDerivativeExpansionX( double nodeX, double nodeY, double clusterX, double clusterY, double dist )
+    {
+        //derivate of expansion over x
+        double result = (nodeX-clusterX)/(Math.sqrt(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2))*dist);
+
+        return result;
+    }
+
+    private double getDerivativeExpansionY( double nodeX, double nodeY, double clusterX, double clusterY, double dist )
+    {
+        //derivative of expansion over y
+        double result = (nodeY-clusterY)/(Math.sqrt(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2))*dist);
+
+        return result;
     }
 
     public void finalPositioningCheck()
@@ -119,120 +240,6 @@ public class BeaconPositioning
                 n.setSite( c.getSite() );
             }
         }
-    }
-
-    public void beaconIntersections( double[] nodeToCluster )
-    {
-        double[] distances = new double[nodeToCluster.length];
-        double lambda = 0.1;
-
-        for( int i = 0; i < 100000; i++ ) {
-            for (int j = 0; j < nodeToCluster.length; j++) {
-                distances[j] = nodeToCluster[j] * lambda;
-            }
-            lambda = (lambda + 0.1);
-            if( circleIntersectionCheck(distances) )
-            {
-                break;
-            }
-        }
-    }
-
-    private boolean circleIntersectionCheck( double[] nodeToClusters )
-    {
-        ArrayList<Vector2> circleIntersections = new ArrayList<Vector2>();
-        boolean intersects = true;
-
-        double radiusR1 = 0;
-        double radiusR2 = 0;
-        double distance = 0;
-
-        for( Cluster c1 : clusters ) {
-            for( Cluster c2 : clusters )
-            {
-                if(c1.getNumber() != c2.getNumber())
-                {
-                    radiusR1 = nodeToClusters[c1.getNumber()];
-                    radiusR2 = nodeToClusters[c2.getNumber()];
-                    distance = c1.getPos().distance(c2.getPos());
-
-                    if (distance > (radiusR1 + radiusR2))
-                    {
-                        //they are separate and don't intersect
-                    }
-                    else if( distance < (radiusR1 - radiusR2 ))
-                    {
-                        //one circle is contained within the other.
-                    }
-                    else
-                    {
-                        //find intersection points of the 2 overlapping circles.
-                        //http://paulbourke.net/geometry/circlesphere/
-                        //we can find the intersection based on the triangle between c1, newPos and the intersection.
-                        //there should be 2 points, so 2 solutions for x, y
-                        double dx = c2.getPos().getX()-c1.getPos().getX();
-                        double dy = c2.getPos().getY()-c1.getPos().getY();
-
-                        double a = (((radiusR1*radiusR1)-(radiusR2*radiusR2) + (distance*distance))/(2*distance));
-
-                        double newX = c1.getPos().getX() + (dx*(a/distance));
-                        double newY = c1.getPos().getY() + (dy*(a/distance));
-
-                        Vector2 P2 = new Vector2( newX, newY );
-
-                        //determine the distance from point P2 to the 2 intersection points.
-                        double h = Math.sqrt(((radiusR1*radiusR1) - (a*a)));
-
-                        double rx = (-dy * (h/distance));
-                        double ry = (dx * (h/distance));
-
-                        double x3 = P2.getX()+rx;
-                        double y3 = P2.getY()+ry;
-
-                        double x3Prime = P2.getX()-rx;
-                        double y3Prime = P2.getY()-ry;
-
-                        circleIntersections.add(new Vector2(x3, y3));
-                        circleIntersections.add(new Vector2(x3Prime, y3Prime));
-                    }
-                }
-            }
-        }
-
-        intersects = checkPointsIntersection( nodeToClusters, circleIntersections );
-
-        return intersects;
-    }
-
-    private boolean checkPointsIntersection( double[] nodeToClusters, ArrayList<Vector2> circleIntersections )
-    {
-        if( circleIntersections.size() > 0 )
-        {
-            for( Vector2 point : circleIntersections )
-            {
-                if( !(Double.isNaN(point.getX()) && Double.isNaN(point.getY())) ) {
-                    boolean intersects = true;
-                    for (Cluster c : clusters) {
-                        double radiusToPoint = point.distance(c.getPos());
-                        double radiusCluster = nodeToClusters[c.getNumber()];
-
-                        if (radiusCluster < radiusToPoint) {
-                            intersects = false;
-                        }
-                    }
-                    if (intersects) {
-                        //there is a point which is in all the circle radii.
-                        nodePosition = point;
-                        return true;
-                    }
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
-        return false;
     }
 
     public void scaleToCluster( Cluster cl )
@@ -286,6 +293,28 @@ public class BeaconPositioning
                 }
                 n.setPos(new Vector2( xPos, yPos ));
             }
+        }
+    }
+
+    public void RandomizeClusterNodes( Cluster cl )
+    {
+        double xPos = 0;
+        double yPos = 0;
+
+        PolygonSimple poly = null;
+
+        poly = cl.getSite().getPolygon();
+        for( Node n : cl.getNodes() )
+        {
+            xPos = rand.nextDouble()*1200;
+            yPos = rand.nextDouble()*800;
+
+            while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
+            {
+                xPos = rand.nextDouble()*1200;
+                yPos = rand.nextDouble()*800;
+            }
+            n.setPos(new Vector2( xPos, yPos ));
         }
     }
 

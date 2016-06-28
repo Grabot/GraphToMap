@@ -97,9 +97,9 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        //drawLabels();
-//        drawEdges( showEdges );
-//        vorRender.drawNodes( g2, nodes );
+        drawLabels();
+        drawEdges( showEdges );
+        //vorRender.drawNodes( g2, nodes );
 
         if( beaconPosTest ) {
             beaconRender.drawBeaconGradient(g2, nodeToCluster, Beaconnode);
