@@ -1,8 +1,10 @@
 package Tue.load.Display;
 
 import Tue.load.Vector2;
+import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.Cluster;
 import Tue.objects.Node;
+import Tue.objects.PolygonEdge;
 import Tue.objects.VectorGraphic;
 
 import java.awt.*;
@@ -38,7 +40,7 @@ public class BeaconRenderer
 
     }
 
-    public void drawBeaconGradient( Graphics2D g2, double[] nodeToCluster, Node node )
+    public void drawBeaconGradient( Graphics2D g2, double[] nodeToCluster, Cluster cl, Node node )
     {
 
         iterationTest++;
@@ -53,19 +55,91 @@ public class BeaconRenderer
 
             once = false;
             fillDistortionArray( nodeToCluster );
-            fillGradientArray();
+            //fillGradientArray();
+            fillGradientArrayCluster( cl );
         }
 
         drawGrid( g2, nodeToCluster );
         drawRadii( g2, nodeToCluster );
 
-        drawVectorField( g2 );
+        drawVectorField( g2, cl );
         node.drawNode(g2);
 
 //        if( (iterationTest % 100) == 0 )
 //        {
 //            once = true;
 //        }
+    }
+
+    private void fillGradientArrayCluster( Cluster cl )
+    {
+        ArrayList<PolygonEdge> polygonEdges = new ArrayList<PolygonEdge>();
+        Vector2 pos;
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+        //just do 1 line for now
+        double x2 = xPoints[2];
+        double y2 = yPoints[2];
+        double x3 = xPoints[3];
+        double y3 = yPoints[3];
+
+        for( int i = 0; i < poly.getNumPoints(); i++ ) {
+            Vector2 from;
+            Vector2 to;
+            if ((i == (poly.getNumPoints() - 1))) {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[0], yPoints[0]);
+            } else {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[i + 1], yPoints[i + 1]);
+            }
+            polygonEdges.add(new PolygonEdge(from, to));
+        }
+        PolygonEdge edge = new PolygonEdge( new Vector2(x2, y2), new Vector2(x3, y3) );
+
+        for( int i = 0; i < 1200; i+=stepsize ) {
+            for( int j = 0; j < 800; j+=stepsize ) {
+                pos = new Vector2(i+(stepsize/2), j+(stepsize/2));
+
+                if( pnpoly(poly.getNumPoints(), xPoints, yPoints, pos.getX(), pos.getY() ))
+                {
+                    Vector2 gradientCluster = new Vector2( 0, 0 );
+                    for( PolygonEdge e : polygonEdges )
+                    {
+                        Vector2 gradientEdge = getDerivativePolyEdge( pos.getX(), pos.getY(), e.getFrom().getX(), e.getFrom().getY(), e.getTo().getX(), e.getTo().getY(), 100 );
+                        if( Math.abs(gradientEdge.getX()) > Math.abs(gradientCluster.getX()) )
+                        {
+                            gradientCluster.x = gradientEdge.getX();
+                            System.out.println("x: " + Math.abs(gradientEdge.getX()) );
+                        }
+                        if( Math.abs(gradientEdge.getY()) > Math.abs(gradientCluster.getY()) )
+                        {
+                            gradientCluster.y = gradientEdge.getY();
+                            System.out.println("y: " + Math.abs(gradientEdge.getY()) );
+                        }
+                    }
+                    if( gradientCluster.getX() > 1 )
+                    {
+                        gradientCluster.x = 1;
+                    }
+                    else if( gradientCluster.getX() < -1 )
+                    {
+                        gradientCluster.x = -1;
+                    }
+
+                    if( gradientCluster.getY() > 1 )
+                    {
+                        gradientCluster.y = 1;
+                    }
+                    else if( gradientCluster.getY() < -1 )
+                    {
+                        gradientCluster.y = -1;
+                    }
+                    gradientFields.add( new VectorGraphic( pos, gradientCluster ));
+                }
+            }
+        }
     }
 
     private void fillGradientArray()
@@ -93,12 +167,25 @@ public class BeaconRenderer
         }
     }
 
-    private void drawVectorField( Graphics2D g2 )
+    private void drawVectorField( Graphics2D g2, Cluster cl )
     {
         for( VectorGraphic v : gradientFields)
         {
             v.draw(g2);
         }
+
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+        //just do 1 line for now
+        double x2 = xPoints[2];
+        double y2 = yPoints[2];
+        double x3 = xPoints[3];
+        double y3 = yPoints[3];
+
+        g2.setColor(new Color(0, 36, 234));
+        Line2D.Double line = new Line2D.Double(x2, y2, x3, y3);
+        g2.draw(line);
     }
 
     private void drawRadii(  Graphics2D g2, double[] nodeToCluster )
@@ -151,8 +238,6 @@ public class BeaconRenderer
             }
         }
 
-        System.out.println("lowest: " + lowest );
-
         for( int i = 0; i < (int)(1200/stepsize); i++ ) {
             for (int j = 0; j < (int)(800/stepsize); j ++ ) {
                 distortion = distortionGrid[i][j];
@@ -172,7 +257,7 @@ public class BeaconRenderer
                 g2.setColor(new Color(((int)(distortion)), 255-(int)(distortion), 0));
                 if( distortion == 0 )
                 {
-                    g2.setColor( Color.BLACK );
+                    //g2.setColor( Color.BLACK );
                 }
                 Rectangle2D.Double shape = new Rectangle2D.Double(i*stepsize, j*stepsize, stepsize+1, stepsize+1 );
                 //Ellipse2D.Double shape = new Ellipse2D.Double(((i*stepsize) + (stepsize / 2)) - (nodeRadius / 2), ((j*stepsize) + (stepsize / 2)) - (nodeRadius / 2), nodeRadius, nodeRadius);
@@ -285,5 +370,51 @@ public class BeaconRenderer
         double result = (nodeY-clusterY)*dist/(Math.pow(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2), (3/2)));
 
         return result;
+    }
+
+
+
+    private Vector2 getDerivativePolyEdge( double x1, double y1, double x2, double y2, double x3, double y3, double dist )
+    {
+        double x = getDerivativePolyEdgeX( x1, y1, x2, y2, x3, y3, dist );
+        double y = getDerivativePolyEdgeY( x1, y1, x2, y2, x3, y3, dist );
+        Vector2 edgeGradient = new Vector2(x, y);
+        return edgeGradient;
+    }
+
+    private double getDerivativePolyEdgeX( double x1, double y1, double x2, double y2, double x3, double y3, double c )
+    {
+        double numerator = c*((y2-y3)*Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)));
+        double denominator = Math.pow(((x3*(y1-y2))+(x1*(y2-y3))+(x2*(y3-y1))),2);
+
+        return ((numerator/denominator)*-1);
+    }
+
+    private double getDerivativePolyEdgeY( double x1, double y1, double x2, double y2, double x3, double y3, double c )
+    {
+        double numerator = c*((x3-x2)*Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)));
+        double denominator = Math.pow(((x3*(y1-y2))+(x1*(y2-y3))+(x2*(y3-y1))),2);
+
+        return ((numerator/denominator)*-1);
+    }
+
+
+    //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
+    //check to see whether point is inside polygon
+    //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
+    //testx and testy are the x and y coordinates of the point you want to check. It returns true if true false otherwise
+    private boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy)
+    {
+        int i, j = 0;
+        boolean c = false;
+
+        for (i = 0, j = nvert-1; i < nvert; j = i++)
+        {
+            if ( ((verty[i]>testy) != (verty[j]>testy)) && (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+            {
+                c = !c;
+            }
+        }
+        return c;
     }
 }

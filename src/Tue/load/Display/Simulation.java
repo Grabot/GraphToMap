@@ -220,16 +220,20 @@ public class Simulation
             beacon.positionNodesRandom( width, height );
             System.out.println("random positions");
         }
-        else {
-            beacon.beacondBasedPositioning( clusterD, pairD, width, height );
+        else
+        {
+            beacon.beacondBasedPositioning( clusterD, pairD, width, height, render );
             System.out.println("positions for nodes found");
         }
 
-        clusterVoronoiInit();
+        render.setNormalNodes( nodes );
+        render.setNormalEdges( edges );
 
-        if( clusterNodesPos ) {
-            beacon.finalPositioningCheck();
-        }
+//        clusterVoronoiInit();
+//
+//        if( clusterNodesPos ) {
+//            beacon.finalPositioningCheck();
+//        }
     }
 
     private void NodePlacementVoronoi( float delta )
@@ -295,14 +299,14 @@ public class Simulation
                 normalIterations++;
                 if( !clusterNodesPos )
                 {
-                    NodePlacementInit2();
+                    NodePlacementInit();
                 }
                 else
                 {
-                    NodePlacementVoronoi(delta);
-                    checkErrorNormal();
-                    render.setNormalNodes(nodes);
-                    render.setNormalEdges(edges);
+//                    NodePlacementVoronoi(delta);
+//                    checkErrorNormal();
+//                    render.setNormalNodes(nodes);
+//                    render.setNormalEdges(edges);
                 }
             }
         }
@@ -360,7 +364,6 @@ public class Simulation
         if( !randomPos ) {
             forceMove = new ForceDirectedMovement(nodes, edges, clusters);
         }
-
     }
 
     private void checkError()

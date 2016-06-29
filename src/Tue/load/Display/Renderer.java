@@ -46,6 +46,9 @@ public class Renderer
 
     private RenderVoronoi vorRender;
     private BeaconRenderer beaconRender;
+    private Node Beaconnode;
+    private Cluster BeaconCluster;
+
 
     public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges, double graphScaling )
     {
@@ -97,16 +100,14 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        drawLabels();
+        //drawLabels();
         drawEdges( showEdges );
-        //vorRender.drawNodes( g2, nodes );
+        vorRender.drawNodes( g2, nodes );
 
         if( beaconPosTest ) {
-            beaconRender.drawBeaconGradient(g2, nodeToCluster, Beaconnode);
+            beaconRender.drawBeaconGradient(g2, nodeToCluster, BeaconCluster, Beaconnode);
         }
     }
-
-    private Node Beaconnode;
 
     private void drawEdges( boolean showEdges )
     {
@@ -222,11 +223,12 @@ public class Renderer
         labelfill = true;
     }
 
-    public void setBeaconBasedTest( double[] nodeToCluster, Node node )
+    public void setBeaconBasedTest( double[] nodeToCluster, Cluster cl, Node node )
     {
         beaconPosTest = true;
         this.nodeToCluster = nodeToCluster;
         this.Beaconnode = node;
+        this.BeaconCluster = cl;
     }
 
     private void sortLabels()

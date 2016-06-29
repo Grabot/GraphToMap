@@ -4,6 +4,7 @@ import Tue.load.Vector2;
 import Tue.load.voronoitreemap.j2d.PolygonSimple;
 import Tue.objects.Cluster;
 import Tue.objects.Node;
+import Tue.objects.PolygonEdge;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,6 +23,11 @@ public class BeaconPositioning
     private double step = 100;
     private double graphScaling;
     private double divideScale = 50;
+
+    private double lowest = 999;
+    private double highest = 0;
+
+    private double clusterBoundary = 100;
 
     public BeaconPositioning(ArrayList<Cluster> clusters, ArrayList<Node> nodes, double graphScaling )
     {
@@ -54,12 +60,15 @@ public class BeaconPositioning
         }
     }
 
-    public void beacondBasedPositioning( double[][] clusterD, double[][] pairD, int width, int height )
+    public void beacondBasedPositioning( double[][] clusterD, double[][] pairD, int width, int height, Renderer render )
     {
-        for( Cluster cl : clusters )
-        {
+
+        Cluster cl = clusters.get(0);
+        Node n = cl.getNodes().get(0);
+//        for( Cluster cl : clusters )
+//        {
             PolygonSimple poly = cl.getSite().getPolygon();
-            for (Node n : cl.getNodes()) {
+            //for (Node n : cl.getNodes()) {
                 double[] nodeToCluster = new double[clusterD.length];
 
                 for (Cluster c : clusters) {
@@ -94,20 +103,23 @@ public class BeaconPositioning
                     yPos = rand.nextDouble()*height;
                 }
                 n.setPos(new Vector2( xPos, yPos ));
-                while( step > 0.0001 )
-                {
-                    placeNode( n, nodeToCluster, dist );
-                }
-                step = 100;
-            }
-            scaleToCluster(cl);
-        }
+                placeNode( cl, n, nodeToCluster, dist );
+
+                render.setBeaconBasedTest( nodeToCluster, cl, n );
+//                while( step > 0.0001 )
+//                {
+//                    placeNode( cl, n, nodeToCluster, dist );
+//                }
+//                step = 100;
+//            }
+//            scaleToCluster(cl);
+//        }
     }
 
-    private void placeNode( Node n, double[] nodeToCluster, double dist )
+    private void placeNode( Cluster cl, Node n, double[] nodeToCluster, double dist )
     {
         double distortion = getDistortionNodeScale( n.getPos().getX(), n.getPos().getY(), nodeToCluster );
-        Vector2 newPos = setNodePos( distortion, n, nodeToCluster, dist );
+        Vector2 newPos = setNodePos( distortion, cl, n, nodeToCluster, dist );
         if(! (newPos == null) )
         {
             step = (step*2);
@@ -159,10 +171,27 @@ public class BeaconPositioning
         return distortion;
     }
 
-    private Vector2 setNodePos( double distortionInit, Node n, double[] nodeToCluster, double dist)
+    private Vector2 setNodePos( double distortionInit, Cluster cl, Node n, double[] nodeToCluster, double dist)
     {
-        Vector2 gradient = getDerivativeExpansion( n.getPos().getX(), n.getPos().getY(), dist );
-        Vector2 newPos = new Vector2(n.getPos().getX()-gradient.getX() * step, n.getPos().getY()-gradient.getY() * step);
+        double distToCluster = distanceToCluster( cl, n );
+
+        System.out.println( "distToCluster: " + distToCluster );
+
+        Vector2 gradientExpansion = getDerivativeExpansion( n.getPos().getX(), n.getPos().getY(), dist );
+        Vector2 gradientContraction = getDerivativeContraction( n.getPos().getX(), n.getPos().getY(), dist );
+
+        //find which function is greater.
+        if( Math.abs(gradientContraction.getX()) > Math.abs(gradientExpansion.getX()) )
+        {
+            gradientExpansion.x = gradientContraction.getX();
+        }
+
+        if( Math.abs(gradientContraction.getY()) > Math.abs(gradientExpansion.getY()) )
+        {
+            gradientExpansion.y = gradientContraction.getY();
+        }
+
+        Vector2 newPos = new Vector2(n.getPos().getX()-gradientExpansion.getX() * step, n.getPos().getY()-gradientExpansion.getY() * step);
         if( distortionInit < getDistortionNodeScale(newPos.getX(), newPos.getY(), nodeToCluster))
         {
             return null;
@@ -187,6 +216,7 @@ public class BeaconPositioning
         derivativeExpansionXTotal = ( derivativeExpansionXTotal/clusters.size() );
         derivativeExpansionYTotal = ( derivativeExpansionYTotal/clusters.size() );
 
+
         return (new Vector2( derivativeExpansionXTotal, derivativeExpansionYTotal ));
     }
 
@@ -202,6 +232,39 @@ public class BeaconPositioning
     {
         //derivative of expansion over y
         double result = (nodeY-clusterY)/(Math.sqrt(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2))*dist);
+
+        return result;
+    }
+
+    private Vector2 getDerivativeContraction( double xPos, double yPos, double dist )
+    {
+        double derivativeContractionXTotal = 0;
+        double derivativeContractionYTotal = 0;
+
+        for( Cluster c : clusters )
+        {
+            derivativeContractionXTotal += getDerivativeContractionX( xPos, yPos, c.getPos().getX(), c.getPos().getY(), dist);
+            derivativeContractionYTotal += getDerivativeContractionY( xPos, yPos, c.getPos().getX(), c.getPos().getY(), dist);
+        }
+
+        derivativeContractionXTotal = ( derivativeContractionXTotal/clusters.size() );
+        derivativeContractionYTotal = ( derivativeContractionYTotal/clusters.size() );
+
+        return (new Vector2( derivativeContractionXTotal, derivativeContractionYTotal ));
+    }
+
+    private double getDerivativeContractionX( double nodeX, double nodeY, double clusterX, double clusterY, double dist )
+    {
+        //derivative of contraction over x
+        double result = (nodeX-clusterX)*dist/(Math.pow(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2), (3/2)));
+
+        return result;
+    }
+
+    private double getDerivativeContractionY( double nodeX, double nodeY, double clusterX, double clusterY, double dist )
+    {
+        //derivative of contraction over y
+        double result = (nodeY-clusterY)*dist/(Math.pow(Math.pow((nodeX-clusterX), 2) + Math.pow((nodeY-clusterY), 2), (3/2)));
 
         return result;
     }
@@ -242,7 +305,7 @@ public class BeaconPositioning
         }
     }
 
-    public void scaleToCluster( Cluster cl )
+    private void scaleToCluster( Cluster cl )
     {
         //check if all the points are inside the cluster
         boolean inside = false;
@@ -270,6 +333,53 @@ public class BeaconPositioning
         }
     }
 
+    private double distanceToCluster( Cluster cl, Node n )
+    {
+        double result = 0;
+        Vector2 derivativeEdge = null;
+        double closest = 9999;
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+
+        for( int i = 0; i < poly.getNumPoints(); i++ )
+        {
+            Vector2 from;
+            Vector2 to;
+            if((i == (poly.getNumPoints()-1)))
+            {
+                from = new Vector2( xPoints[i], yPoints[i] );
+                to = new Vector2( xPoints[0], yPoints[0] );
+            }
+            else
+            {
+                from = new Vector2( xPoints[i], yPoints[i] );
+                to = new Vector2( xPoints[i+1], yPoints[i+1] );
+            }
+            PolygonEdge edge = new PolygonEdge( from, to );
+
+            result = edge.distanceToEdge(n);
+            if( result < closest )
+            {
+                closest = result;
+            }
+
+            if( result < clusterBoundary ) {
+                derivativeEdge = getDerivativePolyEdge(n.getPos().getX(), n.getPos().getY(), from.getX(), from.getY(), to.getX(), to.getY(), clusterBoundary);
+                System.out.println("derivative x: " + derivativeEdge.getX() + " y: " + derivativeEdge.getY() );
+            }
+        }
+
+        result = clusterBoundary/closest;
+
+        if( result > 1 )
+        {
+            return result;
+        }
+        else {
+            return 1;
+        }
+    }
 
     public void positionNodesRandom( int width, int height)
     {
@@ -296,28 +406,6 @@ public class BeaconPositioning
         }
     }
 
-    public void RandomizeClusterNodes( Cluster cl )
-    {
-        double xPos = 0;
-        double yPos = 0;
-
-        PolygonSimple poly = null;
-
-        poly = cl.getSite().getPolygon();
-        for( Node n : cl.getNodes() )
-        {
-            xPos = rand.nextDouble()*1200;
-            yPos = rand.nextDouble()*800;
-
-            while( !pnpoly(poly.length, poly.getXPoints(), poly.getYPoints(), xPos, yPos ))
-            {
-                xPos = rand.nextDouble()*1200;
-                yPos = rand.nextDouble()*800;
-            }
-            n.setPos(new Vector2( xPos, yPos ));
-        }
-    }
-
     //https://www.ecse.rpi.edu/~wrf/Research/Short_Notes/pnpoly.html
     //check to see whether point is inside polygon
     //nvert is number of sides to the polygon, vertx and verty are the x and y coordinates of the polygon
@@ -335,6 +423,32 @@ public class BeaconPositioning
             }
         }
         return c;
+    }
+
+
+
+    private Vector2 getDerivativePolyEdge( double x1, double y1, double x2, double y2, double x3, double y3, double dist )
+    {
+        double x = getDerivativePolyEdgeX( x1, y1, x2, y2, x3, y3, dist );
+        double y = getDerivativePolyEdgeY( x1, y1, x2, y2, x3, y3, dist );
+        Vector2 edgeGradient = new Vector2(x, y);
+        return edgeGradient;
+    }
+
+    private double getDerivativePolyEdgeX( double x1, double y1, double x2, double y2, double x3, double y3, double c )
+    {
+        double numerator = c*((y2-y3)*Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)));
+        double denominator = Math.pow(((x3*(y1-y2))+(x1*(y2-y3))+(x2*(y3-y1))),2);
+
+        return ((numerator/denominator)*-1);
+    }
+
+    private double getDerivativePolyEdgeY( double x1, double y1, double x2, double y2, double x3, double y3, double c )
+    {
+        double numerator = c*((x3-x2)*Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)));
+        double denominator = Math.pow(((x3*(y1-y2))+(x1*(y2-y3))+(x2*(y3-y1))),2);
+
+        return ((numerator/denominator)*-1);
     }
 
 }
