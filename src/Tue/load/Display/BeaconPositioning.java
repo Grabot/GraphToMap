@@ -118,7 +118,7 @@ public class BeaconPositioning
 
     private void placeNode( Cluster cl, Node n, double[] nodeToCluster, double dist )
     {
-        double distortion = getDistortionNodeScale( n.getPos().getX(), n.getPos().getY(), nodeToCluster );
+        double distortion = getDistortionNodeScale( n.getPos().getX(), n.getPos().getY(), cl, nodeToCluster );
         Vector2 newPos = setNodePos( distortion, cl, n, nodeToCluster, dist );
         if(! (newPos == null) )
         {
@@ -131,7 +131,7 @@ public class BeaconPositioning
         }
     }
 
-    private double getDistortionNodeScale( double xPos, double yPos, double[] nodeToCluster )
+    private double getDistortionNodeScale( double xPos, double yPos, Cluster cl, double[] nodeToCluster )
     {
         double distortion = 0;
 
@@ -168,7 +168,64 @@ public class BeaconPositioning
         }
         distortion = (distortion/total);
 
+        distortion = addBoundaryFunction( xPos, yPos, cl, distortion );
+
         return distortion;
+    }
+
+    private double addBoundaryFunction( double xPos, double yPos, Cluster cl, double distortionInit )
+    {
+        double distortion = distortionInit;
+
+        ArrayList<PolygonEdge> polygonEdges = new ArrayList<PolygonEdge>();
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+
+        for( int i = 0; i < poly.getNumPoints(); i++ ) {
+            Vector2 from;
+            Vector2 to;
+            if ((i == (poly.getNumPoints() - 1))) {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[0], yPoints[0]);
+            } else {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[i + 1], yPoints[i + 1]);
+            }
+            polygonEdges.add(new PolygonEdge(from, to));
+        }
+
+        if( pnpoly(poly.getNumPoints(), xPoints, yPoints, xPos, yPos ))
+        {
+            double boundaryCluster = 0;
+            for( PolygonEdge e : polygonEdges )
+            {
+                double boundaryEdge = boundaryFunctionEdge( xPos, yPos, e.getFrom().getX(), e.getFrom().getY(), e.getTo().getX(), e.getTo().getY(), 100 );
+                if( boundaryCluster < boundaryEdge )
+                {
+                    boundaryCluster = boundaryEdge;
+                }
+            }
+            System.out.println("boundaryCluster: " + boundaryCluster );
+            if( boundaryCluster > 10 )
+            {
+                boundaryCluster = 10;
+            }
+            distortion = (distortion+boundaryCluster);
+        }
+        else
+        {
+            distortion = (distortion+10);
+        }
+        return distortion;
+    }
+
+    private double boundaryFunctionEdge(  double x1, double y1, double x2, double y2, double x3, double y3, double dist )
+    {
+        double numerator = dist*Math.sqrt(Math.pow((x3-x2),2) + Math.pow((y3-y2), 2));
+        double denominator = ((x1*(y2-y3))+(x2*(y3-y1))+(x3*(y1-y2)));
+
+        return (numerator/denominator);
     }
 
     private Vector2 setNodePos( double distortionInit, Cluster cl, Node n, double[] nodeToCluster, double dist)
@@ -192,7 +249,7 @@ public class BeaconPositioning
         }
 
         Vector2 newPos = new Vector2(n.getPos().getX()-gradientExpansion.getX() * step, n.getPos().getY()-gradientExpansion.getY() * step);
-        if( distortionInit < getDistortionNodeScale(newPos.getX(), newPos.getY(), nodeToCluster))
+        if( distortionInit < getDistortionNodeScale(newPos.getX(), newPos.getY(), cl, nodeToCluster))
         {
             return null;
         }

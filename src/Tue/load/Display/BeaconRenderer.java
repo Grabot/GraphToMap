@@ -54,8 +54,8 @@ public class BeaconRenderer
 
             once = false;
             fillDistortionArray( cl, nodeToCluster );
-            //fillGradientArray();
-            fillGradientArrayCluster( cl );
+            fillGradientArray( cl );
+            //fillGradientArrayCluster( cl );
         }
 
         drawGrid( g2, nodeToCluster );
@@ -133,12 +133,64 @@ public class BeaconRenderer
         }
     }
 
-    private void fillGradientArray()
+    private void fillGradientArray( Cluster cl )
     {
         Vector2 pos;
+        ArrayList<PolygonEdge> polygonEdges = new ArrayList<PolygonEdge>();
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+
+        for( int i = 0; i < poly.getNumPoints(); i++ ) {
+            Vector2 from;
+            Vector2 to;
+            if ((i == (poly.getNumPoints() - 1))) {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[0], yPoints[0]);
+            } else {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[i + 1], yPoints[i + 1]);
+            }
+            polygonEdges.add(new PolygonEdge(from, to));
+        }
+
         for( int i = 0; i < 1200; i+=stepsize ) {
             for( int j = 0; j < 800; j+=stepsize ) {
                 pos = new Vector2(i+(stepsize/2), j+(stepsize/2));
+                Vector2 gradientCluster = new Vector2( 0, 0 );
+                if( pnpoly(poly.getNumPoints(), xPoints, yPoints, pos.getX(), pos.getY() ))
+                {
+                    for( PolygonEdge e : polygonEdges )
+                    {
+                        Vector2 gradientEdge = getDerivativePolyEdge( pos.getX(), pos.getY(), e.getFrom().getX(), e.getFrom().getY(), e.getTo().getX(), e.getTo().getY(), 100 );
+                        if( Math.abs(gradientEdge.getX()) > Math.abs(gradientCluster.getX()) )
+                        {
+                            gradientCluster.x = gradientEdge.getX();
+                        }
+                        if( Math.abs(gradientEdge.getY()) > Math.abs(gradientCluster.getY()) )
+                        {
+                            gradientCluster.y = gradientEdge.getY();
+                        }
+                    }
+                    if( gradientCluster.getX() > 1 )
+                    {
+                        gradientCluster.x = 1;
+                    }
+                    else if( gradientCluster.getX() < -1 )
+                    {
+                        gradientCluster.x = -1;
+                    }
+
+                    if( gradientCluster.getY() > 1 )
+                    {
+                        gradientCluster.y = 1;
+                    }
+                    else if( gradientCluster.getY() < -1 )
+                    {
+                        gradientCluster.y = -1;
+                    }
+                }
+
                 Vector2 expansionResult = getDerivativeExpansion( pos.getX(), pos.getY(), dist );
                 Vector2 contractionResult = getDerivativeContraction( pos.getX(), pos.getY(), dist );
 
@@ -147,13 +199,21 @@ public class BeaconRenderer
                 {
                     contractionResult.x = expansionResult.getX();
                 }
-
                 if( Math.abs(expansionResult.getY()) > Math.abs(contractionResult.getY()) )
                 {
                     contractionResult.y = expansionResult.getY();
                 }
 
-                gradientFields.add( new VectorGraphic( pos, expansionResult ));
+                if( Math.abs(gradientCluster.getX()) > Math.abs(contractionResult.getX()))
+                {
+                    contractionResult.x = gradientCluster.getX();
+                }
+                if( Math.abs(gradientCluster.getY()) > Math.abs(contractionResult.getY()))
+                {
+                    contractionResult.y = gradientCluster.getY();
+                }
+
+                gradientFields.add( new VectorGraphic( pos, contractionResult ));
             }
         }
     }
@@ -320,15 +380,15 @@ public class BeaconRenderer
                 }
             }
             System.out.println("boundaryCluster: " + boundaryCluster );
-            if( boundaryCluster > 2 )
+            if( boundaryCluster > 10 )
             {
-                boundaryCluster = 2;
+                boundaryCluster = 10;
             }
-            distortion = (distortion*boundaryCluster);
+            distortion = (distortion+boundaryCluster);
         }
         else
         {
-            distortion = distortion*2;
+            distortion = (distortion+10);
         }
         return distortion;
     }
