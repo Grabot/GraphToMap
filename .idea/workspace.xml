@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="141e5fe2-5b11-4221-b9f9-55a3fc84ac6f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" afterPath="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,23 +32,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="83" column="44" selection-start-line="83" selection-start-column="44" selection-end-line="83" selection-end-column="44" />
+            <state vertical-scroll-proportion="0.83469725">
+              <caret line="94" column="73" selection-start-line="94" selection-start-column="73" selection-end-line="94" selection-end-column="73" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3228#3374#0" expanded="true" />
+                <element signature="e#3373#3374#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BeaconRenderer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SpringForce.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BeaconRenderer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.30605564">
-              <caret line="171" column="68" selection-start-line="171" selection-start-column="68" selection-end-line="171" selection-end-column="68" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="159" column="62" selection-start-line="159" selection-start-column="16" selection-end-line="159" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1942#1955#0" expanded="true" />
@@ -71,9 +87,10 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="251" column="86" selection-start-line="251" selection-start-column="86" selection-end-line="251" selection-end-column="86" />
+              <caret line="114" column="5" selection-start-line="114" selection-start-column="5" selection-end-line="114" selection-end-column="5" />
               <folding>
-                <element signature="e#5847#5860#0" expanded="true" />
+                <element signature="e#5736#5749#0" expanded="true" />
+                <element signature="e#7910#7923#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -108,7 +125,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="280" column="17" selection-start-line="280" selection-start-column="17" selection-end-line="280" selection-end-column="17" />
+              <caret line="251" column="45" selection-start-line="251" selection-start-column="45" selection-end-line="251" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -118,7 +135,7 @@
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="229" column="31" selection-start-line="229" selection-start-column="31" selection-end-line="229" selection-end-column="31" />
+              <caret line="107" column="14" selection-start-line="107" selection-start-column="14" selection-end-line="107" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -161,19 +178,19 @@
         <option value="$PROJECT_DIR$/output.csv" />
         <option value="$PROJECT_DIR$/RecipesWithClustering3.csv" />
         <option value="$PROJECT_DIR$/src/Tue/parser/DotParser.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/PointPlacement.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/RenderVoronoi.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/Display.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Geometry/VoronoiCore.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/Node.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
-        <option value="$PROJECT_DIR$/src/Tue/Main.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/VectorGraphic.java" />
         <option value="$PROJECT_DIR$/src/Tue/objects/PolygonEdge.java" />
-        <option value="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
         <option value="$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
+        <option value="$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java" />
+        <option value="$PROJECT_DIR$/src/Tue/Main.java" />
       </list>
     </option>
   </component>
@@ -979,14 +996,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="47" column="23" selection-start-line="47" selection-start-column="23" selection-end-line="47" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/load/PointPlacement.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1091,14 +1100,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="229" column="31" selection-start-line="229" selection-start-column="31" selection-end-line="229" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/DelaunayFace.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1117,14 +1118,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="280" column="17" selection-start-line="280" selection-start-column="17" selection-end-line="280" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/PolygonEdge.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1138,12 +1131,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="83" column="44" selection-start-line="83" selection-start-column="44" selection-end-line="83" selection-end-column="44" />
+          <caret line="159" column="62" selection-start-line="159" selection-start-column="16" selection-end-line="159" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1942#1955#0" expanded="true" />
+            <element signature="e#4551#4564#0" expanded="true" />
+            <element signature="e#12647#12660#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1151,22 +1147,46 @@
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="251" column="86" selection-start-line="251" selection-start-column="86" selection-end-line="251" selection-end-column="86" />
+          <caret line="114" column="5" selection-start-line="114" selection-start-column="5" selection-end-line="114" selection-end-column="5" />
           <folding>
-            <element signature="e#5847#5860#0" expanded="true" />
+            <element signature="e#5736#5749#0" expanded="true" />
+            <element signature="e#7910#7923#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30605564">
-          <caret line="171" column="68" selection-start-line="171" selection-start-column="68" selection-end-line="171" selection-end-column="68" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="251" column="45" selection-start-line="251" selection-start-column="45" selection-end-line="251" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="107" column="14" selection-start-line="107" selection-start-column="14" selection-end-line="107" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Forces/SpringForce.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.83469725">
+          <caret line="94" column="73" selection-start-line="94" selection-start-column="73" selection-end-line="94" selection-end-column="73" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1942#1955#0" expanded="true" />
-            <element signature="e#4551#4564#0" expanded="true" />
-            <element signature="e#12647#12660#0" expanded="true" />
+            <element signature="e#3228#3374#0" expanded="true" />
+            <element signature="e#3373#3374#0" expanded="true" />
           </folding>
         </state>
       </provider>

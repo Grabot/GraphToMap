@@ -63,12 +63,11 @@ public class BeaconPositioning
     public void beacondBasedPositioning( double[][] clusterD, double[][] pairD, int width, int height, Renderer render )
     {
 
-        Cluster cl = clusters.get(0);
-        Node n = cl.getNodes().get(0);
-//        for( Cluster cl : clusters )
-//        {
+        //Node n = cl.getNodes().get(0);
+        for( Cluster cl : clusters )
+        {
             PolygonSimple poly = cl.getSite().getPolygon();
-            //for (Node n : cl.getNodes()) {
+            for (Node n : cl.getNodes()) {
                 double[] nodeToCluster = new double[clusterD.length];
 
                 for (Cluster c : clusters) {
@@ -103,17 +102,16 @@ public class BeaconPositioning
                     yPos = rand.nextDouble()*height;
                 }
                 n.setPos(new Vector2( xPos, yPos ));
-                placeNode( cl, n, nodeToCluster, dist );
 
-                render.setBeaconBasedTest( nodeToCluster, cl, n );
-//                while( step > 0.0001 )
-//                {
-//                    placeNode( cl, n, nodeToCluster, dist );
-//                }
-//                step = 100;
-//            }
-//            scaleToCluster(cl);
-//        }
+                while( step > 0.0001 )
+                {
+                    placeNode( cl, n, nodeToCluster, dist );
+                }
+                step = 100;
+                //render.setBeaconBasedTest( nodeToCluster, cl, n );
+            }
+            //scaleToCluster(cl);
+        }
     }
 
     private void placeNode( Cluster cl, Node n, double[] nodeToCluster, double dist )
@@ -206,7 +204,7 @@ public class BeaconPositioning
                     boundaryCluster = boundaryEdge;
                 }
             }
-            System.out.println("boundaryCluster: " + boundaryCluster );
+
             if( boundaryCluster > 10 )
             {
                 boundaryCluster = 10;
@@ -230,12 +228,56 @@ public class BeaconPositioning
 
     private Vector2 setNodePos( double distortionInit, Cluster cl, Node n, double[] nodeToCluster, double dist)
     {
-        double distToCluster = distanceToCluster( cl, n );
-
-        System.out.println( "distToCluster: " + distToCluster );
-
         Vector2 gradientExpansion = getDerivativeExpansion( n.getPos().getX(), n.getPos().getY(), dist );
         Vector2 gradientContraction = getDerivativeContraction( n.getPos().getX(), n.getPos().getY(), dist );
+
+        ArrayList<PolygonEdge> polygonEdges = new ArrayList<PolygonEdge>();
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+
+        for( int i = 0; i < poly.getNumPoints(); i++ ) {
+            Vector2 from;
+            Vector2 to;
+            if ((i == (poly.getNumPoints() - 1))) {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[0], yPoints[0]);
+            } else {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[i + 1], yPoints[i + 1]);
+            }
+            polygonEdges.add(new PolygonEdge(from, to));
+        }
+        Vector2 gradientCluster = new Vector2( 0, 0 );
+        for( PolygonEdge e : polygonEdges )
+        {
+            Vector2 gradientEdge = getDerivativePolyEdge( n.getPos().getX(), n.getPos().getY(), e.getFrom().getX(), e.getFrom().getY(), e.getTo().getX(), e.getTo().getY(), 100 );
+            if( Math.abs(gradientEdge.getX()) > Math.abs(gradientCluster.getX()) )
+            {
+                gradientCluster.x = gradientEdge.getX();
+            }
+            if( Math.abs(gradientEdge.getY()) > Math.abs(gradientCluster.getY()) )
+            {
+                gradientCluster.y = gradientEdge.getY();
+            }
+        }
+        if( gradientCluster.getX() > 1 )
+        {
+            gradientCluster.x = 1;
+        }
+        else if( gradientCluster.getX() < -1 )
+        {
+            gradientCluster.x = -1;
+        }
+
+        if( gradientCluster.getY() > 1 )
+        {
+            gradientCluster.y = 1;
+        }
+        else if( gradientCluster.getY() < -1 )
+        {
+            gradientCluster.y = -1;
+        }
 
         //find which function is greater.
         if( Math.abs(gradientContraction.getX()) > Math.abs(gradientExpansion.getX()) )
@@ -248,6 +290,14 @@ public class BeaconPositioning
             gradientExpansion.y = gradientContraction.getY();
         }
 
+        if( Math.abs(gradientCluster.getX()) > Math.abs(gradientExpansion.getX() ))
+        {
+            gradientExpansion.x = gradientCluster.getX();
+        }
+        if( Math.abs(gradientCluster.getY()) > Math.abs(gradientExpansion.getY()))
+        {
+            gradientExpansion.y = gradientCluster.getY();
+        }
         Vector2 newPos = new Vector2(n.getPos().getX()-gradientExpansion.getX() * step, n.getPos().getY()-gradientExpansion.getY() * step);
         if( distortionInit < getDistortionNodeScale(newPos.getX(), newPos.getY(), cl, nodeToCluster))
         {
@@ -387,54 +437,6 @@ public class BeaconPositioning
                     }
                 }
             }
-        }
-    }
-
-    private double distanceToCluster( Cluster cl, Node n )
-    {
-        double result = 0;
-        Vector2 derivativeEdge = null;
-        double closest = 9999;
-        PolygonSimple poly = cl.getSite().getPolygon();
-        double[] xPoints = poly.getXPoints();
-        double[] yPoints = poly.getYPoints();
-
-        for( int i = 0; i < poly.getNumPoints(); i++ )
-        {
-            Vector2 from;
-            Vector2 to;
-            if((i == (poly.getNumPoints()-1)))
-            {
-                from = new Vector2( xPoints[i], yPoints[i] );
-                to = new Vector2( xPoints[0], yPoints[0] );
-            }
-            else
-            {
-                from = new Vector2( xPoints[i], yPoints[i] );
-                to = new Vector2( xPoints[i+1], yPoints[i+1] );
-            }
-            PolygonEdge edge = new PolygonEdge( from, to );
-
-            result = edge.distanceToEdge(n);
-            if( result < closest )
-            {
-                closest = result;
-            }
-
-            if( result < clusterBoundary ) {
-                derivativeEdge = getDerivativePolyEdge(n.getPos().getX(), n.getPos().getY(), from.getX(), from.getY(), to.getX(), to.getY(), clusterBoundary);
-                System.out.println("derivative x: " + derivativeEdge.getX() + " y: " + derivativeEdge.getY() );
-            }
-        }
-
-        result = clusterBoundary/closest;
-
-        if( result > 1 )
-        {
-            return result;
-        }
-        else {
-            return 1;
         }
     }
 

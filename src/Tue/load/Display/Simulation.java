@@ -229,11 +229,11 @@ public class Simulation
         render.setNormalNodes( nodes );
         render.setNormalEdges( edges );
 
-//        clusterVoronoiInit();
-//
-//        if( clusterNodesPos ) {
-//            beacon.finalPositioningCheck();
-//        }
+        clusterVoronoiInit();
+
+        if( clusterNodesPos ) {
+            beacon.finalPositioningCheck();
+        }
     }
 
     private void NodePlacementVoronoi( float delta )
@@ -303,10 +303,10 @@ public class Simulation
                 }
                 else
                 {
-//                    NodePlacementVoronoi(delta);
-//                    checkErrorNormal();
-//                    render.setNormalNodes(nodes);
-//                    render.setNormalEdges(edges);
+                    NodePlacementVoronoi(delta);
+                    checkErrorNormal();
+                    render.setNormalNodes(nodes);
+                    render.setNormalEdges(edges);
                 }
             }
         }

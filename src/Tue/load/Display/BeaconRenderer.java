@@ -379,7 +379,7 @@ public class BeaconRenderer
                     boundaryCluster = boundaryEdge;
                 }
             }
-            System.out.println("boundaryCluster: " + boundaryCluster );
+
             if( boundaryCluster > 10 )
             {
                 boundaryCluster = 10;

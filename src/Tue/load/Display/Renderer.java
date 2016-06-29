@@ -100,12 +100,12 @@ public class Renderer
         drawDelaunay(showDelaunay);
         //drawBoundary();
 
-        //drawLabels();
+        drawLabels();
         drawEdges( showEdges );
-        vorRender.drawNodes( g2, nodes );
+        //vorRender.drawNodes( g2, nodes );
 
         if( beaconPosTest ) {
-            beaconRender.drawBeaconGradient(g2, nodeToCluster, BeaconCluster, Beaconnode);
+            //beaconRender.drawBeaconGradient(g2, nodeToCluster, BeaconCluster, Beaconnode);
         }
     }
 
