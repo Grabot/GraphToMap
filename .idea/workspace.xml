@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="141e5fe2-5b11-4221-b9f9-55a3fc84ac6f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Tue/objects/PolygonEdge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Renderer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" afterPath="$PROJECT_DIR$/src/Tue/load/Display/Simulation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Tue/objects/VectorGraphic.java" afterPath="$PROJECT_DIR$/src/Tue/objects/VectorGraphic.java" />
     </list>
     <ignored path="GraphToMap.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,11 +42,12 @@
       <file leaf-file-name="BeaconRenderer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.69394433">
-              <caret line="136" column="46" selection-start-line="136" selection-start-column="46" selection-end-line="136" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.33224222">
+              <caret line="315" column="151" selection-start-line="315" selection-start-column="151" selection-end-line="315" selection-end-column="151" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2013#2026#0" expanded="true" />
+                <element signature="e#1938#1951#0" expanded="true" />
+                <element signature="e#10020#10033#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1092,16 +1087,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="83" column="44" selection-start-line="83" selection-start-column="44" selection-end-line="83" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/Renderer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1136,14 +1121,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="358" column="59" selection-start-line="340" selection-start-column="8" selection-end-line="358" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tue/objects/PolygonEdge.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1157,13 +1134,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
+    <entry file="file://$PROJECT_DIR$/src/Tue/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.69394433">
-          <caret line="136" column="46" selection-start-line="136" selection-start-column="46" selection-end-line="136" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="83" column="44" selection-start-line="83" selection-start-column="44" selection-end-line="83" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2013#2026#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconPositioning.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="358" column="59" selection-start-line="340" selection-start-column="8" selection-end-line="358" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Tue/load/Display/BeaconRenderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33224222">
+          <caret line="315" column="151" selection-start-line="315" selection-start-column="151" selection-end-line="315" selection-end-column="151" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1938#1951#0" expanded="true" />
+            <element signature="e#10020#10033#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -46,7 +46,6 @@ public class BeaconRenderer
         iterationTest++;
         if( once )
         {
-            getDistortionNodeScale( node.getX(), node.getY(), nodeToCluster );
             for( int i = 0; i < nodeToCluster.length; i++ )
             {
                 dist += nodeToCluster[i];
@@ -54,7 +53,7 @@ public class BeaconRenderer
             dist = (dist/nodeToCluster.length);
 
             once = false;
-            fillDistortionArray( nodeToCluster );
+            fillDistortionArray( cl, nodeToCluster );
             //fillGradientArray();
             fillGradientArrayCluster( cl );
         }
@@ -78,11 +77,6 @@ public class BeaconRenderer
         PolygonSimple poly = cl.getSite().getPolygon();
         double[] xPoints = poly.getXPoints();
         double[] yPoints = poly.getYPoints();
-        //just do 1 line for now
-        double x2 = xPoints[2];
-        double y2 = yPoints[2];
-        double x3 = xPoints[3];
-        double y3 = yPoints[3];
 
         for( int i = 0; i < poly.getNumPoints(); i++ ) {
             Vector2 from;
@@ -96,7 +90,6 @@ public class BeaconRenderer
             }
             polygonEdges.add(new PolygonEdge(from, to));
         }
-        PolygonEdge edge = new PolygonEdge( new Vector2(x2, y2), new Vector2(x3, y3) );
 
         for( int i = 0; i < 1200; i+=stepsize ) {
             for( int j = 0; j < 800; j+=stepsize ) {
@@ -111,12 +104,10 @@ public class BeaconRenderer
                         if( Math.abs(gradientEdge.getX()) > Math.abs(gradientCluster.getX()) )
                         {
                             gradientCluster.x = gradientEdge.getX();
-                            System.out.println("x: " + Math.abs(gradientEdge.getX()) );
                         }
                         if( Math.abs(gradientEdge.getY()) > Math.abs(gradientCluster.getY()) )
                         {
                             gradientCluster.y = gradientEdge.getY();
-                            System.out.println("y: " + Math.abs(gradientEdge.getY()) );
                         }
                     }
                     if( gradientCluster.getX() > 1 )
@@ -173,19 +164,6 @@ public class BeaconRenderer
         {
             v.draw(g2);
         }
-
-        PolygonSimple poly = cl.getSite().getPolygon();
-        double[] xPoints = poly.getXPoints();
-        double[] yPoints = poly.getYPoints();
-        //just do 1 line for now
-        double x2 = xPoints[2];
-        double y2 = yPoints[2];
-        double x3 = xPoints[3];
-        double y3 = yPoints[3];
-
-        g2.setColor(new Color(0, 36, 234));
-        Line2D.Double line = new Line2D.Double(x2, y2, x3, y3);
-        g2.draw(line);
     }
 
     private void drawRadii(  Graphics2D g2, double[] nodeToCluster )
@@ -200,14 +178,14 @@ public class BeaconRenderer
         }
     }
 
-    private void fillDistortionArray( double[] nodeToCluster )
+    private void fillDistortionArray( Cluster cl, double[] nodeToCluster )
     {
         int index1 = 0;
         int index2 = 0;
         //we hard code the width and height in here because it is meant as a test not as a stable implementation
         for( int i = 0; i < 1200; i+=stepsize ) {
             for( int j = 0; j < 800; j+=stepsize ) {
-                distortionGrid[index1][index2] = getDistortionNodeScale(i+(stepsize/2), j+(stepsize/2), nodeToCluster );
+                distortionGrid[index1][index2] = getDistortionNodeScale(i+(stepsize/2), j+(stepsize/2), cl, nodeToCluster );
                 index2++;
             }
             index2 = 0;
@@ -266,7 +244,7 @@ public class BeaconRenderer
         }
     }
 
-    private double getDistortionNodeScale( double xPos, double yPos, double[] nodeToCluster )
+    private double getDistortionNodeScale( double xPos, double yPos, Cluster cl, double[] nodeToCluster )
     {
         double distortion = 0;
 
@@ -303,7 +281,64 @@ public class BeaconRenderer
         }
         distortion = (distortion/total);
 
+        distortion = addBoundaryFunction( xPos, yPos, cl, distortion);
+
         return distortion;
+    }
+
+    private double addBoundaryFunction( double xPos, double yPos, Cluster cl, double distortionInit )
+    {
+        double distortion = distortionInit;
+
+        ArrayList<PolygonEdge> polygonEdges = new ArrayList<PolygonEdge>();
+        PolygonSimple poly = cl.getSite().getPolygon();
+        double[] xPoints = poly.getXPoints();
+        double[] yPoints = poly.getYPoints();
+
+        for( int i = 0; i < poly.getNumPoints(); i++ ) {
+            Vector2 from;
+            Vector2 to;
+            if ((i == (poly.getNumPoints() - 1))) {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[0], yPoints[0]);
+            } else {
+                from = new Vector2(xPoints[i], yPoints[i]);
+                to = new Vector2(xPoints[i + 1], yPoints[i + 1]);
+            }
+            polygonEdges.add(new PolygonEdge(from, to));
+        }
+
+        if( pnpoly(poly.getNumPoints(), xPoints, yPoints, xPos, yPos ))
+        {
+            double boundaryCluster = 0;
+            for( PolygonEdge e : polygonEdges )
+            {
+                double boundaryEdge = boundaryFunctionEdge( xPos, yPos, e.getFrom().getX(), e.getFrom().getY(), e.getTo().getX(), e.getTo().getY(), 100 );
+                if( boundaryCluster < boundaryEdge )
+                {
+                    boundaryCluster = boundaryEdge;
+                }
+            }
+            System.out.println("boundaryCluster: " + boundaryCluster );
+            if( boundaryCluster > 2 )
+            {
+                boundaryCluster = 2;
+            }
+            distortion = (distortion*boundaryCluster);
+        }
+        else
+        {
+            distortion = distortion*2;
+        }
+        return distortion;
+    }
+
+    private double boundaryFunctionEdge(  double x1, double y1, double x2, double y2, double x3, double y3, double dist )
+    {
+        double numerator = dist*Math.sqrt(Math.pow((x3-x2),2) + Math.pow((y3-y2), 2));
+        double denominator = ((x1*(y2-y3))+(x2*(y3-y1))+(x3*(y1-y2)));
+
+        return (numerator/denominator);
     }
 
     private Vector2 getDerivativeExpansion( double xPos, double yPos, double dist)
@@ -371,6 +406,7 @@ public class BeaconRenderer
 
         return result;
     }
+
 
 
 
