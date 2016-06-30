@@ -75,9 +75,9 @@ public class RenderVoronoi
                         g2.draw(poly);
 
                         PolygonSimple[] p = new PolygonSimple[4];
-                        for( int j = 0; j < 4; j++ ) {
+                        for( int j = 0; j < 2; j++ ) {
                             p[j] = new PolygonSimple();
-                            g2.setColor(new Color(siteColours[i].getRed(), siteColours[i].getGreen(), siteColours[i].getBlue(), 150 - transparent));
+                            g2.setColor(new Color(siteColours[i].getRed(), siteColours[i].getGreen(), siteColours[i].getBlue(), 200 - transparent));
 
                             for (int k = 0; k < poly.getNumPoints(); k++) {
                                 p[j].add(poly.getXPoints()[k], poly.getYPoints()[k]);

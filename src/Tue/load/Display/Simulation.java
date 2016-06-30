@@ -294,7 +294,7 @@ public class Simulation
                 clusterPositioning( delta );
             }
 
-            if( !normalNodePos )
+            while( !normalNodePos )
             {
                 normalIterations++;
                 if( !clusterNodesPos )
@@ -315,7 +315,13 @@ public class Simulation
         {
             System.out.println("normal nodes iterations: " + normalIterations );
             lastPositioning = false;
-            beacon.finalNodePositioning();
+            try {
+                beacon.finalNodePositioning();
+            }
+            catch(Exception e )
+            {
+                System.out.println("error: " + e );
+            }
             render.setNormalNodes(nodes);
             render.setNormalEdges(edges);
         }
