@@ -64,8 +64,34 @@ public class RenderVoronoi
                 for (Site s : siteCluster[i]) {
                     PolygonSimple poly = s.getPolygon();
                     if (poly != null) {
+                        double distanceToZeroX = poly.getCentroid().getX();
+                        double distanceToZeroY = poly.getCentroid().getY();
+                        double edge = 1;
+                        int transparent = 0;
+
+                        g2.setColor( Color.BLACK );
+                        g2.fill(poly);
                         g2.setColor( new Color( 0, 0, 0, 120) );
                         g2.draw(poly);
+
+                        PolygonSimple[] p = new PolygonSimple[4];
+                        for( int j = 0; j < 4; j++ ) {
+                            p[j] = new PolygonSimple();
+                            g2.setColor(new Color(siteColours[i].getRed(), siteColours[i].getGreen(), siteColours[i].getBlue(), 150 - transparent));
+
+                            for (int k = 0; k < poly.getNumPoints(); k++) {
+                                p[j].add(poly.getXPoints()[k], poly.getYPoints()[k]);
+                            }
+
+                            p[j].translate(-distanceToZeroX, -distanceToZeroY);
+                            p[j].scale(edge);
+                            p[j].translate(distanceToZeroX, distanceToZeroY);
+
+                            g2.fill(p[j]);
+
+                            transparent = (transparent + 20);
+                            edge = (edge - 0.07);
+                        }
                     }
                 }
             }
@@ -155,35 +181,10 @@ public class RenderVoronoi
                     g2.setColor(Colors.circleFill);
                     PolygonSimple poly = clusters.get(i).getSite().getPolygon();
                     if (poly != null) {
-                        double distanceToZeroX = poly.getCentroid().getX();
-                        double distanceToZeroY = poly.getCentroid().getY();
-                        double edge = 1;
-                        int transparent = 0;
-
-                        g2.setColor( Color.BLACK );
+                        g2.setColor( siteColours[i] );
                         g2.fill(poly);
                         g2.setColor( new Color( 0, 0, 0, 120) );
                         g2.draw(poly);
-
-                        PolygonSimple[] p = new PolygonSimple[4];
-                        for( int j = 0; j < 4; j++ ) {
-                            p[j] = new PolygonSimple();
-                            g2.setColor( new Color(siteColours[i].getRed(), siteColours[i].getGreen(), siteColours[i].getBlue(), 150-transparent));
-
-                            for( int k = 0; k < poly.getNumPoints(); k++ )
-                            {
-                                p[j].add( poly.getXPoints()[k], poly.getYPoints()[k]);
-                            }
-
-                            p[j].translate( -distanceToZeroX, -distanceToZeroY );
-                            p[j].scale(edge);
-                            p[j].translate( distanceToZeroX, distanceToZeroY );
-
-                            g2.fill(p[j]);
-
-                            transparent = (transparent+20);
-                            edge = (edge-0.01);
-                        }
                     }
                 }
             }
