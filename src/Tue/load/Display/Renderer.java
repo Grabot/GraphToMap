@@ -9,8 +9,7 @@ import Tue.load.voronoitreemap.j2d.Site;
 import Tue.objects.*;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
+import java.awt.geom.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -48,7 +47,6 @@ public class Renderer
     private BeaconRenderer beaconRender;
     private Node Beaconnode;
     private Cluster BeaconCluster;
-
 
     public Renderer(Display display, ArrayList<Cluster> clusternodes, ArrayList<ClusterEdge> clusteredges, double graphScaling )
     {
@@ -106,6 +104,37 @@ public class Renderer
 
         if( beaconPosTest ) {
             //beaconRender.drawBeaconGradient(g2, nodeToCluster, BeaconCluster, Beaconnode);
+        }
+
+
+        g2.setColor( Color.BLACK );
+        PolygonSimple initial = new PolygonSimple();
+        initial.add(0, 100);
+        initial.add(200, 0);
+        initial.add(400, 100);
+        initial.add(400, 300);
+        initial.add(200, 400);
+        initial.add(0, 300);
+        g2.fill(initial);
+
+        double edge = 1;
+        int transparent = 0;
+        double distanceToZeroX = initial.getCentroid().x;
+        double distanceToZeroY = initial.getCentroid().y;
+        PolygonSimple[] p = new PolygonSimple[4];
+        for( int i = 0; i < 4; i++ ) {
+            p[i] = new PolygonSimple();
+            g2.setColor(new Color(166, 206, 227, (150 - transparent)));
+
+            p[i] = initial;
+            p[i].translate( -distanceToZeroX, -distanceToZeroY );
+            p[i].scale(edge);
+            p[i].translate( distanceToZeroX, distanceToZeroY );
+
+            g2.fill(p[i]);
+
+            transparent = (transparent+20);
+            edge = (edge-0.1);
         }
     }
 
